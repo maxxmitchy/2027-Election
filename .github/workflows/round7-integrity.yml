@@ -1,7 +1,7 @@
-name: Round 7 Integrity Audit
+name: Round 8 Gate 2 Closure Audit
 on:
   push:
-    branches: [round7-integrity-audit]
+    branches: [round5-runtime-ci-2]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -26,8 +26,7 @@ jobs:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
       - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12.14'
+        with: {python-version: '3.12.14'}
       - name: Install pinned dependencies
         run: python -m pip install -r requirements-dev.txt
       - name: Record environment
@@ -39,7 +38,7 @@ jobs:
           git rev-parse HEAD >> reports/environment.txt
       - name: Baseline runtime, schema and property tests
         run: python -m pytest -q tests/test_round7.py tests/test_round7_bitemporal.py
-      - name: Mutation sensitivity audit
+      - name: Mutation sensitivity regression
         if: always()
         run: python tests/run_round7_mutations.py
       - name: Verify required reports exist
@@ -48,11 +47,11 @@ jobs:
           test -f reports/round7-test-results.json
           test -f reports/round7-mutation-results.json
           test -f reports/invariant-coverage.md
-      - name: Upload Round 7 evidence
+      - name: Upload Gate 2 evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: round7-integrity-evidence
+          name: gate2-runtime-integrity-${{ github.sha }}
           path: |
             reports/round7-test-results.json
             reports/round7-mutation-results.json
