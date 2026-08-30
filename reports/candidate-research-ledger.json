@@ -1,50 +1,10 @@
 {
-  "phase": "GATE_4_CONTROLLED_SCALE_UP_ROUND_2",
-  "rule": "one candidate at a time",
-  "candidates": [
-    {
-      "candidate_id": "bola-ahmed-tinubu",
-      "name": "Bola Ahmed Tinubu",
-      "status": "PUBLISHED",
-      "validation_status": "VALIDATED",
-      "last_validation": {"tested_commit":"1be31059ace0bed6ef31de11fe3389132b912d27","workflow_run":33322075297,"job_id":99285686044,"result":"SUCCESS","tests":16,"passed":16,"failed":0,"postgres":"16.15","python":"3.12.14","artifact_id":9735171336,"artifact_sha256":"40c60d2c6478b23851cd817d5823c518081fc5dc0057d7bac5677231488c7ec8"}
-    },
-    {
-      "candidate_id": "peter-gregory-obi",
-      "name": "Peter Gregory Obi",
-      "status": "VALIDATED",
-      "research_status": "RESEARCH_COMPLETE",
-      "validation_status": "VALIDATED",
-      "last_validation": {"tested_commit":"1be31059ace0bed6ef31de11fe3389132b912d27","workflow_run":33322075297,"job_id":99285686144,"result":"SUCCESS","tests":16,"passed":16,"failed":0,"postgres":"16.15","python":"3.12.14","artifact_id":9735167876,"artifact_sha256":"933cee9c4ef0b351aa748c124cb0ea7bb55b09bf9db5f21c340a3ba38faf01b5","supersedes_failed_execution":{"tested_commit":"d22adfd03470046fb72644109dcac6a1f203e4e8","workflow_run":33321495059,"job_id":99284136184,"tests":16,"passed":10,"failed":6,"artifact_id":9735007675,"artifact_sha256":"adc396b7e04ce9b232ab7b9cac78a376a4314d3f7d123567a13da1737e30a2e1"}},
-      "research_completion": {"reproducible_quantitative_calculation":"COMPLETE","causal_classification":"COMPLETE","correction_lineage":"COMPLETE","review_records":"COMPLETE","ten_public_answers":"COMPLETE","retrieval_failure_state":"COMPLETE"}
-    },
-    {
-      "candidate_id": "atiku-abubakar",
-      "name": "Atiku Abubakar",
-      "status": "RESEARCH_COMPLETE",
-      "research_status": "RESEARCH_COMPLETE",
-      "validation_status": "NOT_STARTED",
-      "selection": {
-        "reason": "methodological diversity, not political preference",
-        "difference_from_tinubu": "federal vice-presidential record; governor-elect to vice-president transition; longer presidential contest history; federal policy/economic evidence",
-        "difference_from_obi": "federal rather than state-governorship core; governor-elect to vice-president transition; distinct 2027 ADC candidacy; longer presidential chronology",
-        "expected_challenges": ["long-span party and candidacy reconstruction","primary contests versus general-election candidacies","governor-elect versus officeholding semantics","federal economic and policy attribution","social-media provenance","reproducible quantitative evidence","2026 ADC registration and leadership litigation","current nomination and party-status provenance"]
-      },
-      "research_completion": {
-        "reproducible_quantitative_calculation": "COMPLETE",
-        "causal_classification": "COMPLETE",
-        "correction_lineage": "COMPLETE",
-        "review_records": "COMPLETE",
-        "ten_public_answers": "COMPLETE",
-        "retrieval_failure_state": "COMPLETE"
-      },
-      "validation": {"status":"NOT_STARTED","reason":"Research is complete; no Atiku CI execution has yet been observed."}
-    }
+  "phase":"GATE_4_CONTROLLED_SCALE_UP_ROUND_2",
+  "rule":"one candidate at a time",
+  "candidates":[
+    {"candidate_id":"bola-ahmed-tinubu","name":"Bola Ahmed Tinubu","status":"PUBLISHED","validation_status":"VALIDATED","last_validation":{"tested_commit":"1be31059ace0bed6ef31de11fe3389132b912d27","workflow_run":33322075297,"job_id":99285686044,"result":"SUCCESS","tests":16,"passed":16,"failed":0,"postgres":"16.15","python":"3.12.14","artifact_id":9735171336,"artifact_sha256":"40c60d2c6478b23851cd817d5823c518081fc5dc0057d7bac5677231488c7ec8"}},
+    {"candidate_id":"peter-gregory-obi","name":"Peter Gregory Obi","status":"VALIDATED","research_status":"RESEARCH_COMPLETE","validation_status":"VALIDATED","last_validation":{"tested_commit":"1be31059ace0bed6ef31de11fe3389132b912d27","workflow_run":33322075297,"job_id":99285686144,"result":"SUCCESS","tests":16,"passed":16,"failed":0,"postgres":"16.15","python":"3.12.14","artifact_id":9735167876,"artifact_sha256":"933cee9c4ef0b351aa748c124cb0ea7bb55b09bf9db5f21c340a3ba38faf01b5","supersedes_failed_execution":{"tested_commit":"d22adfd03470046fb72644109dcac6a1f203e4e8","workflow_run":33321495059,"job_id":99284136184,"tests":16,"passed":10,"failed":6,"artifact_id":9735007675,"artifact_sha256":"adc396b7e04ce9b232ab7b9cac78a376a4314d3f7d123567a13da1737e30a2e1"}},"research_completion":{"reproducible_quantitative_calculation":"COMPLETE","causal_classification":"COMPLETE","correction_lineage":"COMPLETE","review_records":"COMPLETE","ten_public_answers":"COMPLETE","retrieval_failure_state":"COMPLETE"}},
+    {"candidate_id":"atiku-abubakar","name":"Atiku Abubakar","status":"VALIDATED","research_status":"RESEARCH_COMPLETE","validation_status":"VALIDATED","research_completion":{"reproducible_quantitative_calculation":"COMPLETE","causal_classification":"COMPLETE","correction_lineage":"COMPLETE","review_records":"COMPLETE","ten_public_answers":"COMPLETE","retrieval_failure_state":"COMPLETE"},"last_validation":{"tested_commit":"0e0647d562706a1c63f6fff18d93a8b69e9cd8d6","workflow":"Gate 4 Candidate Research","workflow_run":33322894802,"job_id":99287868835,"result":"SUCCESS","tests":16,"passed":16,"failed":0,"postgres":"16.15","python":"3.12.14","artifact_id":9735396097,"artifact_sha256":"2770dcc9695e2cf02c118c452afbedaf9363139366db6ad3dfd2a8cbfa2b926d","pytest":"16 passed in 0.68s"}}
   ],
-  "scale_control": {
-    "current_candidate": "atiku-abubakar",
-    "next_candidate_started": false,
-    "next_candidate_authorized": false,
-    "reason": "Atiku is RESEARCH_COMPLETE but not yet VALIDATED; Candidate 4 remains blocked until an actual independent Gate 4 CI result establishes the Atiku status."
-  }
+  "scale_control":{"current_candidate":"atiku-abubakar","next_candidate_started":false,"next_candidate_authorized":false,"reason":"Atiku Abubakar is VALIDATED. Candidate 4 remains blocked; no Candidate 4 research, ingestion or validation has begun."}
 }
