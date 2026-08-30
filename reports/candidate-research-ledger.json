@@ -1,0 +1,58 @@
+{
+  "phase": "GATE_4_CONTROLLED_SCALE_UP",
+  "rule": "one candidate at a time",
+  "candidates": [
+    {
+      "candidate_id": "bola-ahmed-tinubu",
+      "name": "Bola Ahmed Tinubu",
+      "status": "PUBLISHED",
+      "validation_status": "VALIDATED",
+      "last_validation": {
+        "tested_commit": "d22adfd03470046fb72644109dcac6a1f203e4e8",
+        "workflow_run": 33321495059,
+        "job_id": 99284136280,
+        "result": "SUCCESS",
+        "tests": 16,
+        "passed": 16,
+        "failed": 0,
+        "postgres": "16.15",
+        "python": "3.12.14",
+        "artifact_id": 9735008294,
+        "artifact_sha256": "81388dbfb7264712af687409f43d633d9a659140e2acb73754cf19205ff4b9e3"
+      }
+    },
+    {
+      "candidate_id": "peter-gregory-obi",
+      "name": "Peter Gregory Obi",
+      "status": "VALIDATION_FAILED",
+      "research_status": "IN_PROGRESS",
+      "validation_status": "VALIDATION_EXECUTED",
+      "last_validation": {
+        "tested_commit": "d22adfd03470046fb72644109dcac6a1f203e4e8",
+        "workflow_run": 33321495059,
+        "job_id": 99284136184,
+        "result": "FAILURE",
+        "tests": 16,
+        "passed": 10,
+        "failed": 6,
+        "postgres": "16.15",
+        "python": "3.12.14",
+        "artifact_id": 9735007675,
+        "artifact_sha256": "adc396b7e04ce9b232ab7b9cac78a376a4314d3f7d123567a13da1737e30a2e1",
+        "classification": "INCOMPLETE_RESEARCH",
+        "missing_requirements": [
+          "reproducible quantitative calculation",
+          "causal-classification record",
+          "correction lineage",
+          "review records",
+          "10 public answers with dependencies",
+          "retrieval-failure/unavailable source state"
+        ]
+      }
+    }
+  ],
+  "scale_control": {
+    "next_candidate_authorized": false,
+    "reason": "Peter Gregory Obi has not reached VALIDATED."
+  }
+}
