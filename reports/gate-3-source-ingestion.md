@@ -1,79 +1,123 @@
-# Gate 3 — Source Ingestion Controlled Experiment
+# Gate 3 — Source Ingestion Final Evidence Report
 
-## Purpose
+## Decision
 
-This experiment tests whether the existing evidence architecture survives contact with real public information without collapsing provenance, temporal semantics, evidence relationships, version history or review state.
+**GATE 3 — PASS RECOMMENDED** for the controlled source-ingestion experiment.
 
-This is **not candidate research**. No candidate, administration, election result, party dossier or political claim has been populated.
+This recommendation is based on actual GitHub Actions execution against a specific commit. It does **not** authorize candidate research. Gate 4 remains required before candidate population.
 
-## Sources inspected
+## Evidence-to-commit binding
 
-| Source | Type | Tier | Role |
-|---|---|---:|---|
-| National Bureau of Statistics — July 2026 CPI report | Official statistical publication | 1 | Primary measurement |
-| National Bureau of Statistics — CPI dataset catalog | Official statistical dataset/catalog | 1 | Dataset identity and release discovery |
-| Reuters — cost-of-living report, 10 Aug 2026 | Reputable news report | 2 | Secondary contextual evidence |
-| Proshare X post, 24 Mar 2026 | Social-media statement | 3 | Statement-vs-truth semantic test |
-| Central Bank of Nigeria homepage snapshot | Official record/display | 1 | Contradiction/temporal-context test |
-| Premium Times — July 2026 inflation report | Established journalism | 3 | Independent corroboration |
+**TESTED COMMIT:** `b26cccd58b9e6ea1c8e28ecbdd8affe5ea162328`
 
-The public artifacts were inspected on 2026-08-30. Source URLs and retrieval metadata are preserved in `sources/gate3/`.
+**WORKFLOW:** `Gate 3 Source Ingestion`
 
-## Retrieval and hash semantics
+**WORKFLOW RUN:** `33319986354`
 
-Each source has a `RetrievalEvent` with URL, retrieval timestamp, media type, artifact identifier, hash algorithm and content hash. For web/PDF resources whose raw bytes were not directly persisted by this experiment, the recorded SHA-256 covers a **canonical captured representation** stored in the test fixture. The repository does not misrepresent this as a byte-for-byte hash of the remote artifact.
+**JOB:** `99280145039`
 
-The NBS July direct-download endpoint timed out during inspection while the NBS catalog remained accessible. This is recorded as `availability_status=unknown` / retrieval failure, not as evidence that the source is false.
+**RESULT:** `success`
 
-## Evidence semantics
+**RUNNER:** `ubuntu-24.04`
 
-The ingestion demonstrates typed relationships:
+**PYTHON:** `3.12.14`
 
-- NBS CPI report → `directly_establishes` July headline inflation.
-- Premium Times → `reports_claim` the NBS figure.
-- Proshare X post → `is_subject_statement`.
-- CBN homepage snapshot → `directly_establishes` what the page displayed at retrieval.
-- NBS July release → `contradicts_claim` an undated interpretation of the CBN 15.93% display.
+**PYTEST:** `8.4.2`
 
-The social-media test deliberately stores two separate propositions:
+**TEST RESULT:** `7 passed, 0 failed, 0 errors, 0 skipped`
 
-1. **Statement claim:** Proshare's account published a statement about February 2026 inflation.
-2. **Fact claim:** February 2026 inflation was 15.06%.
+**ARTIFACT:** `gate3-source-ingestion-evidence`
 
-The first does not automatically establish the second.
+**ARTIFACT ID:** `9734598011`
+
+**ARTIFACT SHA-256:** `ac349422b075ddce8b924985d0d38a744749c0bc3c13affa0c1ca6bb7ca11ef`
+
+The CI log independently records `git rev-parse HEAD = b26cccd58b9e6ea1c8e28ecbdd8affe5ea162328` immediately before test execution.
+
+## Sources used
+
+1. **Official government publication:** National Bureau of Statistics July 2026 CPI report. The NBS catalog identifies the July 2026 release and its download. citeturn0search0
+2. **Official statistical dataset/catalog:** NBS Consumer Price Index and Inflation catalog, identifier `NGA-NBS-CPI`. citeturn0search1
+3. **Reputable news report:** Reuters, *Nigerians' cost of living pain deepens as election looms*, published 10 August 2026. Reuters reports petrol prices of roughly N1,600/litre and describes inflation as near 16% at that time. citeturn2view1
+4. **Social-media statement:** Proshare X post dated 24 March 2026 stating that February 2026 headline inflation held at 15.06%. citeturn1search4
+5. **Independent corroborating report:** Premium Times reports the NBS July headline inflation figure of 15.43%. citeturn4search7
+6. **Official display snapshot:** CBN homepage displayed an inflation-rate figure of 15.93% when inspected. citeturn4search6
+
+## Test results
+
+| Test | Result |
+|---|---|
+| Source → RetrievalEvent → hash linkage | PASS |
+| Social-media statement separated from factual proposition | PASS |
+| Contradictory evidence preserved | PASS |
+| Correction preserves predecessor and supersedes downstream analysis | PASS |
+| Source revision preserves V1 | PASS |
+| Retrieval failure represented as unavailable/unknown rather than false | PASS |
+| Canonical capture hashes deterministic | PASS |
+
+## Social-media semantic test
+
+Two separate claims were created:
+
+**Statement:** Proshare's account published a statement saying February 2026 headline inflation was 15.06%.
+
+**Proposition:** February 2026 headline inflation was 15.06%.
+
+The statement evidence uses `is_subject_statement`. It does not automatically establish the proposition. This distinction is enforced by the executable test suite.
 
 ## Contradictory evidence
 
-The CBN homepage snapshot displayed 15.93%, while the later NBS July release reported 15.43% year-on-year. Both records remain preserved. The apparent disagreement is treated as a temporal/context problem rather than silently selecting one value and deleting the other.
+The CBN homepage snapshot displayed 15.93%, while the later NBS July release reported 15.43% year-on-year. Both source records remain preserved. The system records the latter as typed contradictory evidence against the undated interpretation of the CBN display.
 
-This is deliberately a controlled contradiction: the system is being tested on preservation and qualification, not asked to decide causation or political responsibility.
+The conflict is not silently collapsed into one value. Temporal context remains part of the assessment.
 
 ## Source revision
 
-`source-version-fixtures.json` contains an explicitly labelled `simulated_revision` from V1 to V2. V1 remains reconstructable. The experiment does **not** claim that NBS actually revised the publication.
+The repository contains V1 and an explicitly labelled **simulated** V2 source state. The V1 record remains reconstructable. The experiment does not claim that NBS actually revised the publication.
 
 ## Correction
 
-A controlled ingestion error was introduced:
+A controlled ingestion error initially labelled 15.43% as the July month-on-month rate. The correction changes the interpretation to:
 
-`15.43% month-on-month`
+- 15.43% year-on-year headline inflation;
+- 1.57% month-on-month headline inflation.
 
-was corrected to:
+V1 remains `superseded`; V2 points to V1 through `previous_version_id`. A downstream analysis record also changes from `superseded` to the corrected valid record.
 
-`15.43% year-on-year; 1.57% month-on-month`.
+## Retrieval failure
 
-V1 remains stored as `superseded`; V2 is the valid version. The downstream analysis fixture correspondingly changes from `superseded` to the corrected valid record.
+The direct NBS July download request timed out during inspection while the NBS catalog remained accessible. The failure is recorded as `retrieval_failure` / `availability_status=unknown`. It is **not** converted into a claim that the source is false.
 
-## Review
+## Hash semantics
 
-Reviews are stored separately from source/evidence records. The correction review explicitly identifies the factual error and proposed action. The CBN dispute review identifies missing temporal context rather than declaring the source itself false.
+The remote artifacts were inspected through public web resources. Where raw remote bytes were not persisted by this experiment, the recorded SHA-256 hashes cover canonical captured representations stored in the fixtures. The repository explicitly records this limitation rather than pretending to possess byte-level hashes of remote responses.
 
-## Execution
+## Earlier failed execution
 
-The executable validation suite is `tests/gate3_source_ingestion.py` and the CI workflow is `.github/workflows/gate3-source-ingestion.yml`.
+An earlier Gate 3 run on commit `1e8ed23128045656ecae521ccd01aa974397cc6b` failed one contradiction-reference test. The failure was real and observable; the CI artifact was still uploaded. The defect was corrected by changing the claim's contradictory-evidence reference to the evidence record whose typed relationship is actually `contradicts_claim`.
 
-The final execution evidence must identify the exact checked-out commit using `git rev-parse HEAD` and is uploaded as a CI artifact. No Gate 3 PASS is claimed merely because the workflow or fixtures exist.
+The corrected commit `b26cccd58b9e6ea1c8e28ecbdd8affe5ea162328` then produced the clean 7/7 execution documented above.
 
-## Acceptance status
+## Gate 2 qualification retained
 
-At creation of this report, the controlled source records, retrieval events, evidence relationships, review records, correction fixtures, source-revision fixtures and executable validator are **IMPLEMENTED**. Gate 3 becomes **PASS** only after the corresponding CI execution is observed as successful for the tested commit.
+Gate 2 remains **OPEN WITH DOCUMENTED EVIDENCE QUALIFICATION**. This report does not claim that `1c1dbc14dafd4b27e80aeaf86e496a23ae86d784` has a clean CI execution. The independent Reviewer explicitly accepted that limitation as technical debt. Gate 3 evidence is separate and commit-specific.
+
+## Gate 3 conclusion
+
+The controlled ingestion experiment demonstrates that the system can ingest real public information while preserving:
+
+- source identity;
+- retrieval metadata;
+- hash metadata;
+- source versions;
+- typed evidence semantics;
+- social-media statement/fact separation;
+- contradictory evidence;
+- corrections and historical versions;
+- downstream stale state;
+- retrieval failure state;
+- reproducible execution evidence.
+
+**Recommendation: GATE 3 — PASS.**
+
+This does **not** open Gate 4. Candidate research remains prohibited until the separate Gate 4 acceptance criteria are satisfied and independently approved.
