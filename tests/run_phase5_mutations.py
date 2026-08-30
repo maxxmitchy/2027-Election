@@ -2,7 +2,7 @@
 from __future__ import annotations
 import copy, json
 from pathlib import Path
-from research_workbench import BLOCKED, CANDIDATES, METHODOLOGY_VERSION, investigate
+from research_workbench import BLOCKED, CANDIDATES, GAP_STATES, METHODOLOGY_VERSION, investigate
 ROOT=Path(__file__).resolve().parents[1]
 
 
@@ -18,7 +18,7 @@ def valid(m):
     if not m["investigation"]["evidence_requirements"]: return False
     if not any(r.get("preferred_primary_source") for r in m["investigation"]["evidence_requirements"]): return False
     if any(r.get("required_provenance") is not True for r in m["investigation"]["evidence_requirements"]): return False
-    if not m["research_gaps"]: return False
+    if not m["research_gaps"] or any(g.get("status") not in GAP_STATES for g in m["research_gaps"]): return False
     if m["review"]["status"]!="NOT_REVIEWED" or m["review"]["review_is_not_source"] is not True: return False
     if "truth probability" not in m["answerability"]["reason"].lower(): return False
     if not m["provenance"].get("database_snapshot") or not m["provenance"].get("generation_timestamp"): return False
@@ -34,7 +34,7 @@ def run():
       "M3_secondary_as_primary":lambda m:m["sources"][0].update({"source_class":"PRIMARY","verification_state":"VERIFIED"}),
       "M4_remove_primary_gap":lambda m:m["research_gaps"].clear(),
       "M5_remove_research_gap":lambda m:m["research_gaps"].clear(),
-      "M6_corrupt_gap_status":lambda m:m["research_gaps"].__getitem__(0).update({"status":"RESOLVED"}) if m["research_gaps"] else m["investigation"].update({"status":"ANSWERABLE"}),
+      "M6_corrupt_gap_status":lambda m:m["research_gaps"].__getitem__(0).update({"status":"ANSWERED"}) if m["research_gaps"] else m["investigation"].update({"status":"ANSWERABLE"}),
       "M7_remove_contradiction":lambda m:m.update({"contradictions":[]}),
       "M8_remove_correction":lambda m:m.update({"corrections":[]}),
       "M9_temporal_to_causal":lambda m:m["investigation"]["question"].update({"question_type":"CAUSAL"}),
