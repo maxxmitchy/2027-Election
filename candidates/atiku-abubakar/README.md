@@ -14,7 +14,7 @@ Atiku Abubakar was born 25 November 1946 in Jada, present-day Adamawa State, Nig
 
 Sources:
 - https://blerf.org/index.php/biography/abubakar-atiku/
-- https://www.theguardian.com/ (historical profile source to be replaced with exact captured URL where used)
+- https://guardian.ng/news/the-man-atiku-abubakar/
 
 ## Office history — initial research
 
@@ -56,13 +56,14 @@ Sources:
 
 As of the research cutoff, Atiku Abubakar is represented as the ADC presidential candidate for the 2027 general election. ADC announced that it uploaded Atiku's and Rotimi Amaechi's nomination particulars to the INEC portal, and INEC's published party information identifies the ADC leadership under which the nomination process occurred.
 
-The record will separately capture the legal history of ADC's registration status. A Federal High Court deregistration order was stayed by the Court of Appeal in June 2026; the appellate proceedings continued and a later appellate ruling must be retained as a separate legal record. Party leadership disputes must likewise be represented as claims/procedural records rather than collapsed into a single political narrative.
+The record will separately capture the legal history of ADC's registration status. A Federal High Court deregistration order was stayed by the Court of Appeal in June 2026; the appellate proceedings then proceeded to substantive judgment. The later appellate outcome must be preserved as its own legal record rather than inferred from earlier reporting. Party leadership disputes must likewise be represented as claims/procedural records rather than collapsed into a single political narrative.
 
 Sources:
 - https://adc.org.ng/news-single/adc-successfully-submits-presidential-and-vice-presidential-candidates-to-inec-for-2027-election
 - https://inecnigeria.org/political-parties/african-democratic-congress-adc/
 - https://www.channelstv.com/2026/06/25/deregistration-of-parties-court-defers-hearing-of-appeals-by-adc-four-others-to-july-7/
 - https://www.premiumtimesng.com/news/headlines/888206-updated-appeal-court-stays-judgement-deregistering-adc-accord-three-other-opposition-parties.html
+- https://blueprint.ng/breaking-appeal-court-nullifies-order-for-deregistration-of-adc-others-ahead-of-2027-elections/
 - https://punchng.com/full-list-names-credentials-of-2027-presidential-candidates-released-by-inec/
 
 ## Public statements / RELATED PUBLIC CONVERSATION
