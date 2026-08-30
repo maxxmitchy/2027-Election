@@ -1,0 +1,20 @@
+[
+  {
+    "retrieval_event_id": "RET-G3-PREMIUMTIMES-JULY-2026",
+    "source_id": "SRC-G3-PREMIUMTIMES-JULY-2026",
+    "retrieved_at": "2026-08-30T00:00:00Z",
+    "original_url": "https://www.premiumtimesng.com/business/business-news/903732-nigerias-inflation-falls-to-15-43-in-july-as-food-prices-rise.html",
+    "canonical_url": "https://www.premiumtimesng.com/business/business-news/903732-nigerias-inflation-falls-to-15-43-in-july-as-food-prices-rise.html",
+    "archive_url": null,
+    "archive_captured_at": null,
+    "artifact_media_type": "text/html",
+    "artifact_identifier": "Premium Times July 2026 inflation report",
+    "hash_algorithm": "sha256",
+    "content_hash": "b7faf4f730661782d25ce02e8a8ab40599e0fbb9acc9dc7fd320c5579fc4b141",
+    "http_etag": null,
+    "http_last_modified": null,
+    "notes": "Hash covers the canonical captured representation used for the controlled ingestion experiment.",
+    "version": 1,
+    "previous_version_id": null
+  }
+]
