@@ -1,0 +1,97 @@
+[
+  {
+    "evidence_id": "EVD-G3-NBS-JULY",
+    "claim_id": "CLM-G3-NBS-JULY-INFLATION",
+    "source_id": "SRC-G3-NBS-CPI-2026-07",
+    "relationship": "directly_establishes",
+    "excerpt_reference": "NBS July 2026 CPI report: headline inflation 15.43% y/y; CPI 145.3; food inflation 20.31% y/y.",
+    "evidence_notes": "Primary statistical publication directly establishes the reported measurement for the stated period and definition.",
+    "independence_group": "official-statistics",
+    "confidence": {
+      "source_reliability": "high",
+      "evidence_directness": "direct",
+      "corroboration": "multiple_independent_sources",
+      "claim_certainty": "high",
+      "calculation_integrity": "not_applicable",
+      "overall_assessment": "high"
+    },
+    "version": 1,
+    "previous_version_id": null
+  },
+  {
+    "evidence_id": "EVD-G3-PREMIUMTIMES-JULY",
+    "claim_id": "CLM-G3-NBS-JULY-INFLATION",
+    "source_id": "SRC-G3-REUTERS-COL-2026-08-10",
+    "relationship": "indirectly_informs",
+    "excerpt_reference": "Reuters reports near-16% inflation in August and provides contemporary context; it is not the primary July statistical release.",
+    "evidence_notes": "Used only as contextual corroboration for the approximate level, not as the primary basis for the exact 15.43% figure. The evidence ID is intentionally retained to expose source-type semantics.",
+    "independence_group": "journalism",
+    "confidence": {
+      "source_reliability": "high",
+      "evidence_directness": "indirect",
+      "corroboration": "single_source",
+      "claim_certainty": "moderate",
+      "calculation_integrity": "not_applicable",
+      "overall_assessment": "moderate"
+    },
+    "version": 1,
+    "previous_version_id": null
+  },
+  {
+    "evidence_id": "EVD-G3-X-STATEMENT",
+    "claim_id": "CLM-G3-X-STATEMENT",
+    "source_id": "SRC-G3-PROSHARE-X-2026-03-24",
+    "relationship": "is_subject_statement",
+    "excerpt_reference": "Proshare's post states that Nigeria's February 2026 headline inflation held at 15.06%.",
+    "evidence_notes": "This evidence establishes authorship/publication of the statement. It is not evidence that the underlying economic proposition is true.",
+    "independence_group": "social-media-account",
+    "confidence": {
+      "source_reliability": "moderate",
+      "evidence_directness": "direct",
+      "corroboration": "not_assessed",
+      "claim_certainty": "high",
+      "calculation_integrity": "not_applicable",
+      "overall_assessment": "moderate"
+    },
+    "version": 1,
+    "previous_version_id": null
+  },
+  {
+    "evidence_id": "EVD-G3-CBN-SNAPSHOT",
+    "claim_id": "CLM-G3-CBN-CURRENT-INFLATION",
+    "source_id": "SRC-G3-CBN-HOMEPAGE-SNAPSHOT",
+    "relationship": "directly_establishes",
+    "excerpt_reference": "CBN homepage displayed Inflation Rate 15.93% in the inspected snapshot.",
+    "evidence_notes": "Directly establishes what the CBN homepage displayed at retrieval time. It does not establish that 15.93% is the latest NBS observation.",
+    "independence_group": "official-statistics-display",
+    "confidence": {
+      "source_reliability": "high",
+      "evidence_directness": "direct",
+      "corroboration": "contradicted",
+      "claim_certainty": "high",
+      "calculation_integrity": "not_applicable",
+      "overall_assessment": "moderate"
+    },
+    "version": 1,
+    "previous_version_id": null
+  },
+  {
+    "evidence_id": "EVD-G3-NBS-JULY-CONTRADICTION",
+    "claim_id": "CLM-G3-CBN-CURRENT-INFLATION",
+    "source_id": "SRC-G3-NBS-CPI-2026-07",
+    "relationship": "contradicts_claim",
+    "excerpt_reference": "NBS July 2026 release reports 15.43% year-on-year headline inflation.",
+    "evidence_notes": "Contradicts the undated interpretation that 15.93% is the current national headline rate. The temporal metadata permits the apparent disagreement to be investigated rather than silently resolved.",
+    "independence_group": "official-statistics",
+    "confidence": {
+      "source_reliability": "high",
+      "evidence_directness": "direct",
+      "corroboration": "multiple_independent_sources",
+      "claim_certainty": "high",
+      "calculation_integrity": "not_applicable",
+      "overall_assessment": "high"
+    },
+    "version": 1,
+    "previous_version_id": null
+  }
+]
