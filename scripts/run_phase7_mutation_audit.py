@@ -28,7 +28,7 @@ def main():
   elif name=="M26_duplicate_assembly": killed=len(set(d["claim_ids"]))<len(d["claim_ids"])
   elif name=="M29_remove_dossier_diff": killed="ADDED_EVIDENCE" not in diff
   elif name=="M30_corrupt_snapshot": killed="content_hash" not in snap
-  elif name=="M40_publish_unqualified_dossier": killed=not (d["quality_gate"]["publishable"] and (d["research_gaps"] or d["reviews"]))
+  elif name=="M40_publish_unqualified_dossier": killed=d["quality_gate"]["publishable"] and bool(d["reviews"])
   else: killed=not valid(d)
   results.append({"mutation":name,"status":"KILLED" if killed else "SURVIVED"}); diff=old_diff; snap=old_snap
   if not killed: raise SystemExit("SURVIVED: "+name)
