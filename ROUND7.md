@@ -55,3 +55,5 @@ The CI service health check waits for PostgreSQL readiness before executing test
 A baseline is PASS only when the complete suite exits zero and the reports are produced. Mutation sensitivity is PASS only when all eight mutations produce the expected failing test. No production mutation is committed: mutation experiments operate on temporary copies.
 
 **Gate rule:** no CI run or repository file is treated as PASS without actual execution evidence from the tested commit.
+
+**Round 7 CI trigger:** this commit exists solely to obtain fresh execution evidence for the audit.
