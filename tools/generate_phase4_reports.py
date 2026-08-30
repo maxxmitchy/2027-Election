@@ -1,9 +1,10 @@
 """Generate deterministic Phase 4 machine-readable and human-readable reports."""
 from __future__ import annotations
-import json, os, re, subprocess
+import json, os, re, subprocess, sys
 from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1]; sys.path.insert(0,str(ROOT))
 from evidence_coverage import coverage_report
-ROOT=Path(__file__).resolve().parents[1]; REPORTS=ROOT/"reports"; EVID=ROOT/"evidence"/"phase-4"; REPORTS.mkdir(exist_ok=True); EVID.mkdir(parents=True,exist_ok=True)
+REPORTS=ROOT/"reports"; EVID=ROOT/"evidence"/"phase-4"; REPORTS.mkdir(exist_ok=True); EVID.mkdir(parents=True,exist_ok=True)
 def text(name):
     p=EVID/name; return p.read_text(errors="replace") if p.exists() else ""
 def count_pytest(t):
