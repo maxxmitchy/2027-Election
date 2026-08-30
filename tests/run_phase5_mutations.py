@@ -7,7 +7,10 @@ ROOT=Path(__file__).resolve().parents[1]
 
 
 def baseline():
-    return investigate(ROOT,"What evidence exists for Peter Obi's economic record?",as_of="2026-08-30")
+    m=investigate(ROOT,"What evidence exists for Peter Obi's economic record?",as_of="2026-08-30")
+    m["contradictions"]=[{"id":"mutation-fixture-contradiction","status":"OPEN","material_conflict":True}]
+    m["corrections"]=[{"id":"mutation-fixture-correction","status":"OPEN","supersedes":"mutation-fixture-v1"}]
+    return m
 
 
 def valid(m):
@@ -19,6 +22,7 @@ def valid(m):
     if not any(r.get("preferred_primary_source") for r in m["investigation"]["evidence_requirements"]): return False
     if any(r.get("required_provenance") is not True for r in m["investigation"]["evidence_requirements"]): return False
     if not m["research_gaps"] or any(g.get("status") not in GAP_STATES for g in m["research_gaps"]): return False
+    if not m["contradictions"] or not m["corrections"]: return False
     if m["review"]["status"]!="NOT_REVIEWED" or m["review"]["review_is_not_source"] is not True: return False
     if "truth probability" not in m["answerability"]["reason"].lower(): return False
     if not m["provenance"].get("database_snapshot") or not m["provenance"].get("generation_timestamp"): return False
