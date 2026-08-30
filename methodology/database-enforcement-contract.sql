@@ -1,62 +1,58 @@
--- Round 4 conceptual PostgreSQL enforcement contract.
--- This is a design contract, not a production migration.
+-- Round 5 executable enforcement contract.
+-- This file is now aligned with db/round5_reference.sql.
+-- Temporal convention: [start,end).
+-- Critical correction: transaction_to is DERIVED with LEAD(transaction_from),
+-- not maintained by mutating old rows. This preserves append-only history.
 
--- 1. Version identity and transaction-time integrity
+-- RECORD VERSION
 -- PRIMARY KEY(version_id)
--- UNIQUE(entity_id, version_number)
--- FOREIGN KEY(previous_version_id) REFERENCES record_version(version_id)
--- CHECK ((version_number = 1 AND previous_version_id IS NULL)
---     OR (version_number > 1 AND previous_version_id IS NOT NULL))
--- CHECK (transaction_to IS NULL OR transaction_to > transaction_from)
--- Trigger/policy: UPDATE/DELETE on record_version are rejected for all rows.
--- Trigger: a new version must reference the immediately preceding version number
--- for the same entity; no alternate predecessor is accepted.
+-- UNIQUE(entity_id,version_number)
+-- FK(previous_version_id) -> record_version(version_id)
+-- CHECK(v1 => predecessor IS NULL; v>1 => predecessor IS NOT NULL)
+-- Trigger: predecessor must be same entity and exactly n-1.
+-- Trigger/policy: UPDATE/DELETE on record_version rejected.
+-- Bitemporal view derives transaction_to with LEAD(transaction_from).
 
--- 2. Valid-time integrity
--- CHECK (valid_until IS NULL OR valid_until > valid_from)
--- Use [start,end) semantics everywhere. A null end is +infinity.
--- For single-occupancy offices:
--- EXCLUDE USING gist (
---   office_id WITH =,
---   tstzrange(valid_from, COALESCE(valid_until,'infinity'), '[)') WITH &&
--- ) WHERE (office_single_occupancy = true AND state NOT IN ('invalid','superseded'));
+-- VALID TIME
+-- CHECK(valid_until IS NULL OR valid_until > valid_from)
+-- [start,end) semantics; NULL end = +infinity.
+-- Single-occupancy office holdings use PostgreSQL EXCLUDE USING gist over
+-- office_id and tstzrange(valid_from,COALESCE(valid_until,'infinity'),'[)').
 
--- 3. Referential integrity
--- Foreign keys must exist for person, election, candidacy, office, party,
--- geography, source, evidence, calculation, analysis, result, methodology,
--- dataset version and dependency-version references.
+-- REFERENTIAL INTEGRITY
+-- Foreign keys cover person, election, candidacy, office, geography, source,
+-- evidence, methodology, dataset version and exact dependency-version references.
+-- Election result uses a composite FK(candidacy_id,election_id) so a result
+-- cannot attach a candidacy from another election.
 
--- 4. Dependency graph
+-- DEPENDENCY GRAPH
 -- PRIMARY KEY(dependency_id)
--- INDEX(dependency_edge.upstream_ref)
--- INDEX(dependency_edge.downstream_ref)
--- UNIQUE(upstream_ref, downstream_ref, relationship, transaction_from)
--- FK(upstream_ref) -> record_version(version_id)
--- FK(downstream_ref) -> record_version(version_id)
+-- INDEX(upstream_ref), INDEX(downstream_ref)
+-- UNIQUE(upstream_ref,downstream_ref,relationship)
+-- FK both endpoints -> record_version(version_id)
 -- CHECK(upstream_ref <> downstream_ref)
--- API/CI rejects cycles. Database stores the graph; recursive traversal performs impact analysis.
+-- INSERT trigger performs recursive cycle detection.
+-- UPDATE/DELETE on dependency_edge rejected.
 
--- 5. Published AI answers
--- Published answer rows are append-only.
--- UPDATE/DELETE trigger rejects mutation of answer content or dependency refs.
--- A publication transaction must verify that every required dependency exists,
--- is resolvable, and is not stale/invalid.
+-- PUBLISHED AI ANSWERS
+-- Answer content, generation metadata and dependency rows are immutable.
+-- Lifecycle state is deliberately separate in ai_answer_state and may transition
+-- published -> stale/superseded without changing historical answer content or lineage.
 
--- 6. Dataset lineage
--- dataset_id is stable; dataset_version_id is immutable.
--- UNIQUE(dataset_id, version_number)
--- FK(previous_dataset_version_id) -> dataset_version(dataset_version_id)
--- Observation logical identity is stable across dataset releases; revised values
--- create new observation versions rather than new logical IDs.
+-- DATASET LINEAGE
+-- dataset_id stable; dataset_version_id immutable.
+-- UNIQUE(dataset_id,version_number); predecessor FK.
+-- observation_id is stable logical identity; observation_version captures revisions.
 
--- 7. Provenance integrity
--- retrieval_event_id is immutable and linked to source_id.
--- Store hash_algorithm + content_hash + retrieval timestamp + original URL.
--- A later hash mismatch creates an integrity_finding; it never mutates the old event.
+-- PROVENANCE
+-- retrieval_event is immutable and linked to source_id.
+-- Preserve retrieval timestamp, original URL, hash algorithm and content hash.
+-- Hash mismatches create integrity findings; they do not mutate historical events.
 
--- 8. CI-only graph assertions
--- Assert dependency graph is acyclic.
--- Assert every current derived record has only current/non-invalid dependencies.
--- Assert every published answer has complete quantitative lineage when it contains
--- a quantitative result.
--- Assert no orphan evidence/claim/source references.
+-- GEOGRAPHIC COMPATIBILITY
+-- Comparison trigger rejects different geo_type values. More sophisticated
+-- aggregation/metric compatibility remains an API/domain rule.
+
+-- CI
+-- Structural JSON Schema validation, reference closure, graph-cycle detection,
+-- temporal properties, stale propagation and AI lineage completeness are CI gates.
