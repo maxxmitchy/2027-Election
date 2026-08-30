@@ -140,3 +140,4 @@ jobs:
       - name: Fail closed
         if: steps.phase3.outcome != 'success' || steps.phase4.outcome != 'success' || steps.phase5.outcome != 'success' || steps.mutations.outcome != 'success'
         run: exit 1
+# Phase 5 execution-trigger commit: preserve exact CI evidence and tested SHA.
