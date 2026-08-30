@@ -6,17 +6,17 @@ SUBJECTIVE_RE=re.compile(r"\b(best|worst|most competent|least competent|performe
 SECURITY_RE=re.compile(r"\b(ignore|assume|don't mention|do not mention|everyone knows|give me the most favorable)\b[^.?!]*",re.I)
 TRUTH_ASSESSMENT_RE=re.compile(r"\b(was|is|were|are)\s+(what|that)\b.*\b(true|correct|accurate)\b",re.I)
 PUBLIC_REQUEST_RE=re.compile(r"\b(what did|what .* said|what .* say|what public statement|what .*statement|what statement)\b",re.I)
-CAUSAL_PHRASES=("caused","causes","causing","because of","responsible for","led to","resulted in","make ","made ","created ","due to","as a result of")
+CAUSAL_PHRASES=("cause ","caused ","causes ","causing ","because of","responsible for","led to","resulted in","make ","made ","created ","due to","as a result of")
 
 def _scope(q):
-    ql=q.lower(); found=[]
+    ql=q.lower();found=[]
     for cid,aliases in CANDIDATE_ALIASES.items():
-        if any(re.search(r"\b"+re.escape(a)+r"\b",ql) for a in aliases): found.append(cid)
-    if "three candidates" in ql or all(x in ql for x in ("tinubu","obi","atiku")): return list(CANDIDATE_ALIASES)
+        if any(re.search(r"\b"+re.escape(a)+r"\b",ql) for a in aliases):found.append(cid)
+    if "three candidates" in ql or all(x in ql for x in ("tinubu","obi","atiku")):return list(CANDIDATE_ALIASES)
     return found
 
 def _time(q):
-    ql=q.lower(); m=re.search(r"as of\s+([A-Za-z]+\s+\d{4}|\d{4}-\d{2}-\d{2})",q,re.I)
+    ql=q.lower();m=re.search(r"as of\s+([A-Za-z]+\s+\d{4}|\d{4}-\d{2}-\d{2})",q,re.I)
     if m:return {"as_of_expression":m.group(1)}
     m=re.search(r"between\s+(19\d{2}|20\d{2})\s+(?:and|to|-)\s+(19\d{2}|20\d{2})",ql)
     if m:return {"start":m.group(1),"end":m.group(2),"expression":m.group(0)}
@@ -40,9 +40,9 @@ def _domain_entity(ql):
     return None,None,None
 
 def interpret(raw_question):
-    raw=raw_question.strip(); ql=raw.lower(); scope=_scope(raw); public_request=bool(PUBLIC_REQUEST_RE.search(raw)) and ("adc" in ql or "ncp" in ql or "statement" in ql or "said" in ql)
+    raw=raw_question.strip();ql=raw.lower();scope=_scope(raw);public_request=bool(PUBLIC_REQUEST_RE.search(raw)) and ("adc" in ql or "ncp" in ql or "statement" in ql or "said" in ql)
     causal=any(p in ql for p in CAUSAL_PHRASES) and not public_request
-    domain,entity,geography=_domain_entity(ql); t=_time(raw); ambiguities=[]; unsupported=[]
+    domain,entity,geography=_domain_entity(ql);t=_time(raw);ambiguities=[];unsupported=[]
     if SUBJECTIVE_RE.search(raw):status="UNSUPPORTED";operation="FACTUAL_LOOKUP";unsupported.append("Subjective ranking or evaluation is not defined by the validated methodology.")
     elif public_request and not TRUTH_ASSESSMENT_RE.search(raw):status="INTERPRETED";operation="PUBLIC_CONVERSATION"
     elif causal:status="INTERPRETED";operation="CAUSAL_ATTRIBUTION"
@@ -59,7 +59,7 @@ def interpret(raw_question):
     elif "what happened" in ql or "timeline" in ql or "chronology" in ql:status="INTERPRETED";operation="TIMELINE"
     elif domain or scope:status="PARTIALLY_INTERPRETED";operation="FACTUAL_LOOKUP";ambiguities.append("The question is broader than a currently defined deterministic metric or operation.")
     else:status="NO_MATCH";operation="UNKNOWN_LOOKUP";unsupported.append("No supported deterministic topic or operation was identified.")
-    if not domain and operation in {"COUNT","CHANGE","CAUSAL_ATTRIBUTION","COMPARISON"}:ambiguities.append("The requested metric/topic could not be resolved to a validated entity."); status="PARTIALLY_INTERPRETED" if status=="INTERPRETED" else status
+    if not domain and operation in {"COUNT","CHANGE","CAUSAL_ATTRIBUTION","COMPARISON"}:ambiguities.append("The requested metric/topic could not be resolved to a validated entity.");status="PARTIALLY_INTERPRETED" if status=="INTERPRETED" else status
     if operation=="COMPARISON" and len(scope)<2:ambiguities.append("Comparison requires at least two compatible subjects.");status="PARTIALLY_INTERPRETED"
     if len(scope)>1 and operation not in {"COMPARISON","COUNT"}:status="PARTIALLY_INTERPRETED";ambiguities.append("Multiple candidate subjects require an explicit comparison or aggregate operation.")
     if "during tinubu" in ql and causal:ambiguities.append("Administrative period and personal causation are distinct concepts.")
