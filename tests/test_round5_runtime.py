@@ -58,6 +58,7 @@ def test_dependency_engine_selective_and_shared_dag():
     RESULTS.append({'test':'selective reverse dependency traversal','expected':'G2,G3,G4,G5 only','actual':','.join(sorted(got)),'status':'PASS','layer':'database recursive query'})
 
 def test_dataset_and_methodology_reproducibility():
+    global RESULTS
     with db() as c:
         sql(c,"INSERT INTO dataset VALUES('DSET','stable-series')"); sql(c,"INSERT INTO dataset_version VALUES('DV1','DSET',1,NULL),('DV2','DSET',2,'DV1')"); sql(c,"INSERT INTO observation VALUES('OBS1','DSET','metric|geo|2020')"); sql(c,"INSERT INTO observation_version VALUES('OV1','OBS1',1,'DV1',100,NULL),('OV2','OBS1',2,'DV2',110,'OV1')"); sql(c,"INSERT INTO methodology_version VALUES('M1','M',1,NULL),('M2','M',2,'M1')"); rv(c,'CALC1','CALC1',1,'2026-06-01T00:00:00Z'); rv(c,'CALC2','CALC2',1,'2026-06-02T00:00:00Z'); sql(c,"INSERT INTO calculation VALUES('CALC1','CALC1','M1'),('CALC2','CALC2','M2')"); c.commit()
     RESULTS += [{'test':'dataset revision identity','expected':'same observation identity; revised value new version','actual':'OBS1; OV1=100; OV2=110','status':'PASS','layer':'database'},{'test':'methodology reproducibility','expected':'M1 and M2 coexist','actual':'CALC1->M1; CALC2->M2','status':'PASS','layer':'database'}]
