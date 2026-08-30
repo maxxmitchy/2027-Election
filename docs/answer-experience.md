@@ -48,6 +48,10 @@ Review information is explicitly marked `NOT_A_SOURCE` in the current retrieval 
 
 The answer contains a content-derived query ID, interpreted query, database snapshot hash, methodology version and generation metadata. Runtime performance is recorded separately from deterministic answer content.
 
+## Validation state
+
+The checked-in Phase 3 validation report remains `UNTESTED` until a dedicated CI run evaluates the exact implementation commit. A prior Phase 2 PASS is not reused as Phase 3 evidence.
+
 ## Future language models
 
 An LLM could later be placed before this module as an optional interface. Its only permitted output would be a validated structured query. Retrieval and evidence assessment would remain deterministic.
