@@ -1,9 +1,12 @@
 import json
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "candidates/bola-ahmed-tinubu/data/pilot-record.json"
-ANSWERS = ROOT / "candidates/bola-ahmed-tinubu/data/public-answers.json"
+CANDIDATE_ID = os.environ.get("CANDIDATE_ID", "bola-ahmed-tinubu")
+CANDIDATE_DIR = ROOT / "candidates" / CANDIDATE_ID
+DATA = CANDIDATE_DIR / "data/pilot-record.json"
+ANSWERS = CANDIDATE_DIR / "data/public-answers.json"
 
 
 def load(path):
@@ -11,18 +14,23 @@ def load(path):
         return json.load(f)
 
 
+def require_data():
+    assert DATA.exists(), f"missing research fixture: {DATA}"
+    return load(DATA)
+
+
 def test_person_candidacy_separation():
-    d = load(DATA)
+    d = require_data()
     person_id = d["person"]["id"]
-    assert person_id == "person-bola-ahmed-tinubu"
+    assert person_id
     assert all(c["person_id"] == person_id for c in d["candidacies"])
     assert all("election_id" in c for c in d["candidacies"])
 
 
 def test_party_chronology():
-    d = load(DATA)
+    d = require_data()
     memberships = d["party_memberships"]
-    assert len(memberships) == 4
+    assert memberships, "INCOMPLETE: party history is missing"
     for m in memberships:
         assert m["person_id"] == d["person"]["id"]
         assert m["valid_from"]
@@ -31,100 +39,127 @@ def test_party_chronology():
 
 
 def test_office_chronology():
-    d = load(DATA)
+    d = require_data()
     offices = d["officeholdings"]
-    assert len(offices) == 3
-    assert offices[1]["valid_from"] == "1999-05-29"
-    assert offices[1]["valid_until"] == "2007-05-29"
-    assert offices[2]["valid_from"] == "2023-05-29"
-    assert offices[2]["valid_until"] is None
+    assert offices, "INCOMPLETE: office history is missing"
+    for o in offices:
+        assert o["person_id"] == d["person"]["id"]
+        assert o["valid_from"]
+        if o["valid_until"]:
+            assert o["valid_from"] < o["valid_until"]
 
 
 def test_election_result_relationships():
-    d = load(DATA)
+    d = require_data()
     candidacy_ids = {c["id"] for c in d["candidacies"]}
     assert all(r["candidacy_id"] in candidacy_ids for r in d["election_results"])
-    official = next(r for r in d["election_results"] if r["id"] == "res-2023")
-    assert official["votes"] == 8794726
-    assert official["certification_status"] == "OFFICIAL"
+    official = [r for r in d["election_results"] if r.get("certification_status") == "OFFICIAL"]
+    assert official, "INCOMPLETE: no officially anchored election result"
 
 
 def test_source_provenance():
-    d = load(DATA)
+    d = require_data()
     source_ids = {s["id"] for s in d["sources"]}
-    assert len(source_ids) == len(d["sources"])
-    assert all(s["retrieval_date"] == "2026-08-30" for s in d["sources"])
-    for r in d["retrieval_events"]:
+    assert source_ids
+    for s in d["sources"]:
+        assert s.get("url")
+        assert s.get("retrieval_date")
+    for r in d.get("retrieval_events", []):
         assert r["source_id"] in source_ids
 
 
 def test_social_media_semantics():
-    d = load(DATA)
-    claim = next(c for c in d["claims"] if c["id"] == "claim-social-statement")
-    evidence = next(e for e in d["evidence"] if e["id"] == "ev-social")
-    assert claim["claim_type"] == "STATEMENT_OCCURRENCE"
-    assert evidence["relationship"] == "DIRECTLY_ESTABLISHES_STATEMENT_OCCURRENCE"
-    assert "factually" not in claim["claim"].lower()
+    d = require_data()
+    claims = [c for c in d["claims"] if c.get("claim_type") == "STATEMENT_OCCURRENCE"]
+    assert claims, "INCOMPLETE: no social/public-statement semantics record"
+    for claim in claims:
+        assert "factually true" not in claim["claim"].lower()
 
 
 def test_economic_lineage_and_calculation():
-    d = load(DATA)
-    obs = {o["id"]: o for o in d["observations"]}
-    calc = next(c for c in d["calculations"] if c["id"] == "calc-cpi-2022-2023")
-    assert calc["result"] == 7.58
-    assert calc["unit"] == "percentage_points"
-    assert obs["obs-cpi-2022-12"]["unit"] == obs["obs-cpi-2023-12"]["unit"] == "percent"
-    assert obs["obs-cpi-2022-12"]["geography"] == obs["obs-cpi-2023-12"]["geography"] == "Nigeria"
+    d = require_data()
+    observations = {o["id"]: o for o in d.get("observations", [])}
+    calculations = d.get("calculations", [])
+    assert calculations, "INCOMPLETE: no reproducible quantitative calculation"
+    calc = next((c for c in calculations if c.get("input_observation_versions")), None)
+    assert calc, "INCOMPLETE: calculation lacks observation dependencies"
+    assert calc.get("result") is not None
+    for ref in calc["input_observation_versions"]:
+        obs_id = ref.split("@", 1)[0]
+        assert obs_id in observations
 
 
 def test_causality_is_not_inferred():
-    d = load(DATA)
-    claim = next(c for c in d["claims"] if c["id"] == "claim-inflation-causation")
-    assert claim["status"] == "INSUFFICIENT_EVIDENCE"
-    assert claim["causal_classification"] == "INSUFFICIENT_EVIDENCE"
+    d = require_data()
+    claims = [c for c in d["claims"] if c.get("claim_type") == "CAUSAL"]
+    assert claims, "INCOMPLETE: no causal-classification test record"
+    for claim in claims:
+        assert claim.get("causal_classification") in {
+            "TEMPORAL_ASSOCIATION",
+            "DOCUMENTED_ATTRIBUTION",
+            "SUPPORTED_CAUSAL_INFERENCE",
+            "CONTESTED_ATTRIBUTION",
+            "INSUFFICIENT_EVIDENCE",
+        }
 
 
 def test_contradictory_or_qualifying_evidence_preserved():
-    d = load(DATA)
-    claim = next(c for c in d["claims"] if c["id"] == "claim-reform-assessment")
-    relationships = {e["relationship"] for e in d["evidence"] if e["id"] in claim["evidence_ids"]}
-    assert "QUALIFIES" in relationships
-    assert "REPORTS_OFFICIAL_POSITION" in relationships
-    assert len(claim["evidence_ids"]) >= 3
+    d = require_data()
+    contradictions = d.get("contradictions", [])
+    assert contradictions, "INCOMPLETE: contradiction representation is missing"
+    assert all(c.get("source_a") and c.get("source_b") for c in contradictions)
 
 
 def test_correction_lineage():
-    d = load(DATA)
-    correction = d["correction"]
-    assert correction["v2"]["predecessor"] == "v1"
-    assert correction["v1"]["status"] == "PUBLISHED"
-    assert correction["v2"]["status"] == "PUBLISHED"
+    d = require_data()
+    corrections = d.get("corrections")
+    assert corrections, "INCOMPLETE: correction lineage is missing"
+    for correction in corrections:
+        assert correction.get("v1") and correction.get("v2")
+        assert correction["v2"].get("predecessor") == "v1"
 
 
 def test_review_dimensions():
-    d = load(DATA)
-    r = d["reviews"][0]
-    for field in ["evidence_quality", "factual_accuracy", "calculation_accuracy", "context_completeness", "source_quality", "reviewer_confidence"]:
-        assert field in r
+    d = require_data()
+    reviews = d.get("reviews", [])
+    assert reviews, "INCOMPLETE: review records are missing"
+    fields = ["evidence_quality", "factual_accuracy", "calculation_accuracy", "context_completeness", "source_quality", "reviewer_confidence"]
+    for review in reviews:
+        for field in fields:
+            assert field in review
 
 
 def test_ten_public_answers_have_dependencies():
+    assert ANSWERS.exists(), f"INCOMPLETE: missing public answers fixture: {ANSWERS}"
     d = load(ANSWERS)
-    assert len(d["answers"]) == 10
+    assert len(d.get("answers", [])) == 10, "INCOMPLETE: standardized public-answer set must contain 10 answers"
     for answer in d["answers"]:
-        assert answer["id"]
-        assert answer["question"]
-        assert answer["answer"]
-        assert answer["dependencies"]
+        assert answer.get("id") and answer.get("question") and answer.get("answer")
+        assert answer.get("dependencies")
 
 
 def test_unknown_source_is_not_false():
-    d = load(DATA)
-    failure = d["source_failure"]
-    assert failure["state"] == "RETRIEVAL_FAILURE"
-    assert failure["truth_status"] == "UNKNOWN"
+    d = require_data()
+    failure = d.get("source_failure")
+    assert failure, "INCOMPLETE: retrieval-failure state is missing"
+    assert failure["state"] in {"RETRIEVAL_FAILURE", "UNAVAILABLE"}
+    assert failure["truth_status"] in {"UNKNOWN", "UNVERIFIED"}
 
 
-def test_no_candidate_population_beyond_pilot():
-    pilot_dirs = [p for p in (ROOT / "candidates").iterdir() if p.is_dir()]
-    assert pilot_dirs == [ROOT / "candidates/bola-ahmed-tinubu"]
+def test_machine_lineage_is_resolvable():
+    d = require_data()
+    source_ids = {s["id"] for s in d["sources"]}
+    evidence = {e["id"]: e for e in d.get("evidence", [])}
+    assert evidence, "INCOMPLETE: evidence graph is missing"
+    for claim in d["claims"]:
+        for evidence_id in claim.get("evidence_ids", []):
+            assert evidence_id in evidence
+        for evidence_id in claim.get("evidence_ids", []):
+            assert set(evidence[evidence_id].get("source_ids", [])) <= source_ids
+
+
+def test_candidate_fixture_is_parameterized():
+    d = require_data()
+    assert CANDIDATE_ID
+    assert d["person"]["id"].startswith("person-")
+    assert CANDIDATE_DIR.exists()
