@@ -1,0 +1,32 @@
+{
+  "experiment": "SYSTEM_LEVEL_CROSS_CANDIDATE_RETRIEVAL",
+  "status": "PENDING_CI",
+  "candidate_scope": ["bola-ahmed-tinubu", "peter-gregory-obi", "atiku-abubakar"],
+  "candidate_4": "BLOCKED",
+  "data_boundary": "existing validated candidate pilot-record.json fixtures only",
+  "external_knowledge_allowed": false,
+  "answer_model": {"state":"DERIVED","source_of_truth":"underlying_records","versioned":true,"snapshot_required":true},
+  "golden_questions": [
+    {"id":"Q1","scope":"three candidates","expected":"2023 presidential result rows with party, votes, rank, source and explicit missing fields"},
+    {"id":"Q2","scope":"each candidate","expected":"documented presidential candidacies; NOT_FOUND_IN_CURRENT_DATASET distinct from DID_NOT_OCCUR"},
+    {"id":"Q3","scope":"each candidate","expected":"selected stored economic claims; no economic ranking"},
+    {"id":"Q4","scope":"each candidate","expected":"explicit uncertain/disputed claims only"},
+    {"id":"Q5","scope":"each candidate","expected":"stored correction lineages without overwriting versions"},
+    {"id":"Q6","scope":"each candidate","expected":"public conversation records with statement occurrence separated from truth"},
+    {"id":"Q7","scope":"three candidates","expected":"transaction-time as_of reconstruction"},
+    {"id":"Q8","scope":"selected quantitative answer","expected":"result-analysis-calculation-observation-dataset/source dependency chain"}
+  ],
+  "failure_states":["NO_MATCH","UNKNOWN","UNVERIFIED","INCOMPLETE","DISPUTED","INCOMPARABLE","INSUFFICIENT_EVIDENCE","STALE"],
+  "tests": {
+    "candidate_identity_contamination": true,
+    "provenance_contamination": true,
+    "quantitative_compatibility": true,
+    "mutation_detection": true,
+    "answer_reproducibility": true,
+    "answer_version_diff": true,
+    "as_of_recording": true
+  },
+  "ci": {"workflow":"System-Level Retrieval","tested_commit":null,"run_id":null,"job_id":null,"postgres":"16.15","python":"3.12","test_count":null,"pass_count":null,"failure_count":null,"artifact":null,"artifact_sha256":null},
+  "limitations":["The initial prototype is deterministic and repository-local rather than a production API.","Historical Q7 requires immutable transaction-time metadata to be populated for the underlying candidate records; the prototype records as_of but does not invent missing transaction history.","Economic comparison is intentionally constrained to fields already present in the validated fixtures."],
+  "recommendation":"Do not declare PASS until CI evidence exists. If CI passes, treat this as a validated retrieval prototype and proceed to controlled answer fixtures, not Candidate 4 research."
+}
