@@ -1,4 +1,5 @@
 from __future__ import annotations
+# Phase 6 implementation point: mutation audit is a fail-closed gate.
 import copy, json
 from datetime import datetime, timezone
 from pathlib import Path
