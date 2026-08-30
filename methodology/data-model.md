@@ -1,35 +1,51 @@
-# Information Architecture and Core Data Model
+# Normalized Domain Model
 
-## Design principle
+## Purpose
 
-Separate entities, claims, evidence, sources, observations, analyses, reviews and versions. Prose is a presentation layer, not the canonical knowledge model.
+The canonical model separates identity, participation, office occupancy, administrations, evidence, measurement, analysis, review and version history. Prose dossiers are views over structured records, not the source of truth.
 
-## Core entities
+## Political identity and elections
 
-- **Person/Candidate** — identity and candidate-specific attributes.
-- **Administration** — office holder with explicit start/end dates.
-- **Office/Party** — reusable political entities.
-- **Event** — dated historical event with participants and evidence.
-- **Claim** — proposition whose status can be evaluated.
-- **Source** — bibliographic/provenance record for an external source.
-- **Evidence** — specific support or contradiction relationship between a source and claim.
-- **Economic Observation** — measured value for a defined metric and period.
-- **Analysis** — reproducible transformation or comparison of observations.
-- **Review** — public/internal assessment of a claim, answer or evidence record.
-- **Version** — immutable domain-level state transition.
+**Person** is a durable real-world identity. A person may exist without ever being a candidate.
 
-## Relationships
+**Election** identifies a particular electoral contest, with election date, office, jurisdiction and relevant electoral cycle metadata.
 
-`subject -> claim -> evidence -> source`
+**Candidacy** is the person's participation in one election. It links exactly one person to one election and stores candidate-specific facts such as party, ballot status, nomination status and result references. A person can have many candidacies; an election has many candidacies.
 
-`metric -> observation -> source`
+`person_id -> candidacy -> election_id`
 
-`analysis -> observations -> calculation -> result`
+Candidate dossiers should therefore not be the primary identity table.
 
-`record -> version -> predecessor/successor`
+## Offices, officeholdings and administrations
 
-`answer -> claims/observations -> sources -> database version`
+**Office** is the institutional position (for example, President of Nigeria), independent of its occupant.
 
-## Separation of concerns
+**OfficeHolding** records one person's occupancy of an office over a defined interval, with start/end dates and evidence. It is the authoritative temporal relationship for questions such as who held an office on a given date.
 
-A source is not itself a claim. Evidence describes what a source contributes to a claim. A statement by a candidate is evidence that the candidate made the statement; it does not automatically validate the statement's underlying content. A review is feedback about a record and does not become evidence merely because it exists.
+**Administration** is an analytical/governance period, not a person. It may be associated with one or more officeholdings and has explicit start/end boundaries plus a methodology note explaining the boundary rule.
+
+`person -> office_holding -> office`
+
+`administration -> office_holding(s)`
+
+Economic performance can be compared against an administration's defined period, but attribution must remain a separate analytical claim.
+
+## Claims and evidence
+
+A **Claim** is a proposition. It may be a factual proposition, allegation, statement, analysis, estimate, opinion or disputed proposition.
+
+An **Evidence** record describes exactly how a source relates to a claim. Evidence has a typed relationship; `supports` alone is intentionally insufficient.
+
+A **Source** is the bibliographic/provenance object. A source may contain multiple relevant evidence items and may relate to multiple claims.
+
+## Quantitative layer
+
+**Metric** defines what is being measured. **Observation** stores a value for a metric, period and scope. **Calculation** defines a reproducible transformation of observations. **Analysis** interprets calculations or observations. **Result** is a versioned derived output that records its dependencies.
+
+## Versioning
+
+Material domain records are immutable versions. A correction creates a new version linked to its predecessor. Git commits provide repository history; domain versions provide record-level history. Both are retained.
+
+## Design rule
+
+No entity should contain another entity's mutable history merely for convenience. Relationships should carry their own temporal/provenance semantics where appropriate.

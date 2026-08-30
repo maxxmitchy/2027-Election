@@ -1,25 +1,20 @@
-# Corrections and Historical Integrity
+# Corrections, Invalidation and Historical Integrity
 
-## Rule
+A correction changes the evidentiary state; it does not erase history.
 
-Never silently rewrite a material historical record.
+## Correction record
 
-When a record changes materially, preserve the prior version and record the previous value/text, new value/text, change timestamp, reason, supporting evidence, proposer or system actor, reviewer when applicable, new version identifier and predecessor version identifier.
+A material correction should identify the affected entity/version, previous version, new version, reason, supporting evidence, actor, reviewer when applicable, timestamp and Git commit. The correction type should be explicit: factual, source, calculation, context, classification, methodological, or source-revision.
 
-## Correction types
+## Dependency effects
 
-- `factual_correction`
-- `source_correction`
-- `calculation_correction`
-- `context_correction`
-- `classification_correction`
-- `methodological_revision`
-- `source_revision`
+If a corrected observation or source changes a calculation input, dependent calculations and downstream results become `stale` or `invalid` until recomputed. Recalculation creates new versions using the corrected dependencies. The old derived records remain available for historical reconstruction.
 
-## Git and application history
+## Historical questions
 
-Git commit history is the repository-level audit trail. Structured version records provide domain-level provenance so downstream databases and APIs can reconstruct what the system knew at a given time.
+Two time axes matter:
 
-## Reproducibility
+- **Valid time:** when the represented fact/measurement applied in the world.
+- **Transaction time:** when the repository/database accepted a version.
 
-A correction should make it possible for a reviewer to identify both the old state and the evidence that justified the new state. Derived values should be recalculated from corrected source observations rather than manually patched.
+`as_of` retrieval should resolve records by transaction time; date-specific factual questions should also evaluate valid time.
