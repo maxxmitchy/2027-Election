@@ -73,7 +73,7 @@ jobs:
       - name: Run Phase 7 mutation audit
         id: mutations
         continue-on-error: true
-        run: PYTHONPATH=. python tests/run_phase7_mutations.py | tee evidence/phase-7/mutations.txt
+        run: PYTHONPATH=. python scripts/run_phase7_mutation_audit.py | tee evidence/phase-7/mutations.txt
       - name: Validate JSON Schemas
         id: schemas
         continue-on-error: true
@@ -82,8 +82,7 @@ jobs:
           import json
           from pathlib import Path
           from jsonschema import Draft202012Validator
-          names=['research-investigation.schema.json','dossier.schema.json','dossier-claim.schema.json','dossier-diff.schema.json','dossier-snapshot.schema.json','review-queue.schema.json']
-          for name in names:
+          for name in ['research-investigation.schema.json','dossier.schema.json','dossier-claim.schema.json','dossier-diff.schema.json','dossier-snapshot.schema.json','review-queue.schema.json']:
               Draft202012Validator.check_schema(json.loads((Path('schemas')/name).read_text()))
           print('SCHEMA_VALIDATION_OK')
           PY
