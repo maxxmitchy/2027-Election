@@ -15,6 +15,7 @@ CAUSAL_RE = re.compile(r"\b(caused?|causes?|causing|because of|responsible for|l
 SUBJECTIVE_RE = re.compile(r"\b(best|worst|most competent|least competent|performed better|most successful|better candidate|worse candidate|who performed best)\b", re.I)
 SECURITY_RE = re.compile(r"\b(ignore|assume|don't mention|do not mention|everyone knows|give me the most favorable)\b[^.?!]*", re.I)
 TRUTH_ASSESSMENT_RE = re.compile(r"\b(was|is|were|are)\s+(what|that)\b.*\b(true|correct|accurate)\b", re.I)
+PUBLIC_REQUEST_RE = re.compile(r"\b(what did|what .* said|what .* say|what public statement|what statement)\b", re.I)
 
 def _scope(q: str):
     ql=q.lower(); found=[]
@@ -50,14 +51,15 @@ def _domain_entity(ql):
 
 def interpret(raw_question: str) -> dict:
     raw=raw_question.strip(); ql=raw.lower(); scope=_scope(raw)
-    causal=bool(CAUSAL_RE.search(raw))
+    public_request=bool(PUBLIC_REQUEST_RE.search(raw)) and ("adc" in ql or "ncp" in ql or "statement" in ql or "said" in ql)
+    causal=bool(CAUSAL_RE.search(raw)) and not public_request
     domain,entity,geography=_domain_entity(ql)
     t=_time(raw)
     ambiguities=[]; unsupported=[]
     if SUBJECTIVE_RE.search(raw): status="UNSUPPORTED"; operation="FACTUAL_LOOKUP"; unsupported.append("Subjective ranking or evaluation is not defined by the validated methodology.")
+    elif public_request and not TRUTH_ASSESSMENT_RE.search(raw): status="INTERPRETED"; operation="PUBLIC_CONVERSATION"
     elif causal: status="INTERPRETED"; operation="CAUSAL_ATTRIBUTION"
     elif TRUTH_ASSESSMENT_RE.search(raw): status="INTERPRETED"; operation="FACTUAL_LOOKUP"
-    elif re.search(r"\bwhat did\b|\bwhat .* said\b|\bwhat .*say\b|\bstatement", ql) and ("adc" in ql or "ncp" in ql or "said" in ql): status="INTERPRETED"; operation="PUBLIC_CONVERSATION"
     elif re.search(r"\bhow many\b|\bhow much\b|\bcount\b|\bnumber of\b", ql) or (entity=="presidential_vote_count" and "total" in ql): status="INTERPRETED"; operation="COUNT"
     elif re.search(r"\b(increase|decrease|change|moved from|rose|fell)\b", ql): status="INTERPRETED"; operation="CHANGE"
     elif re.search(r"\bcompare\b|\bversus\b|\bvs\.?\b", ql): status="INTERPRETED"; operation="COMPARISON"
