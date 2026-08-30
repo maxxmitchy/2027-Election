@@ -16,6 +16,8 @@ def validate(m, expected, expected_answer):
     if m.get("evidence")!=expected_answer.get("evidence"):return False
     if m.get("sources")!=expected_answer.get("sources"):return False
     if m.get("why_this_answer")!=expected_answer.get("why_this_answer"):return False
+    if m.get("provenance",{}).get("methodology_version")!=expected_answer.get("provenance",{}).get("methodology_version"):return False
+    if cov.get("known_gaps")!=expected_answer.get("coverage",{}).get("known_gaps"):return False
     if "candidate-4" in json.dumps(m):return False
     if cov.get("is_truth_probability") is not False or cov.get("model")!="multidimensional-documentary-coverage-v1":return False
     if m.get("why_this_answer",{}).get("operation")!="COVERAGE":return False
