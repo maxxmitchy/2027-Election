@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'candidates/bola-ahmed-tinubu/**'
+      - 'candidates/**'
       - 'tests/gate4_candidate_acceptance.py'
       - 'tests/gate4_postgres_runtime.py'
       - 'db/round5_reference.sql'
@@ -12,7 +12,7 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - 'candidates/bola-ahmed-tinubu/**'
+      - 'candidates/**'
       - 'tests/gate4_candidate_acceptance.py'
       - 'tests/gate4_postgres_runtime.py'
       - 'db/round5_reference.sql'
@@ -21,7 +21,18 @@ on:
 
 jobs:
   gate4:
+    name: Gate 4 — ${{ matrix.candidate }}
+    strategy:
+      fail-fast: false
+      matrix:
+        candidate:
+          - bola-ahmed-tinubu
+          - peter-gregory-obi
     runs-on: ubuntu-24.04
+    env:
+      CANDIDATE_ID: ${{ matrix.candidate }}
+      PGPASSWORD: postgres
+      GATE4_POSTGRES_DSN: postgresql://postgres:postgres@localhost:5432/election
     services:
       postgres:
         image: postgres:16
@@ -35,9 +46,7 @@ jobs:
           --health-interval=5s
           --health-timeout=5s
           --health-retries=20
-    env:
-      PGPASSWORD: postgres
-      GATE4_POSTGRES_DSN: postgresql://postgres:postgres@localhost:5432/election
+
     steps:
       - name: Checkout exact source commit
         uses: actions/checkout@v4
@@ -52,11 +61,12 @@ jobs:
 
       - name: Record execution identity
         run: |
-          mkdir -p reports/gate4-ci
-          echo "$(git rev-parse HEAD)" | tee reports/gate4-ci/commit.txt
-          echo "run=${GITHUB_RUN_ID}" | tee -a reports/gate4-ci/commit.txt
-          python --version | tee reports/gate4-ci/python.txt
-          psql --version | tee reports/gate4-ci/psql-client.txt
+          mkdir -p "reports/gate4-ci/${CANDIDATE_ID}"
+          git rev-parse HEAD | tee "reports/gate4-ci/${CANDIDATE_ID}/commit.txt"
+          echo "candidate=${CANDIDATE_ID}" | tee -a "reports/gate4-ci/${CANDIDATE_ID}/commit.txt"
+          echo "run=${GITHUB_RUN_ID}" | tee -a "reports/gate4-ci/${CANDIDATE_ID}/commit.txt"
+          python --version | tee "reports/gate4-ci/${CANDIDATE_ID}/python.txt"
+          psql --version | tee "reports/gate4-ci/${CANDIDATE_ID}/psql-client.txt"
 
       - name: Install dependencies
         run: python -m pip install -r requirements-dev.txt
@@ -64,58 +74,85 @@ jobs:
       - name: Initialize PostgreSQL reference schema
         run: psql -h localhost -U postgres -d election -v ON_ERROR_STOP=1 -f db/round5_reference.sql
 
-      - name: Load pilot identity fixture into PostgreSQL
+      - name: Load candidate identity fixture into PostgreSQL
         run: |
-          psql -h localhost -U postgres -d election -v ON_ERROR_STOP=1 <<'SQL'
-          INSERT INTO person(person_id) VALUES ('person-bola-ahmed-tinubu') ON CONFLICT DO NOTHING;
-          INSERT INTO office(office_id, single_occupancy) VALUES
-            ('office-senator-lagos-west', true),
-            ('office-governor-lagos', true),
-            ('office-president-nigeria', true)
-          ON CONFLICT DO NOTHING;
-          INSERT INTO election(election_id, office_id) VALUES
-            ('election-ng-pres-2023','office-president-nigeria'),
-            ('election-ng-pres-2027','office-president-nigeria'),
-            ('election-lagos-gov-1999','office-governor-lagos'),
-            ('election-lagos-gov-2003','office-governor-lagos')
-          ON CONFLICT DO NOTHING;
-          INSERT INTO candidacy(candidacy_id, person_id, election_id, status) VALUES
-            ('cand-1999','person-bola-ahmed-tinubu','election-lagos-gov-1999','registered'),
-            ('cand-2003','person-bola-ahmed-tinubu','election-lagos-gov-2003','registered'),
-            ('cand-2023','person-bola-ahmed-tinubu','election-ng-pres-2023','elected'),
-            ('cand-2027','person-bola-ahmed-tinubu','election-ng-pres-2027','nominated')
-          ON CONFLICT DO NOTHING;
-          SQL
+          python - <<'PY'
+          import json, os
+          import psycopg
+          from pathlib import Path
+
+          candidate = os.environ['CANDIDATE_ID']
+          root = Path.cwd()
+          data = json.loads((root / 'candidates' / candidate / 'data' / 'pilot-record.json').read_text(encoding='utf-8'))
+          dsn = os.environ['GATE4_POSTGRES_DSN']
+          with psycopg.connect(dsn) as conn:
+              with conn.cursor() as cur:
+                  person_id = data['person']['id']
+                  cur.execute('INSERT INTO person(person_id) VALUES (%s) ON CONFLICT DO NOTHING', (person_id,))
+                  for office in data.get('offices', []):
+                      cur.execute('INSERT INTO office(office_id, single_occupancy) VALUES (%s, true) ON CONFLICT DO NOTHING', (office['id'],))
+                  for election in data.get('elections', []):
+                      office_id = None
+                      for office in data.get('offices', []):
+                          if office['id'] in election['id']:
+                              office_id = office['id']
+                      if office_id is None and 'pres' in election['id']:
+                          office_id = next((o['id'] for o in data.get('offices', []) if 'President' in o['name']), None)
+                      if office_id is None and 'gov' in election['id']:
+                          office_id = next((o['id'] for o in data.get('offices', []) if 'Governor' in o['name']), None)
+                      if office_id is None:
+                          office_id = data['offices'][0]['id']
+                      cur.execute('INSERT INTO election(election_id, office_id) VALUES (%s, %s) ON CONFLICT DO NOTHING', (election['id'], office_id))
+                  for candidacy in data.get('candidacies', []):
+                      status = {
+                          'ELECTED': 'elected',
+                          'PARTY_NOMINEE': 'nominated',
+                          'CONTESTED': 'registered'
+                      }.get(candidacy.get('status'), 'registered')
+                      cur.execute('INSERT INTO candidacy(candidacy_id, person_id, election_id, status) VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING',
+                                  (candidacy['id'], person_id, candidacy['election_id'], status))
+              conn.commit()
+          PY
 
       - name: Run Gate 4 acceptance tests
         run: |
           set -o pipefail
-          python -m pytest tests/gate4_candidate_acceptance.py tests/gate4_postgres_runtime.py -q --junitxml=reports/gate4-ci/junit.xml 2>&1 | tee reports/gate4-ci/pytest.log
+          python -m pytest tests/gate4_candidate_acceptance.py tests/gate4_postgres_runtime.py -q \
+            --junitxml="reports/gate4-ci/${CANDIDATE_ID}/junit.xml" \
+            2>&1 | tee "reports/gate4-ci/${CANDIDATE_ID}/pytest.log"
 
       - name: Generate execution report
         if: always()
         run: |
           python - <<'PY'
           import json, os, pathlib, subprocess
-          p = pathlib.Path('reports/gate4-ci')
+          candidate = os.environ['CANDIDATE_ID']
+          p = pathlib.Path('reports/gate4-ci') / candidate
           p.mkdir(parents=True, exist_ok=True)
           commit = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
           report = {
+              'candidate': candidate,
               'tested_commit': commit,
               'workflow': os.environ.get('GITHUB_WORKFLOW'),
               'run_id': os.environ.get('GITHUB_RUN_ID'),
               'job_id': os.environ.get('GITHUB_JOB'),
               'runner': os.environ.get('RUNNER_OS'),
               'python': os.popen('python --version').read().strip(),
+              'postgres_image': 'postgres:16',
               'status': 'generated_after_test_step',
           }
           (p/'execution.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
           PY
 
+      - name: Hash evidence
+        if: always()
+        run: |
+          find "reports/gate4-ci/${CANDIDATE_ID}" -type f -print0 | sort -z | xargs -0 sha256sum > "reports/gate4-ci/${CANDIDATE_ID}/artifact-sha256.txt"
+
       - name: Upload Gate 4 evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: gate4-candidate-research-evidence-${{ github.sha }}
-          path: reports/gate4-ci/
+          name: gate4-candidate-research-evidence-${{ matrix.candidate }}-${{ github.sha }}
+          path: reports/gate4-ci/${{ matrix.candidate }}/
           if-no-files-found: error
