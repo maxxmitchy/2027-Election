@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from query_interpreter import interpret_and_validate
 from system_demo import CANDIDATES, load_dossiers, load_questions, answer_question, snapshot_ref
+from evidence_coverage import coverage_for_candidate, coverage_report, VALID_CANDIDATES
 ANSWER_STATUSES={"ANSWERED","PARTIALLY_ANSWERED","UNKNOWN","UNVERIFIED","DISPUTED","INSUFFICIENT_EVIDENCE","INCOMPLETE","INCOMPARABLE","NO_MATCH","UNSUPPORTED"}
 SUPPORTED_PARTIAL_ENTITIES={"party_membership","presidential_election"}
 
@@ -38,7 +39,7 @@ def _source_details(dossiers, source_ids):
         for cid,d in dossiers.items():
             for s in d.get("sources",[]):
                 if s.get("id")==sid:
-                    found={"source_id":sid,"candidate_id":cid,"title":s.get("title"),"publisher":s.get("publisher"),"tier":s.get("tier"),"source_type":s.get("source_type") or s.get("type"),"publication_date":s.get("publication_date") or s.get("date"),"canonical_url":s.get("url") or s.get("canonical_url"),"archive_url":s.get("archive_url"),"content_hash":s.get("content_hash"),"availability":s.get("availability") or "RECORDED","reliability_assessment":s.get("reliability_assessment"),"limitations":s.get("limitations",[])}; break
+                    found={"source_id":sid,"candidate_id":cid,"title":s.get("title"),"publisher":s.get("publisher"),"tier":s.get("tier"),"source_type":s.get("source_type") or s.get("type"),"publication_date":s.get("publication_date") or s.get("date"),"canonical_url":s.get("url") or s.get("canonical_url"),"archive_url":s.get("archive_url"),"content_hash":s.get("content_hash"),"availability":s.get("availability") or "RECORDED","reliability_assessment":s.get("reliability_assessment") or s.get("reliability"),"limitations":s.get("limitations",[])}; break
             if found: break
         out.append(found or {"source_id":sid,"availability":"UNKNOWN","limitations":["Source metadata is not present in the selected dossier."]})
     return out
@@ -54,9 +55,32 @@ def _collect_sources(dossiers, answer):
 def _why(interpreted, retrieved):
     return {"question_interpreted_as":interpreted,"candidate_scope":interpreted.get("candidate_scope",[]),"entity":interpreted.get("entity"),"domain":interpreted.get("domain"),"time_range":interpreted.get("time_range"),"geography":interpreted.get("geography"),"operation":interpreted.get("operation"),"retrieved_record_count":len(retrieved.get("key_evidence",[])) if isinstance(retrieved.get("key_evidence"),list) else None,"calculation":retrieved.get("calculation"),"evidence_supports":retrieved.get("what_evidence_establishes",[]),"evidence_does_not_establish":retrieved.get("what_evidence_does_not_establish",[]),"qualifications":retrieved.get("contradictions_qualifications",[]),"methodology_version":retrieved.get("methodology_versions",[]),"limitations":retrieved.get("limitations",[])}
 
+def _coverage_answer(question, interpreted, root):
+    scope=interpreted.get("candidate_scope") or sorted(VALID_CANDIDATES)
+    report={cid:coverage_for_candidate(root,cid) for cid in scope if cid in VALID_CANDIDATES}
+    partial=any(any(x.get("coverage") in {"PARTIAL","SPARSE","UNKNOWN","UNAVAILABLE"} for x in r.get("domains",[])) or r.get("research_gaps") for r in report.values())
+    status="PARTIALLY_ANSWERED" if partial else "ANSWERED"
+    strongest={cid:[x for x in r.get("domains",[]) if x.get("coverage")=="HIGH"] for cid,r in report.items()}
+    gaps={cid:r.get("research_gaps",[]) for cid,r in report.items()}
+    text="Coverage describes the documentary record, not truth probability or candidate quality. " + "; ".join(f"{cid}: {r.get('source_coverage')} source coverage, {r.get('quantitative_coverage')} quantitative coverage" for cid,r in report.items())
+    a=_contract(question,interpreted,None,root,status,text)
+    a["coverage"]={"model":"multidimensional-documentary-coverage-v1","is_truth_probability":False,"candidates":report,"strongest_documented_domains":strongest,"known_gaps":gaps}
+    a["evidence"]=[{"candidate_id":cid,"domains":r["domains"],"source_composition":r["source_composition"],"economic_metrics":r["economic_metrics"]} for cid,r in report.items()]
+    a["sources"]=[]
+    for cid in scope:
+        if cid in report:
+            p4=json.loads((root/CANDIDATES[cid]/"data/phase4-depth.json").read_text(encoding="utf-8"))
+            a["sources"].extend(p4.get("source_upgrades",[]))
+    a["research_gaps"]=gaps
+    a["limitations"] += ["Coverage categories measure breadth/depth of the stored documentary record; they are not truth scores.","A gap means the repository has identified missing or incomplete coverage. It does not mean the underlying fact is false."]
+    a["why_this_answer"]={"operation":"COVERAGE","candidate_scope":scope,"coverage_dimensions":["source_coverage","primary_source_coverage","provenance_coverage","temporal_coverage","quantitative_coverage","review_coverage","contradiction_coverage","correction_coverage"],"research_gaps":gaps,"limitations":a["limitations"]}
+    a["performance_metadata"]={"coverage_calculation_time_ms":sum(r.get("performance",{}).get("coverage_calculation_time_ms",0) for r in report.values()),"records_touched":sum(r.get("performance",{}).get("records_touched",0) for r in report.values()),"dependency_depth":max([r.get("performance",{}).get("dependency_depth",0) for r in report.values()] or [0]),"total_time_ms":0.0}
+    return a
+
 def present(question: str, root: Path|str="."):
     root=Path(root); started=time.perf_counter(); interpreted=interpret_and_validate(question)
     if interpreted["interpretation_status"]=="UNSUPPORTED": return _contract(question,interpreted,None,root,"UNSUPPORTED","This question is not defined by the validated methodology.")
+    if interpreted["operation"]=="COVERAGE": return _coverage_answer(question,interpreted,root)
     partial_supported=interpreted["interpretation_status"]=="PARTIALLY_INTERPRETED" and interpreted.get("entity") in SUPPORTED_PARTIAL_ENTITIES
     if interpreted["interpretation_status"] in {"AMBIGUOUS","PARTIALLY_INTERPRETED","NO_MATCH"} and not partial_supported and not (interpreted["operation"]=="COUNT" and interpreted.get("entity")=="presidential_vote_count"):
         status="PARTIALLY_ANSWERED" if interpreted["interpretation_status"]=="PARTIALLY_INTERPRETED" else "NO_MATCH"; text="The system cannot safely execute this question without resolving the stated ambiguity." if interpreted["ambiguities"] else "No supported deterministic retrieval route matches this question."; return _contract(question,interpreted,None,root,status,text)
@@ -68,7 +92,7 @@ def present(question: str, root: Path|str="."):
 
 def _contract(question,interpreted,retrieved,root,status,text):
     dossiers=load_dossiers(root); snap=snapshot_ref(dossiers); answer_id="answer-"+hashlib.sha256((question+json.dumps(interpreted,sort_keys=True)).encode()).hexdigest()[:16]
-    return {"question":question,"interpreted_query":interpreted,"answer_status":status,"answer_text":text,"evidence_status":retrieved.get("answer_status") if retrieved else status,"qualification":(retrieved or {}).get("contradictions_qualifications",[]),"claims":(retrieved or {}).get("claim_versions",[]),"evidence":(retrieved or {}).get("key_evidence",[]),"sources":[],"observations":(retrieved or {}).get("observation_versions",[]),"calculations":(retrieved or {}).get("calculation_versions",[]),"calculation":(retrieved or {}).get("calculation"),"analyses":(retrieved or {}).get("analysis_versions",[]),"results":(retrieved or {}).get("result_versions",[]),"methodology":(retrieved or {}).get("methodology_versions",[]),"as_of":interpreted.get("as_of"),"database_snapshot":snap,"limitations":list((retrieved or {}).get("limitations",[]))+list(interpreted.get("ambiguities",[])),"contradictions":[],"corrections":[],"related_public_conversation":[],"review_information":{"status":"NOT_A_SOURCE","reviewed":False},"provenance":{"answer_id":answer_id,"query_id":interpreted.get("query_id"),"interpretation_version":interpreted.get("methodology_version"),"retrieval_plan":None,"claim_versions":(retrieved or {}).get("claim_versions",[]),"evidence_versions":(retrieved or {}).get("evidence_versions",[]),"source_versions":(retrieved or {}).get("source_versions",[]),"observation_versions":(retrieved or {}).get("observation_versions",[]),"calculation_versions":(retrieved or {}).get("calculation_versions",[]),"analysis_versions":(retrieved or {}).get("analysis_versions",[]),"result_versions":(retrieved or {}).get("result_versions",[]),"methodology_version":interpreted.get("methodology_version"),"database_snapshot":snap,"as_of":interpreted.get("as_of"),"generation_timestamp":datetime.now(timezone.utc).isoformat(),"limitations":list((retrieved or {}).get("limitations",[]))},"performance_metadata":{},"generation_version":"answer-experience-v1"}
+    return {"question":question,"interpreted_query":interpreted,"answer_status":status,"answer_text":text,"evidence_status":retrieved.get("answer_status") if retrieved else status,"qualification":(retrieved or {}).get("contradictions_qualifications",[]),"claims":(retrieved or {}).get("claim_versions",[]),"evidence":(retrieved or {}).get("key_evidence",[]),"sources":[],"observations":(retrieved or {}).get("observation_versions",[]),"calculations":(retrieved or {}).get("calculation_versions",[]),"calculation":(retrieved or {}).get("calculation"),"analyses":(retrieved or {}).get("analysis_versions",[]),"results":(retrieved or {}).get("result_versions",[]),"methodology":(retrieved or {}).get("methodology_versions",[]),"as_of":interpreted.get("as_of"),"database_snapshot":snap,"limitations":list((retrieved or {}).get("limitations",[]))+list(interpreted.get("ambiguities",[])),"contradictions":[],"corrections":[],"related_public_conversation":[],"review_information":{"status":"NOT_A_SOURCE","reviewed":False},"provenance":{"answer_id":answer_id,"query_id":interpreted.get("query_id"),"interpretation_version":interpreted.get("methodology_version"),"retrieval_plan":None,"claim_versions":(retrieved or {}).get("claim_versions",[]),"evidence_versions":(retrieved or {}).get("evidence_versions",[]),"source_versions":(retrieved or {}).get("source_versions",[]),"observation_versions":(retrieved or {}).get("observation_versions",[]),"calculation_versions":(retrieved or {}).get("calculation_versions",[]),"analysis_versions":(retrieved or {}).get("analysis_versions",[]),"result_versions":(retrieved or {}).get("result_versions",[]),"methodology_version":interpreted.get("methodology_version"),"database_snapshot":snap,"as_of":interpreted.get("as_of"),"generation_timestamp":datetime.now(timezone.utc).isoformat(),"limitations":list((retrieved or {}).get("limitations",[]))},"performance_metadata":{},"generation_version":"answer-experience-v2-coverage"}
 
 def why_this_answer(question,root="."): return present(question,root).get("why_this_answer")
 def main():
