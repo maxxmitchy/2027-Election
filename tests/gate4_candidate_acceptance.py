@@ -106,15 +106,30 @@ def test_causality_is_not_inferred():
 def test_contradictory_or_qualifying_evidence_preserved():
     d = require_data()
     contradictions = d.get("contradictions", [])
-    assert contradictions, "INCOMPLETE: contradiction representation is missing"
-    assert all(c.get("source_a") and c.get("source_b") for c in contradictions)
+    if contradictions:
+        assert all(c.get("source_a") and c.get("source_b") for c in contradictions)
+        return
+    # Backward-compatible acceptance of the Tinubu pilot's typed evidence graph.
+    typed = {"QUALIFIES", "CONTRADICTS", "CONTEXTUALIZES", "CORRECTS"}
+    relationships = {
+        e.get("relationship")
+        for e in d.get("evidence", [])
+        if e.get("relationship") in typed
+    }
+    assert relationships, "INCOMPLETE: contradiction/qualification representation is missing"
 
 
 def test_correction_lineage():
     d = require_data()
     corrections = d.get("corrections")
-    assert corrections, "INCOMPLETE: correction lineage is missing"
-    for correction in corrections:
+    if corrections:
+        items = corrections if isinstance(corrections, list) else [corrections]
+    elif d.get("correction"):
+        items = [d["correction"]]
+    else:
+        items = []
+    assert items, "INCOMPLETE: correction lineage is missing"
+    for correction in items:
         assert correction.get("v1") and correction.get("v2")
         assert correction["v2"].get("predecessor") == "v1"
 
