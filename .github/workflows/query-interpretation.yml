@@ -1,12 +1,13 @@
 name: Query Interpretation
 on:
   push:
-    branches: [evidence-product]
+    branches: [query-interpretation]
   pull_request:
     branches: [evidence-product]
+  workflow_dispatch:
 jobs:
   query-interpretation:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       postgres:
         image: postgres:16.15
@@ -38,8 +39,8 @@ jobs:
           python --version > evidence/query-interpretation/versions.txt
           psql --version >> evidence/query-interpretation/versions.txt
           python -m pip freeze >> evidence/query-interpretation/versions.txt
-      - name: Run interpreter tests
-        run: python -m pytest -q tests/test_query_interpreter.py tests/test_system_demo.py | tee evidence/query-interpretation/pytest.txt
+      - name: Run interpreter and semantic tests
+        run: python -m pytest -q tests/test_query_interpreter.py tests/query_semantics.py tests/test_system_demo.py | tee evidence/query-interpretation/pytest.txt
       - name: Run mutation audit
         run: python tests/run_query_interpretation_mutations.py | tee evidence/query-interpretation/mutations.txt
       - name: Validate schema and reports
@@ -49,12 +50,12 @@ jobs:
           from pathlib import Path
           from jsonschema import Draft202012Validator
           schema=json.loads(Path('schemas/query.schema.json').read_text())
-          sample=json.loads(__import__('json').dumps(__import__('query_interpreter').interpret_and_validate('How many votes did Tinubu get in 2023?')))
+          sample=__import__('query_interpreter').interpret_and_validate('How many votes did Tinubu get in 2023?')
           Draft202012Validator(schema).validate({k:v for k,v in sample.items() if k!='validation'})
           for p in ['docs/query-interpretation.md','reports/query-interpretation-demo.md','reports/query-interpretation-validation.md','reports/query-interpretation-validation.json']:
               assert Path(p).exists(), p
           PY
-      - name: Generate validation report identity
+      - name: Record final validation identity
         run: |
           python - <<'PY'
           import json
