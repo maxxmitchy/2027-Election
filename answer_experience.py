@@ -6,11 +6,12 @@ from pathlib import Path
 from query_interpreter import interpret_and_validate
 from system_demo import CANDIDATES, load_dossiers, load_questions, answer_question, snapshot_ref
 ANSWER_STATUSES={"ANSWERED","PARTIALLY_ANSWERED","UNKNOWN","UNVERIFIED","DISPUTED","INSUFFICIENT_EVIDENCE","INCOMPLETE","INCOMPARABLE","NO_MATCH","UNSUPPORTED"}
+SUPPORTED_PARTIAL_ENTITIES={"party_membership","presidential_election"}
 
 def _question_record(root, interpreted):
     qs=load_questions(root); scope=interpreted["candidate_scope"]; op=interpreted["operation"]; entity=interpreted.get("entity")
     if op=="COUNT" and entity=="presidential_vote_count": return next((q for q in qs if q["id"]=="Q4"),None)
-    if op=="COMPARISON" and entity=="presidential_vote_count": return next((q for q in qs if q["id"]=="Q4"),None)
+    if op=="COMPARISON" and entity in {"presidential_vote_count","presidential_election"}: return next((q for q in qs if q["id"]=="Q4"),None)
     if op=="CHANGE" and entity=="headline_inflation" and scope==["bola-ahmed-tinubu"]: return next((q for q in qs if q["id"]=="Q7"),None)
     if op=="CAUSAL_ATTRIBUTION" and entity=="headline_inflation" and scope==["bola-ahmed-tinubu"]: return next((q for q in qs if q["id"]=="Q10"),None)
     if op=="CAUSAL_ATTRIBUTION" and entity=="debt" and scope==["peter-gregory-obi"]: return next((q for q in qs if q["id"]=="Q11"),None)
@@ -20,8 +21,7 @@ def _question_record(root, interpreted):
     if op=="CORRECTION" and scope==["atiku-abubakar"]: return next((q for q in qs if q["id"]=="Q14"),None)
     if op=="AS_OF" and scope==["peter-gregory-obi"]: return next((q for q in qs if q["id"]=="Q16"),None)
     if op=="FACTUAL_LOOKUP" and scope==["peter-gregory-obi"] and entity=="party_membership": return next((q for q in qs if q["id"]=="Q3"),None)
-    if op=="FACTUAL_LOOKUP" and len(scope)==1 and entity=="office_holding":
-        return next((q for q in qs if q["id"]==("Q1" if scope[0]=="bola-ahmed-tinubu" else "Q2")),None)
+    if op=="FACTUAL_LOOKUP" and len(scope)==1 and entity=="office_holding": return next((q for q in qs if q["id"]==("Q1" if scope[0]=="bola-ahmed-tinubu" else "Q2")),None)
     return None
 
 def _status_from_retrieval(a):
@@ -45,11 +45,10 @@ def _source_details(dossiers, source_ids):
 
 def _collect_sources(dossiers, answer):
     ids=list(answer.get("source_versions",[])); ids += [x.split("@")[0] for x in answer.get("evidence_versions",[]) if not x.startswith("social:") and not x.startswith("correction:")]
-    rows=answer.get("key_evidence",[])
-    for r in rows if isinstance(rows,list) else []:
-        if not isinstance(r,dict): continue
-        ids += r.get("source_ids",[]) or []
-        if r.get("source_id"): ids += r["source_id"] if isinstance(r["source_id"],list) else [r["source_id"]]
+    for r in answer.get("key_evidence",[]) if isinstance(answer.get("key_evidence"),list) else []:
+        if isinstance(r,dict):
+            ids += r.get("source_ids",[]) or []
+            if r.get("source_id"): ids += r["source_id"] if isinstance(r["source_id"],list) else [r["source_id"]]
     return _source_details(dossiers,[x for x in ids if x])
 
 def _why(interpreted, retrieved):
@@ -58,14 +57,14 @@ def _why(interpreted, retrieved):
 def present(question: str, root: Path|str="."):
     root=Path(root); started=time.perf_counter(); interpreted=interpret_and_validate(question)
     if interpreted["interpretation_status"]=="UNSUPPORTED": return _contract(question,interpreted,None,root,"UNSUPPORTED","This question is not defined by the validated methodology.")
-    if interpreted["interpretation_status"] in {"AMBIGUOUS","PARTIALLY_INTERPRETED","NO_MATCH"} and not (interpreted["operation"]=="COUNT" and interpreted.get("entity")=="presidential_vote_count"):
+    partial_supported=interpreted["interpretation_status"]=="PARTIALLY_INTERPRETED" and interpreted.get("entity") in SUPPORTED_PARTIAL_ENTITIES
+    if interpreted["interpretation_status"] in {"AMBIGUOUS","PARTIALLY_INTERPRETED","NO_MATCH"} and not partial_supported and not (interpreted["operation"]=="COUNT" and interpreted.get("entity")=="presidential_vote_count"):
         status="PARTIALLY_ANSWERED" if interpreted["interpretation_status"]=="PARTIALLY_INTERPRETED" else "NO_MATCH"; text="The system cannot safely execute this question without resolving the stated ambiguity." if interpreted["ambiguities"] else "No supported deterministic retrieval route matches this question."; return _contract(question,interpreted,None,root,status,text)
     dossiers=load_dossiers(root); qr=_question_record(root,interpreted)
     if qr is None: return _contract(question,interpreted,None,root,"NO_MATCH","The interpreted query has no existing deterministic retrieval route.")
     qrec=dict(qr); qrec["candidate_scope"]=interpreted["candidate_scope"] or qr.get("candidate_scope",[])
     if interpreted.get("as_of"): qrec["as_of"]=qr.get("as_of") if "T" not in str(interpreted["as_of"]) else interpreted["as_of"]
-    retrieved=answer_question(qrec,dossiers); status=_status_from_retrieval(retrieved)
-    contract=_contract(question,interpreted,retrieved,root,status,retrieved.get("answer_text","")); contract["sources"]=_collect_sources(dossiers,retrieved); contract["why_this_answer"]=_why(interpreted,retrieved); contract["retrieval_plan"]={"engine":"existing deterministic system_demo retrieval","question_id":qr["id"],"candidate_scope":qrec["candidate_scope"],"raw_question_reinterpreted_by_retrieval":False}; contract["evidence_status"]=retrieved.get("answer_status",retrieved.get("status")); contract["contradictions"]=retrieved.get("contradictions_qualifications",[]); contract["corrections"]=retrieved.get("key_evidence",[]) if qr["id"]=="Q14" else []; contract["related_public_conversation"]=retrieved.get("key_evidence",[]) if qr["id"]=="Q15" else []; contract["review_information"]=retrieved.get("review_status",{"status":"NOT_A_SOURCE","reviewed":False}); p=retrieved.get("performance",{}); contract["performance_metadata"]={"query_interpretation_time_ms":round((time.perf_counter()-started)*1000,3),"retrieval_time_ms":p.get("retrieval_time_ms"),"answer_assembly_time_ms":0.0,"total_time_ms":round((time.perf_counter()-started)*1000,3),"records_touched":p.get("records_touched"),"dependency_depth":p.get("dependency_depth")}; return contract
+    retrieved=answer_question(qrec,dossiers); status=_status_from_retrieval(retrieved); contract=_contract(question,interpreted,retrieved,root,status,retrieved.get("answer_text","")); contract["sources"]=_collect_sources(dossiers,retrieved); contract["why_this_answer"]=_why(interpreted,retrieved); contract["retrieval_plan"]={"engine":"existing deterministic system_demo retrieval","question_id":qr["id"],"candidate_scope":qrec["candidate_scope"],"raw_question_reinterpreted_by_retrieval":False}; contract["evidence_status"]=retrieved.get("answer_status",retrieved.get("status")); contract["contradictions"]=retrieved.get("contradictions_qualifications",[]); contract["corrections"]=retrieved.get("key_evidence",[]) if qr["id"]=="Q14" else []; contract["related_public_conversation"]=retrieved.get("key_evidence",[]) if qr["id"]=="Q15" else []; contract["review_information"]=retrieved.get("review_status",{"status":"NOT_A_SOURCE","reviewed":False}); p=retrieved.get("performance",{}); contract["performance_metadata"]={"query_interpretation_time_ms":round((time.perf_counter()-started)*1000,3),"retrieval_time_ms":p.get("retrieval_time_ms"),"answer_assembly_time_ms":0.0,"total_time_ms":round((time.perf_counter()-started)*1000,3),"records_touched":p.get("records_touched"),"dependency_depth":p.get("dependency_depth")}; return contract
 
 def _contract(question,interpreted,retrieved,root,status,text):
     dossiers=load_dossiers(root); snap=snapshot_ref(dossiers); answer_id="answer-"+hashlib.sha256((question+json.dumps(interpreted,sort_keys=True)).encode()).hexdigest()[:16]
