@@ -39,7 +39,8 @@ jobs:
       - name: Record exact execution identity
         run: |
           mkdir -p evidence/phase-6
-          printf 'implementation_sha=%s\n' "$GITHUB_SHA" | tee evidence/phase-6/github-sha.txt
+          printf 'implementation_sha=%s\n' "${{ github.event.pull_request.head.sha || github.sha }}" | tee evidence/phase-6/implementation-sha.txt
+          printf 'github.sha=%s\n' "$GITHUB_SHA" | tee evidence/phase-6/github-sha.txt
           printf 'tested_sha=%s\n' "$(git rev-parse HEAD)" | tee evidence/phase-6/sha.txt
           printf 'workflow=.github/workflows/phase-6-evidence-acquisition.yml\nrun_id=%s\n' "$GITHUB_RUN_ID" | tee evidence/phase-6/execution.txt
           python --version | tee evidence/phase-6/versions.txt
@@ -97,6 +98,10 @@ jobs:
           for e in b['evidence']:
               assert e['provenance_complete'] is True
               assert e['source_version_id'] and e['retrieval_event_id'] and e['artifact_id'] and e['content_hash']
+          implementation=Path('evidence/phase-6/implementation-sha.txt').read_text().strip().split('=',1)[1]
+          tested=Path('evidence/phase-6/sha.txt').read_text().strip().split('=',1)[1]
+          assert implementation and tested
+          assert implementation != tested if '${{ github.event_name }}' == 'pull_request' else True
           PY
       - name: Generate execution report
         if: always()
@@ -114,10 +119,12 @@ jobs:
           from pathlib import Path
           outcomes={k:os.environ.get(k) for k in ('PHASE3_OUTCOME','PHASE4_OUTCOME','PHASE5_OUTCOME','PHASE6_OUTCOME','ACQUISITION_OUTCOME','SCHEMA_OUTCOME','INVARIANT_OUTCOME')}
           b=json.loads(Path('reports/phase-6-evidence-acquisition.json').read_text()) if Path('reports/phase-6-evidence-acquisition.json').exists() else {}
-          report={'phase':'6','name':'Evidence Acquisition & Research Execution','implementation_sha':os.environ.get('GITHUB_SHA',''),'tested_sha':Path('evidence/phase-6/sha.txt').read_text().strip().split('=',1)[-1] if Path('evidence/phase-6/sha.txt').exists() else '','workflow':'.github/workflows/phase-6-evidence-acquisition.yml','run_id':int(os.environ.get('GITHUB_RUN_ID','0')),'job_id':os.environ.get('GITHUB_JOB',''),'environment':{'python':'3.12.14','postgresql':'16'},'execution':outcomes,'candidate_scope':['bola-ahmed-tinubu','peter-gregory-obi','atiku-abubakar'],'candidate_4':'BLOCKED','methodology_version':'phase6-evidence-acquisition-v1','summary':b.get('summary',{}),'status':'PASS' if all(v=='success' for v in outcomes.values()) else 'FAILED','failure_evidence':{k:(Path('evidence/phase-6')/f'{f}.txt').read_text(errors='replace')[-4000:] if (Path('evidence/phase-6')/f'{f}.txt').exists() else '' for k,f in [('phase3','phase3'),('phase4','phase4'),('phase5','phase5'),('phase6','phase6'),('acquisition','acquisition')]}}
+          implementation=Path('evidence/phase-6/implementation-sha.txt').read_text().strip().split('=',1)[-1] if Path('evidence/phase-6/implementation-sha.txt').exists() else ''
+          tested=Path('evidence/phase-6/sha.txt').read_text().strip().split('=',1)[-1] if Path('evidence/phase-6/sha.txt').exists() else ''
+          report={'phase':'6','name':'Evidence Acquisition & Research Execution','implementation_sha':implementation,'tested_sha':tested,'github_sha':os.environ.get('GITHUB_SHA',''),'workflow':'.github/workflows/phase-6-evidence-acquisition.yml','run_id':int(os.environ.get('GITHUB_RUN_ID','0')),'job_id':os.environ.get('GITHUB_JOB',''),'environment':{'python':'3.12.14','postgresql':'16'},'execution':outcomes,'candidate_scope':['bola-ahmed-tinubu','peter-gregory-obi','atiku-abubakar'],'candidate_4':'BLOCKED','methodology_version':'phase6-evidence-acquisition-v1','summary':b.get('summary',{}),'status':'PASS' if all(v=='success' for v in outcomes.values()) else 'FAILED','failure_evidence':{k:(Path('evidence/phase-6')/f'{f}.txt').read_text(errors='replace')[-4000:] if (Path('evidence/phase-6')/f'{f}.txt').exists() else '' for k,f in [('phase3','phase3'),('phase4','phase4'),('phase5','phase5'),('phase6','phase6'),('acquisition','acquisition')]}}
           Path('reports/phase-6-research-execution.json').write_text(json.dumps(report,indent=2)+'\n')
           Path('reports/phase-6-research-execution.md').write_text('# Phase 6 — Research Execution\n\n'+json.dumps(report,indent=2)+'\n')
-          Path('reports/phase-6-execution-identity.json').write_text(json.dumps({'implementation_sha':report['implementation_sha'],'tested_sha':report['tested_sha'],'workflow':report['workflow'],'run_id':report['run_id'],'job_id':report['job_id']},indent=2)+'\n')
+          Path('reports/phase-6-execution-identity.json').write_text(json.dumps({'implementation_sha':report['implementation_sha'],'tested_sha':report['tested_sha'],'github_sha':report['github_sha'],'workflow':report['workflow'],'run_id':report['run_id'],'job_id':report['job_id']},indent=2)+'\n')
           PY
       - name: Hash evidence and reports
         if: always()
