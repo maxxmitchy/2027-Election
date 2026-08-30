@@ -1,3 +1,4 @@
+# Gate 4 validation matrix — candidate fixture completion rerun
 name: Gate 4 Candidate Research
 
 on:
@@ -46,19 +47,16 @@ jobs:
           --health-interval=5s
           --health-timeout=5s
           --health-retries=20
-
     steps:
       - name: Checkout exact source commit
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12.14'
-
       - name: Record execution identity
         run: |
           mkdir -p "reports/gate4-ci/${CANDIDATE_ID}"
@@ -67,20 +65,16 @@ jobs:
           echo "run=${GITHUB_RUN_ID}" | tee -a "reports/gate4-ci/${CANDIDATE_ID}/commit.txt"
           python --version | tee "reports/gate4-ci/${CANDIDATE_ID}/python.txt"
           psql --version | tee "reports/gate4-ci/${CANDIDATE_ID}/psql-client.txt"
-
       - name: Install dependencies
         run: python -m pip install -r requirements-dev.txt
-
       - name: Initialize PostgreSQL reference schema
         run: psql -h localhost -U postgres -d election -v ON_ERROR_STOP=1 -f db/round5_reference.sql
-
       - name: Load candidate identity fixture into PostgreSQL
         run: |
           python - <<'PY'
           import json, os
           import psycopg
           from pathlib import Path
-
           candidate = os.environ['CANDIDATE_ID']
           root = Path.cwd()
           data = json.loads((root / 'candidates' / candidate / 'data' / 'pilot-record.json').read_text(encoding='utf-8'))
@@ -104,23 +98,16 @@ jobs:
                           office_id = data['offices'][0]['id']
                       cur.execute('INSERT INTO election(election_id, office_id) VALUES (%s, %s) ON CONFLICT DO NOTHING', (election['id'], office_id))
                   for candidacy in data.get('candidacies', []):
-                      status = {
-                          'ELECTED': 'elected',
-                          'PARTY_NOMINEE': 'nominated',
-                          'CONTESTED': 'registered'
-                      }.get(candidacy.get('status'), 'registered')
-                      cur.execute('INSERT INTO candidacy(candidacy_id, person_id, election_id, status) VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING',
-                                  (candidacy['id'], person_id, candidacy['election_id'], status))
+                      status = {'ELECTED': 'elected','PARTY_NOMINEE': 'nominated','CONTESTED': 'registered'}.get(candidacy.get('status'), 'registered')
+                      cur.execute('INSERT INTO candidacy(candidacy_id, person_id, election_id, status) VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING', (candidacy['id'], person_id, candidacy['election_id'], status))
               conn.commit()
           PY
-
       - name: Run Gate 4 acceptance tests
         run: |
           set -o pipefail
           python -m pytest tests/gate4_candidate_acceptance.py tests/gate4_postgres_runtime.py -q \
             --junitxml="reports/gate4-ci/${CANDIDATE_ID}/junit.xml" \
             2>&1 | tee "reports/gate4-ci/${CANDIDATE_ID}/pytest.log"
-
       - name: Generate execution report
         if: always()
         run: |
@@ -130,25 +117,13 @@ jobs:
           p = pathlib.Path('reports/gate4-ci') / candidate
           p.mkdir(parents=True, exist_ok=True)
           commit = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
-          report = {
-              'candidate': candidate,
-              'tested_commit': commit,
-              'workflow': os.environ.get('GITHUB_WORKFLOW'),
-              'run_id': os.environ.get('GITHUB_RUN_ID'),
-              'job_id': os.environ.get('GITHUB_JOB'),
-              'runner': os.environ.get('RUNNER_OS'),
-              'python': os.popen('python --version').read().strip(),
-              'postgres_image': 'postgres:16',
-              'status': 'generated_after_test_step',
-          }
+          report = {'candidate': candidate,'tested_commit': commit,'workflow': os.environ.get('GITHUB_WORKFLOW'),'run_id': os.environ.get('GITHUB_RUN_ID'),'job_id': os.environ.get('GITHUB_JOB'),'runner': os.environ.get('RUNNER_OS'),'python': os.popen('python --version').read().strip(),'postgres_image': 'postgres:16','status': 'generated_after_test_step'}
           (p/'execution.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
           PY
-
       - name: Hash evidence
         if: always()
         run: |
           find "reports/gate4-ci/${CANDIDATE_ID}" -type f -print0 | sort -z | xargs -0 sha256sum > "reports/gate4-ci/${CANDIDATE_ID}/artifact-sha256.txt"
-
       - name: Upload Gate 4 evidence
         if: always()
         uses: actions/upload-artifact@v4
