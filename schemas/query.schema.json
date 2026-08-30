@@ -1,0 +1,15 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"Evidence Product Structured Query",
+  "type":"object",
+  "required":["query_id","raw_question","candidate_scope","person_scope","domain","entity","operation","geography","time_range","as_of","comparison_scope","evidence_type","causal_request","requested_output","interpretation_status","ambiguities","unsupported_elements","methodology_version"],
+  "properties":{
+    "query_id":{"type":"string"},"raw_question":{"type":"string"},
+    "candidate_scope":{"type":"array","items":{"type":"string"}},"person_scope":{"type":"array","items":{"type":"string"}},
+    "domain":{"type":["string","null"]},"entity":{"type":["string","null"]},
+    "operation":{"enum":["FACTUAL_LOOKUP","TIMELINE","COMPARISON","COUNT","CHANGE","CALCULATION","CAUSAL_ATTRIBUTION","CONTRADICTION","CORRECTION","PUBLIC_CONVERSATION","AS_OF","PROVENANCE","REVIEW","UNKNOWN_LOOKUP","INCOMPARABLE_COMPARISON"]},
+    "geography":{"type":["string","null"]},"time_range":{"type":["object","null"]},"as_of":{"type":["string","null"]},"comparison_scope":{"type":"array","items":{"type":"string"}},"evidence_type":{"type":"array","items":{"type":"string"}},"causal_request":{"type":"boolean"},"requested_output":{"type":"string"},
+    "interpretation_status":{"enum":["INTERPRETED","PARTIALLY_INTERPRETED","AMBIGUOUS","UNSUPPORTED","INVALID","NO_MATCH"]},"ambiguities":{"type":"array","items":{"type":"string"}},"unsupported_elements":{"type":"array","items":{"type":"string"}},"methodology_version":{"type":"string"}
+  },
+  "additionalProperties":false
+}
