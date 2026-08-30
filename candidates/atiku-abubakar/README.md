@@ -1,137 +1,174 @@
 # Atiku Abubakar — Gate 4 Controlled Scale-Up Dossier
 
-**Research status:** IN_PROGRESS  
+**Research status:** RESEARCH_COMPLETE  
 **Validation status:** NOT_STARTED  
 **Research cutoff:** 2026-08-30
 
-## Selection rationale
+## Research conclusion
 
-Atiku Abubakar is Candidate 3 because his dossier introduces a materially different evidence structure from both validated candidates. Unlike Tinubu and Obi, whose core executive records are anchored in state governorships before/around their national political careers, Atiku's central executive record is the federal vice presidency (1999–2007). He also has a long sequence of presidential contests and a distinctive governor-elect → vice-president transition. His 2027 ADC candidacy additionally creates a live party/legal-status problem that requires temporal provenance rather than a static party field.
+Atiku Abubakar's standardized dossier is now research-complete and ready for the unchanged Gate 4 acceptance validator. The machine-readable fixture preserves person identity, temporal party membership, governor-elect versus officeholding, presidential candidacies versus primary contests, official election results, institutional policy responsibility, public-statement semantics, ADC legal-state chronology, contradictions, corrections, uncertainty, reviews, quantitative lineage and ten public answers with dependencies.
+
+The dossier does not infer that Atiku caused every federal outcome during the 1999–2007 administration merely because he was Vice President or chaired the National Council on Privatisation.
 
 ## Identity
 
-Atiku Abubakar was born 25 November 1946 in Jada, present-day Adamawa State, Nigeria. He served as Vice President of Nigeria from 1999 to 2007 under President Olusegun Obasanjo. Institutional biographical material records his Nigerian Customs Service career and subsequent political career.
+Atiku Abubakar was born 25 November 1946 in Jada, Adamawa State, Nigeria. He served as Vice President of Nigeria from 29 May 1999 to 29 May 2007.
 
-Sources:
-- https://blerf.org/index.php/biography/abubakar-atiku/
-- https://guardian.ng/news/the-man-atiku-abubakar/
+## Adamawa chronology
 
-## Office history — initial research
+The temporal state is deliberately split:
 
-- 1998: elected Governor of Adamawa State.
-- 1999: before being sworn in as governor, selected by Olusegun Obasanjo as running mate for the presidential election; the ticket won.
-- 29 May 1999: became Vice President of Nigeria.
-- 2003: re-elected Vice President with Obasanjo.
-- 29 May 2007: left the vice presidency.
+1. Atiku was elected Governor of Adamawa on 9 January 1999.
+2. He was not sworn in as governor before the presidential ticket was finalized.
+3. Olusegun Obasanjo selected him as vice-presidential running mate.
+4. The Obasanjo–Atiku ticket won the 27 February 1999 presidential election.
+5. Atiku became Vice President on 29 May 1999.
+6. Boni Haruna, who had been Atiku's running mate, became governor.
 
-The dossier will preserve the governor-elect status separately from the vice-presidential officeholding. It will not rewrite the 1998 governorship election as though the governorship was simply held from 1998–1999.
+The dossier therefore represents Atiku as **elected governor / governor-elect**, not as a sworn governor. This correction is preserved as V1 → correction → V2.
 
-Sources:
-- https://blerf.org/index.php/biography/abubakar-atiku/
-- https://www.xinhuanet.com/english/2019-02/11/c_137811277.htm
+The Supreme Court case record on the Adamawa election is a key temporal anchor: it records Atiku as elected and notes that he had not yet been sworn before accepting the vice-presidential role.
 
-## Presidential election history — initial research
+## Vice Presidency
 
-The research set will treat each presidential contest as a separate candidacy/election record. Current research anchors identify presidential contests/primaries in 1993, 2007, 2011, 2015, 2019 and 2023.
+The dossier records the 1999–2007 vice-presidential officeholding separately from the 1999 presidential candidacy. Atiku was the vice-presidential running mate to Obasanjo in 1999 and 2003; he was not the presidential candidate in either election.
 
-INEC's historical final candidate lists provide authoritative anchors for later contests, including:
-- 2019: PDP presidential candidate Atiku Abubakar, with Peter Obi as running mate.
-- 2023: PDP presidential candidate Atiku Abubakar, with Ifeanyi Okowa as running mate.
+Institutional responsibility is distinguished from personal responsibility and from public statements.
 
-Sources:
-- https://www.inecnigeria.org/wp-content/uploads/2019/02/2019-GENERAL-ELECTIONS-FINAL-LIST-OF-PRESIDENTIAL-CANDIDATES-1.pdf
-- https://inecnigeria.org/wp-content/uploads/2024/04/Final-List-of-Candidates-for-National-Elections-1.pdf
+## National Council on Privatisation
 
-## Party history — initial research
+Evidence supports Atiku's institutional role as chairman of the National Council on Privatisation during the Obasanjo administration. Contemporary newspaper archives and later accounts document NCP activity and sector steering committees covering areas including telecommunications, electricity and oil/gas.
 
-Initial chronology identifies major party periods including Peoples Democratic Movement activity, PDP membership, the 2006–2007 Action Congress period, APC membership from 2014–2017, return to PDP in 2017, and ADC membership from 2025 onward.
+The dossier deliberately does **not** convert this institutional role into a causal claim that Atiku personally caused later national economic outcomes. His own later statements about the NCP are retained as statements and assessed separately from the institutional record.
 
-Exact entry/exit dates and the distinction between party membership, primary participation and candidacy will be represented as separate temporal records.
+## Presidential electoral history
 
-Sources:
-- https://www.channelstv.com/2025/11/24/atiku-officially-joins-adc/
-- https://www.inecnigeria.org/political-parties/african-democratic-congress-adc/
+The dossier separates primary contests from general-election candidacies.
 
-## Current 2027 candidacy
+- **1993:** SDP presidential primary — Atiku participated but did not win the ticket.
+- **1999:** vice-presidential candidacy with Obasanjo; ticket elected.
+- **2003:** vice-presidential candidacy with Obasanjo; ticket elected.
+- **2007:** Action Congress presidential general-election candidate — 2,567,798 votes, third place in the reproduced INEC result.
+- **2011:** PDP presidential primary — Atiku received 805 votes and lost to Goodluck Jonathan.
+- **2015:** APC presidential primary — Atiku received 954 votes and lost to Muhammadu Buhari.
+- **2019:** PDP presidential general-election candidate — 11,262,978 votes, second place.
+- **2023:** PDP presidential general-election candidate — 6,984,520 votes, second place.
+- **2027:** ADC presidential nominee; general election not yet held.
 
-As of the research cutoff, Atiku Abubakar is represented as the ADC presidential candidate for the 2027 general election. ADC announced that it uploaded Atiku's and Rotimi Amaechi's nomination particulars to the INEC portal, and INEC's published party information identifies the ADC leadership under which the nomination process occurred.
+Official electoral evidence is preferred where available. Primary-contest records are not represented as general-election results.
 
-The record will separately capture the legal history of ADC's registration status. A Federal High Court deregistration order was stayed by the Court of Appeal in June 2026; the appellate proceedings then proceeded to substantive judgment. The later appellate outcome must be preserved as its own legal record rather than inferred from earlier reporting. Party leadership disputes must likewise be represented as claims/procedural records rather than collapsed into a single political narrative.
+## Party history
 
-Sources:
-- https://adc.org.ng/news-single/adc-successfully-submits-presidential-and-vice-presidential-candidates-to-inec-for-2027-election
-- https://inecnigeria.org/political-parties/african-democratic-congress-adc/
-- https://www.channelstv.com/2026/06/25/deregistration-of-parties-court-defers-hearing-of-appeals-by-adc-four-others-to-july-7/
-- https://www.premiumtimesng.com/news/headlines/888206-updated-appeal-court-stays-judgement-deregistering-adc-accord-three-other-opposition-parties.html
-- https://blueprint.ng/breaking-appeal-court-nullifies-order-for-deregistration-of-adc-others-ahead-of-2027-elections/
-- https://punchng.com/full-list-names-credentials-of-2027-presidential-candidates-released-by-inec/
+The machine-readable chronology records the major party periods while preserving approximate dates where historical sources do not establish exact entry/exit timestamps. Membership, political association, primary participation and candidacy are not treated as interchangeable states.
+
+The principal chronology represented is:
+
+**SDP → PDP → Action Congress → PDP → APC → PDP → ADC**
+
+The dossier explicitly marks older date boundaries as approximate rather than manufacturing false precision.
+
+## ADC legal-state experiment
+
+The legal chronology is represented as a sequence rather than a binary label:
+
+**15 Jun 2026 — Federal High Court:** ordered INEC to deregister ADC and four other parties in FHC/ABJ/CS/2637/2026.
+
+**16 Jun 2026 — Court of Appeal:** stayed execution of the deregistration judgment.
+
+**2 Jul 2026 — Federal High Court:** dismissed a separate challenge to the David Mark-led ADC leadership and affirmed the leadership position in the judgment reported from FHC/ABJ/CS/1637/2025.
+
+**28 Jul 2026 — Court of Appeal:** nullified the 15 June deregistration judgment, holding that the lower court lacked jurisdiction and that the suit was incompetent.
+
+Therefore the dossier does not say simply "ADC was deregistered" or "ADC was never deregistered." It records each legal state, source, court and date.
+
+As of the 30 August 2026 cutoff, available INEC-related evidence and contemporary reporting support the representation of the Mark-led ADC as the operative party structure for candidate submissions, while broader internal-party litigation is preserved as a separate uncertainty where applicable.
+
+## 2027 candidacy
+
+ADC states that Atiku Abubakar and Rotimi Amaechi's nomination particulars were successfully uploaded to the INEC nomination portal. Contemporary INEC-related reporting also identifies the Mark-led ADC as the recognized structure for candidate submissions. The dossier distinguishes:
+
+**party nomination → nomination submission → INEC-related record → current status.**
+
+It does not treat the party announcement alone as equivalent to an election result or a completed general-election candidacy.
 
 ## Public statements / RELATED PUBLIC CONVERSATION
 
-The initial controlled public-conversation set will focus on statements that materially relate to Atiku's candidacy, party transitions, election process or policy claims. A June 2026 statement welcoming the Court of Appeal stay of the ADC deregistration judgment is a useful controlled artifact because it can establish that Atiku's verified account made the statement without proving every proposition contained in it.
+Two controlled public-conversation examples are retained:
 
-Source/context:
-- https://www.premiumtimesng.com/news/top-news/888295-atiku-welcomes-appeal-court-order-staying-party-deregistration-judgement.html
+1. Atiku's verified X-account statement welcoming the June 16, 2026 Court of Appeal stay of the ADC deregistration judgment.
+2. Atiku's August 12, 2026 public statement concerning security deployment and the Osun governorship election.
 
-The dossier will preserve the distinction:
+The evidence model establishes statement occurrence separately from the truth of propositions contained in the statement.
 
-**Atiku said X** != **X is true**.
+**Atiku said X ≠ X is true.**
 
-## Major documented actions / policy record
+Where original social-media capture was unavailable, the dossier records the limitation rather than treating the absence as evidence that the statement did not occur.
 
-The federal executive record will prioritize institutional anchors. A principal research line is Atiku's role as chairman of the National Council on Privatisation during the Obasanjo administration. Claims about the economic effects of privatization will be separated from the documented fact of institutional responsibility and tested independently.
+## Economic record
 
-Source:
-- https://www.xinhuanet.com/english/2019-02/11/c_137811277.htm
+The controlled quantitative lineage contains election-result observations and calculations with explicit metric, unit, geography, period, dataset version, observation version and methodology version.
 
-## Economic record — initial research plan
+For 2023, the machine-readable record uses the INEC observation of 6,984,520 votes and calculates approximately 29.07% of valid votes.
 
-The quantitative record will use federal/national indicators only where the metric definition, geography, period and dataset permit a defensible attribution question. Initial candidates for controlled quantitative work include:
+The economic/policy analysis also preserves the distinction between:
 
-1. a documented national fiscal/economic observation during 1999–2007;
-2. a privatisation transaction dataset or official institutional count where versioned source data exists;
-3. election-result quantities where an economic interpretation is not incorrectly implied.
+**institutional role → documented action → economic observation → analysis → causal conclusion.**
 
-No economic result will be attributed causally to Atiku merely because it occurred during his vice-presidential tenure. The required lineage is:
+No causal conclusion is made where the evidence only establishes temporal association or institutional involvement.
 
-`METRIC → OBSERVATION → CALCULATION → ANALYSIS → RESULT`
+## Contradictions
 
-with definition, unit, geography, period, dataset, dataset version, observation version and methodology version preserved.
+The dossier preserves, among others:
 
-## Legal record — initial research plan
+- the distinction between governor-elect status and actual officeholding;
+- Atiku's institutional NCP role versus claims attributing broad economic outcomes personally to him;
+- the official 2019 result versus Atiku/PDP's subsequent litigation claims about the vote count;
+- competing/approximate historical party-date accounts.
 
-Legal research will separate:
-
-- allegations;
-- court findings;
-- procedural rulings;
-- party-registration disputes;
-- final outcomes.
-
-The ADC deregistration litigation is an initial controlled example. The dossier will not treat the existence of a lawsuit or an allegation as proof of the underlying proposition.
-
-## Contested / contradictory claims
-
-Potential controlled contradiction areas include claims concerning Atiku's political transitions, the economic effects of privatization, and public assertions about ADC's legal/organizational status. Each side will be retained with source, period, scope and evidentiary relationship rather than selecting a preferred narrative in advance.
+Contradictions are retained rather than deleted or reconciled into a preferred narrative without evidence.
 
 ## Corrections
 
-No correction lineage will be declared complete until a genuine correction, revision, clarification or changed evidentiary assessment is established. If none is found for a selected record, the limitation will be documented rather than manufactured.
+Two genuine corrections are preserved:
 
-## Uncertainty
+1. **Adamawa officeholding correction:** the initial shorthand that Atiku "served as governor" was corrected to the more precise governor-elect/not-sworn state.
+2. **ADC legal-state correction:** a preliminary representation of the June 15 deregistration order was superseded by the complete June 16 stay and July 28 appellate nullification sequence.
 
-Initial known uncertainty includes:
-
-1. long-span party chronology where membership, primary participation and candidacy are not interchangeable;
-2. historical office transition around the 1998 Adamawa governorship and 1999 vice-presidential selection;
-3. ADC legal and leadership proceedings in 2026;
-4. public social-media availability and archive completeness;
-5. quantitative economic attribution during the 1999–2007 federal administration.
+Historical versions remain reconstructable.
 
 ## Reviews
 
-The final dossier will separately review evidence quality, factual accuracy, calculation accuracy, context completeness, source quality and reviewer confidence. Review records will not be used as evidence.
+A multidimensional research review is recorded for:
+
+- evidence quality;
+- factual accuracy;
+- calculation accuracy;
+- context completeness;
+- source quality;
+- reviewer confidence.
+
+Review records remain an assessment layer and are not treated as evidence.
+
+## AI answer provenance
+
+Ten standardized public answers are stored in `data/public-answers.json`.
+
+Each answer follows:
+
+`ANSWER → DEPENDENCIES → CLAIMS/EVIDENCE/SOURCES → AS_OF → GENERATION_VERSION`
+
+Quantitative answers additionally resolve through:
+
+`RESULT → ANALYSIS → CALCULATION → OBSERVATION → DATASET VERSION → SOURCE VERSION`
+
+## Known limitations
+
+1. Some historical party-entry/exit dates remain approximate.
+2. The 1993 SDP primary lacks a directly accessible official party-primary archive in the captured research set.
+3. Some original social-media artifacts were not directly archived through the research interface.
+4. ADC's broader internal leadership dispute has generated multiple proceedings; the dossier does not treat every political assertion about that dispute as judicially established.
+5. The NCP evidence establishes institutional responsibility and activity but does not prove individual causal responsibility for national economic outcomes.
 
 ## Current research state
 
-**IN_PROGRESS.** Candidate selection is complete and initial identity, office, election, party, current candidacy, public-conversation, policy and legal research anchors have been established. Machine-readable evidence, reproducible quantitative lineage, correction/revision lineage, review records, public-answer provenance and retrieval-failure handling remain to be completed before Gate 4 validation.
+**RESEARCH_COMPLETE.** The dossier is ready for acceptance testing. Validation has not yet been claimed. The unchanged generalized Gate 4 validator must now independently test Atiku alongside the existing Tinubu and Peter Obi fixtures.
