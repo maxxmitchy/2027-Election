@@ -16,7 +16,10 @@ def execute(question,candidate='all',as_of=None):
     record=dict(q)
     if candidate!='all':
         cid=next((k for k,v in NAMES.items() if v.casefold()==candidate.casefold() or k==candidate),None)
-        if cid: record['candidate_scope']=[cid]
+        if cid:
+            if len(record.get('candidate_scope',[]))>1:
+                return {'answer_status':'INCOMPARABLE','answer_text':'This is a cross-candidate question. Candidate scope must remain explicitly set to all three validated candidates.','candidate_scope':record['candidate_scope'],'limitations':['A single-candidate filter cannot silently narrow a cross-candidate comparison.']}
+            record['candidate_scope']=[cid]
     if as_of: record['as_of']=as_of
     return answer_question(record,load_dossiers(ROOT))
 def profile(cid):
