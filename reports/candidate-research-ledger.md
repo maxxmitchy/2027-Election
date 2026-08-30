@@ -6,9 +6,28 @@
 
 | Candidate | Research status | Coverage | Primary-source coverage | Provenance | Quantitative | Review | Contradictions | Corrections | Research gaps | Validation | Phase 4 CI |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Bola Ahmed Tinubu | VALIDATED | PARTIAL / domain-dependent | MODERATE / domain-dependent | HIGH where claimed | MODERATE | PRESENT | PRESENT | PRESENT | OPEN | PRESERVED | PENDING |
-| Peter Gregory Obi | VALIDATED | PARTIAL / domain-dependent | MODERATE / domain-dependent | HIGH where claimed | PARTIAL | PRESENT | PRESENT | PRESENT | OPEN | PRESERVED | PENDING |
-| Atiku Abubakar | VALIDATED | PARTIAL / domain-dependent | MODERATE / domain-dependent | HIGH where claimed | PARTIAL | PRESENT | PRESENT | PRESENT | OPEN | PRESERVED | PENDING |
+| Bola Ahmed Tinubu | VALIDATED | PARTIAL / domain-dependent | MODERATE / domain-dependent | HIGH where claimed | MODERATE | PRESENT | PRESENT | PRESENT | OPEN | PRESERVED | PASS |
+| Peter Gregory Obi | VALIDATED | PARTIAL / domain-dependent | MODERATE / domain-dependent | HIGH where claimed | PARTIAL | PRESENT | PRESENT | PRESENT | OPEN | PRESERVED | PASS |
+| Atiku Abubakar | VALIDATED | PARTIAL / domain-dependent | MODERATE / domain-dependent | HIGH where claimed | PARTIAL | PRESENT | PRESENT | PRESENT | OPEN | PRESERVED | PASS |
+
+## Phase 4 validation execution
+
+**Tested commit:** `965cbaf1d61d7e35e29a6ea6f64d0fa21ccd0026`
+
+- **Workflow:** Phase 4 Research Depth & Evidence Coverage
+- **Run ID:** `33334459275`
+- **Job ID:** `99318747038`
+- **PostgreSQL:** `16.15`
+- **Python:** `3.12.14`
+- **Golden / Phase 3 / Phase 4 suite:** `106 passed / 0 failed`
+- **Database integrity regression:** `10 passed / 0 failed`
+- **Phase 3 mutations:** `18/18 killed`
+- **Phase 4 mutations:** `30/30 killed`
+- **Artifact ID:** `9738600377`
+- **Artifact SHA-256:** `ee92934146f49bd41b0e977cecdc51cc142338560cfb63d01a3e05fcdfd19da2`
+- **Result:** `PASS`
+
+The final execution generated and uploaded the six required machine-readable/human-readable Phase 4 reports plus coverage/dependency evidence. The exact tested SHA is recorded inside the generated report and execution evidence.
 
 ## Phase 4 scope
 
@@ -29,4 +48,4 @@ The Phase 4 implementation adds deterministic coverage reports, research-gap rec
 - Atiku Abubakar — unchanged validated candidate.
 - Candidate 4 — **BLOCKED**. No Candidate 4 dossier, ingestion or research has begun.
 
-Phase 4 validation state is determined only by the exact CI execution associated with the final tested commit. Until that execution passes, this ledger remains `PENDING` rather than claiming PASS.
+Phase 4 PASS is tied to the exact tested commit above. Subsequent documentation commits do not transfer or change that validation result.
