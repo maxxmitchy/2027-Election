@@ -23,6 +23,7 @@
     "strong_areas":["Anambra state debt 2013","Anambra IGR 2011-2014","judicial office chronology","2023 election result"],
     "partial_areas":["state expenditure","state GDP/economic output","selected consumer prices","unemployment","poverty","complete 2006-2014 quarterly fiscal series"],
     "primary_source_gaps":["some election-result details for the 2010 Anambra governorship remain anchored to secondary reporting pending direct result capture","policy implementation and documented outcomes require additional primary records"],
-    "contested_data":"The NGN 9.00 IGR discrepancy is retained as source disagreement rather than silently selecting a winner."
+    "contested_data":"The NGN 9.00 IGR discrepancy is retained as source disagreement rather than silently selecting a winner.",
+    "causal_discipline":"The IGR and debt observations describe the Anambra record during the relevant period; they do not establish that Peter Obi personally caused any measured change."
   }
 }
