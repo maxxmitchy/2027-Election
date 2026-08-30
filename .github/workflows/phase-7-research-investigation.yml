@@ -65,11 +65,11 @@ jobs:
       - name: Run Phase 7 investigation and dossier tests
         id: phase7tests
         continue-on-error: true
-        run: python -m pytest -q tests/test_phase7_dossier.py | tee evidence/phase-7/phase7-tests.txt
+        run: python -m pytest -q tests/test_phase7_dossier.py tests/test_phase7_investigation.py | tee evidence/phase-7/phase7-tests.txt
       - name: Run Phase 7 assembly
         id: assembly
         continue-on-error: true
-        run: PYTHONPATH=. python scripts/run_phase7_assembly.py | tee evidence/phase-7/assembly.txt
+        run: PYTHONPATH=. python scripts/run_phase7_assembly_v2.py | tee evidence/phase-7/assembly.txt
       - name: Run Phase 7 mutation audit
         id: mutations
         continue-on-error: true
@@ -95,9 +95,12 @@ jobs:
           from pathlib import Path
           from phase7_dossier import CANDIDATES, BLOCKED
           b=json.loads(Path('reports/phase-7-dossier-assembly.json').read_text())
+          r=json.loads(Path('reports/phase-7-research-investigation.json').read_text())
           assert b['candidate_4']==BLOCKED
           assert set(b['candidate_scope'])==set(CANDIDATES)
           assert BLOCKED not in b['candidate_scope']
+          assert len(r['investigations'])==10
+          assert sum(i['candidate_id'] is None for i in r['investigations'])==4
           for cid,d in b['dossiers'].items():
               assert cid in CANDIDATES
               assert all(c['candidate_id']==cid for c in d['claims'])
@@ -153,7 +156,8 @@ jobs:
           implementation=Path('evidence/phase-7/implementation-sha.txt').read_text().strip().split('=',1)[1]
           tested=Path('evidence/phase-7/sha.txt').read_text().strip().split('=',1)[1]
           muts=json.loads(Path('reports/phase-7-mutation-results.json').read_text()) if Path('reports/phase-7-mutation-results.json').exists() else {}
-          report={'phase':'7','name':'Research Investigation & Dossier Assembly','implementation_sha':implementation,'tested_sha':tested,'github_sha':os.environ['GITHUB_SHA'],'workflow':'.github/workflows/phase-7-research-investigation.yml','run_id':int(os.environ['GITHUB_RUN_ID']),'job_id':os.environ['GITHUB_JOB'],'python':'3.12.14','postgresql':'16','execution':outcomes,'candidate_scope':['bola-ahmed-tinubu','peter-gregory-obi','atiku-abubakar'],'candidate_4':'BLOCKED','methodology_version':'phase7-research-investigation-dossier-v1','mutation_count':muts.get('mutation_count',0),'mutations_killed':muts.get('killed',0),'mutations_survived':muts.get('survived',0),'status':'PASS' if all(v=='success' for v in outcomes.values()) and muts.get('survived',1)==0 else 'FAILED'}
+          invs=json.loads(Path('reports/phase-7-coverage.json').read_text()) if Path('reports/phase-7-coverage.json').exists() else {}
+          report={'phase':'7','name':'Research Investigation & Dossier Assembly','implementation_sha':implementation,'tested_sha':tested,'github_sha':os.environ['GITHUB_SHA'],'workflow':'.github/workflows/phase-7-research-investigation.yml','run_id':int(os.environ['GITHUB_RUN_ID']),'job_id':os.environ['GITHUB_JOB'],'python':'3.12.14','postgresql':'16','execution':outcomes,'candidate_scope':['bola-ahmed-tinubu','peter-gregory-obi','atiku-abubakar'],'candidate_4':'BLOCKED','methodology_version':'phase7-research-investigation-dossier-v1','investigations':invs.get('investigations',0),'tasks':invs.get('tasks',0),'mutation_count':muts.get('mutation_count',0),'mutations_killed':muts.get('killed',0),'mutations_survived':muts.get('survived',0),'status':'PASS' if all(v=='success' for v in outcomes.values()) and invs.get('investigations')==10 and muts.get('survived',1)==0 else 'FAILED'}
           Path('reports/phase-7-execution-report.json').write_text(json.dumps(report,indent=2)+'\n')
           Path('reports/phase-7-execution-report.md').write_text('# Phase 7 — Execution Report\n\n```json\n'+json.dumps(report,indent=2)+'\n```\n')
           PY
