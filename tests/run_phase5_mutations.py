@@ -29,7 +29,7 @@ def run():
     muts={
       "M1_remove_claim_decomposition":lambda m:m["investigation"].update({"sub_questions":[]}),
       "M2_remove_evidence_requirement":lambda m:m["investigation"].update({"evidence_requirements":[]}),
-      "M3_secondary_as_primary":lambda m:m["investigation"]["evidence_requirements"][0].update({"required_source_class":"PRIMARY"}),
+      "M3_secondary_as_primary":lambda m:m["sources"][0].update({"source_class":"PRIMARY","verification_state":"VERIFIED"}),
       "M4_remove_primary_gap":lambda m:m["research_gaps"].clear(),
       "M5_remove_research_gap":lambda m:m["research_gaps"].clear(),
       "M6_corrupt_gap_status":lambda m:m["research_gaps"].__getitem__(0).update({"status":"RESOLVED"}) if m["research_gaps"] else m["investigation"].update({"status":"ANSWERABLE"}),
