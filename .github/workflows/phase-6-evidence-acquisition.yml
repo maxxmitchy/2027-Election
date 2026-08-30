@@ -1,0 +1,143 @@
+name: Phase 6 Evidence Acquisition & Research Execution
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  phase-6:
+    name: evidence-acquisition
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: retrieval_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d retrieval_test"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/retrieval_test
+      PGPASSWORD: postgres
+      PYTHONHASHSEED: "0"
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12.14"}
+      - name: Install pinned dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Initialize reference database
+        run: psql -h 127.0.0.1 -U postgres -d retrieval_test -f db/round5_reference.sql
+      - name: Record exact execution identity
+        run: |
+          mkdir -p evidence/phase-6
+          printf 'implementation_sha=%s\n' "$GITHUB_SHA" | tee evidence/phase-6/github-sha.txt
+          printf 'tested_sha=%s\n' "$(git rev-parse HEAD)" | tee evidence/phase-6/sha.txt
+          printf 'workflow=.github/workflows/phase-6-evidence-acquisition.yml\nrun_id=%s\n' "$GITHUB_RUN_ID" | tee evidence/phase-6/execution.txt
+          python --version | tee evidence/phase-6/versions.txt
+          psql --version >> evidence/phase-6/versions.txt
+          python -m pip freeze >> evidence/phase-6/versions.txt
+      - name: Run Phase 3 regression
+        id: phase3
+        continue-on-error: true
+        run: python -m pytest -q tests/test_query_interpreter.py tests/query_semantics.py tests/test_system_demo.py tests/test_answer_experience.py tests/test_phase3_golden.py | tee evidence/phase-6/phase3.txt
+      - name: Run Phase 4 regression
+        id: phase4
+        continue-on-error: true
+        run: python -m pytest -q tests/test_phase4_*.py tests/gate4_candidate_acceptance.py tests/gate4_postgres_runtime.py | tee evidence/phase-6/phase4.txt
+      - name: Run Phase 5 regression
+        id: phase5
+        continue-on-error: true
+        run: python -m pytest -q tests/test_phase5_research_workbench.py | tee evidence/phase-6/phase5.txt
+      - name: Run Phase 6 tests
+        id: phase6
+        continue-on-error: true
+        run: python -m pytest -q tests/test_phase6_evidence_acquisition.py | tee evidence/phase-6/phase6.txt
+      - name: Execute controlled public acquisition
+        id: acquisition
+        continue-on-error: true
+        run: PYTHONPATH=. python scripts/run_phase6_acquisition.py | tee evidence/phase-6/acquisition.txt
+      - name: Validate JSON Schemas
+        id: schemas
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from jsonschema import Draft202012Validator
+          for name in ['research-task.schema.json','source-capture.schema.json','evidence-extraction.schema.json','research-gap.schema.json','verification-result.schema.json']:
+              p=Path('schemas')/name; Draft202012Validator.check_schema(json.loads(p.read_text()))
+          PY
+      - name: Validate Phase 6 invariants
+        id: invariants
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from phase6_acquisition import CANDIDATES, BLOCKED, METHODOLOGY_VERSION, TASK_STATES
+          b=json.loads(Path('reports/phase-6-evidence-acquisition.json').read_text())
+          assert b['candidate_4']==BLOCKED
+          assert b['candidate_scope']==list(CANDIDATES)
+          assert b['methodology_version']==METHODOLOGY_VERSION
+          assert b['summary']['tasks_executed']==10
+          assert all(t['candidate_id'] in CANDIDATES or t['candidate_id'] is None for t in b['tasks'])
+          assert all(t['status'] in TASK_STATES for t in b['tasks'])
+          assert b['summary']['sources_captured'] >= 4, b['summary']
+          assert b['summary']['sources_verified'] >= 1, b['summary']
+          assert any(r.get('retrieval_status')=='RETRIEVAL_FAILED' for r in b['retrieval_events'])
+          for e in b['evidence']:
+              assert e['provenance_complete'] is True
+              assert e['source_version_id'] and e['retrieval_event_id'] and e['artifact_id'] and e['content_hash']
+          PY
+      - name: Generate execution report
+        if: always()
+        env:
+          PHASE3_OUTCOME: ${{ steps.phase3.outcome }}
+          PHASE4_OUTCOME: ${{ steps.phase4.outcome }}
+          PHASE5_OUTCOME: ${{ steps.phase5.outcome }}
+          PHASE6_OUTCOME: ${{ steps.phase6.outcome }}
+          ACQUISITION_OUTCOME: ${{ steps.acquisition.outcome }}
+          SCHEMA_OUTCOME: ${{ steps.schemas.outcome }}
+          INVARIANT_OUTCOME: ${{ steps.invariants.outcome }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          outcomes={k:os.environ.get(k) for k in ('PHASE3_OUTCOME','PHASE4_OUTCOME','PHASE5_OUTCOME','PHASE6_OUTCOME','ACQUISITION_OUTCOME','SCHEMA_OUTCOME','INVARIANT_OUTCOME')}
+          b=json.loads(Path('reports/phase-6-evidence-acquisition.json').read_text()) if Path('reports/phase-6-evidence-acquisition.json').exists() else {}
+          report={'phase':'6','name':'Evidence Acquisition & Research Execution','implementation_sha':os.environ.get('GITHUB_SHA',''),'tested_sha':Path('evidence/phase-6/sha.txt').read_text().strip().split('=',1)[-1] if Path('evidence/phase-6/sha.txt').exists() else '','workflow':'.github/workflows/phase-6-evidence-acquisition.yml','run_id':int(os.environ.get('GITHUB_RUN_ID','0')),'job_id':os.environ.get('GITHUB_JOB',''),'environment':{'python':'3.12.14','postgresql':'16'},'execution':outcomes,'candidate_scope':['bola-ahmed-tinubu','peter-gregory-obi','atiku-abubakar'],'candidate_4':'BLOCKED','methodology_version':'phase6-evidence-acquisition-v1','summary':b.get('summary',{}),'status':'PASS' if all(v=='success' for v in outcomes.values()) else 'FAILED','failure_evidence':{k:(Path('evidence/phase-6')/f'{f}.txt').read_text(errors='replace')[-4000:] if (Path('evidence/phase-6')/f'{f}.txt').exists() else '' for k,f in [('phase3','phase3'),('phase4','phase4'),('phase5','phase5'),('phase6','phase6'),('acquisition','acquisition')]}}
+          Path('reports/phase-6-research-execution.json').write_text(json.dumps(report,indent=2)+'\n')
+          Path('reports/phase-6-research-execution.md').write_text('# Phase 6 — Research Execution\n\n'+json.dumps(report,indent=2)+'\n')
+          Path('reports/phase-6-execution-identity.json').write_text(json.dumps({'implementation_sha':report['implementation_sha'],'tested_sha':report['tested_sha'],'workflow':report['workflow'],'run_id':report['run_id'],'job_id':report['job_id']},indent=2)+'\n')
+          PY
+      - name: Hash evidence and reports
+        if: always()
+        run: |
+          sha256sum reports/phase-6-evidence-acquisition.* reports/phase-6-source-acquisition.* reports/phase-6-research-execution.* reports/phase-6-coverage.* > evidence/phase-6/report-hashes.txt
+      - name: Upload Phase 6 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase-6-evidence-${{ github.sha }}
+          path: |
+            reports/phase-6-*.md
+            reports/phase-6-*.json
+            schemas/research-task.schema.json
+            schemas/source-capture.schema.json
+            schemas/evidence-extraction.schema.json
+            schemas/research-gap.schema.json
+            schemas/verification-result.schema.json
+            evidence/phase-6/
+          if-no-files-found: error
+      - name: Fail closed
+        if: steps.phase3.outcome != 'success' || steps.phase4.outcome != 'success' || steps.phase5.outcome != 'success' || steps.phase6.outcome != 'success' || steps.acquisition.outcome != 'success' || steps.schemas.outcome != 'success' || steps.invariants.outcome != 'success'
+        run: exit 1
