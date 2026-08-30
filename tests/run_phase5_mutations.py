@@ -16,7 +16,9 @@ def valid(m):
     if q.get("methodology_version")!=METHODOLOGY_VERSION: return False
     if not m["investigation"]["sub_questions"]: return False
     if not m["investigation"]["evidence_requirements"]: return False
+    if not any(r.get("preferred_primary_source") for r in m["investigation"]["evidence_requirements"]): return False
     if any(r.get("required_provenance") is not True for r in m["investigation"]["evidence_requirements"]): return False
+    if not m["research_gaps"]: return False
     if m["review"]["status"]!="NOT_REVIEWED" or m["review"]["review_is_not_source"] is not True: return False
     if "truth probability" not in m["answerability"]["reason"].lower(): return False
     if not m["provenance"].get("database_snapshot") or not m["provenance"].get("generation_timestamp"): return False
