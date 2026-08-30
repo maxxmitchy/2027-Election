@@ -1,7 +1,9 @@
 name: Phase 3 Evidence Answer Experience
 on:
   push:
-    branches: ["query-interpretation"]
+    branches: ["phase-3-evidence-answer"]
+  pull_request:
+    branches: ["main"]
   workflow_dispatch:
 permissions:
   contents: read
