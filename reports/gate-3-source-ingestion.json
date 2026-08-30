@@ -1,0 +1,47 @@
+{
+  "gate": "GATE_3_SOURCE_INGESTION",
+  "status": "PASS_RECOMMENDED",
+  "tested_commit": "b26cccd58b9e6ea1c8e28ecbdd8affe5ea162328",
+  "workflow": {
+    "name": "Gate 3 Source Ingestion",
+    "run_id": 33319986354,
+    "job_id": 99280145039,
+    "result": "success",
+    "artifact_id": 9734598011,
+    "artifact_sha256": "ac349422b075ddce8b924985d0d38a744749c0bc3c13affa0c1ca6bb7ca11ef"
+  },
+  "environment": {
+    "runner": "ubuntu-24.04",
+    "python": "3.12.14",
+    "pytest": "8.4.2"
+  },
+  "tests": {
+    "total": 7,
+    "passed": 7,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "controls": {
+    "retrieval_and_hash_linkage": "PASS",
+    "social_statement_separation": "PASS",
+    "contradictory_evidence_preservation": "PASS",
+    "correction_and_stale_downstream": "PASS",
+    "source_revision_history": "PASS",
+    "retrieval_failure_not_falsehood": "PASS",
+    "canonical_capture_hash_determinism": "PASS"
+  },
+  "source_types": [
+    "official_government_publication",
+    "official_statistical_dataset",
+    "established_journalism",
+    "social_media_statement"
+  ],
+  "known_limitations": [
+    "The experiment hashes canonical captured representations for remote artifacts rather than claiming byte-level hashes of inaccessible remote responses.",
+    "The source revision fixture is explicitly simulated and is not presented as evidence of an actual NBS revision.",
+    "Gate 2 retains its previously documented evidence-to-commit qualification; this Gate 3 result does not retroactively alter that qualification."
+  ],
+  "candidate_research_started": false,
+  "gate_4_authorized": false
+}
