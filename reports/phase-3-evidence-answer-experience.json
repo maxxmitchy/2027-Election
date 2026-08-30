@@ -1,0 +1,67 @@
+{
+  "phase": "3",
+  "name": "Evidence Answer Experience",
+  "status": "PASS",
+  "tested_commit": "98f2cc66b757a45835456b9cb3a6013a225c5eda",
+  "workflow": ".github/workflows/phase-3-evidence-answer.yml",
+  "run_id": 33329403929,
+  "job_id": 99305148716,
+  "job_name": "evidence-answer",
+  "environment": {
+    "postgresql": "16.15",
+    "python": "3.12.14"
+  },
+  "tests": {
+    "count": 94,
+    "passed": 94,
+    "failed": 0
+  },
+  "mutations": {
+    "count": 18,
+    "killed": 18,
+    "survived": 0
+  },
+  "candidate_scope": [
+    "bola-ahmed-tinubu",
+    "peter-gregory-obi",
+    "atiku-abubakar"
+  ],
+  "candidate_4": "BLOCKED",
+  "golden_questions": 24,
+  "implementation": "Deterministic presentation layer over the existing natural-language interpreter and deterministic retrieval engine; no parallel factual engine and no LLM dependency.",
+  "answer_statuses": [
+    "ANSWERED",
+    "PARTIALLY_ANSWERED",
+    "UNKNOWN",
+    "UNVERIFIED",
+    "DISPUTED",
+    "INSUFFICIENT_EVIDENCE",
+    "INCOMPLETE",
+    "INCOMPARABLE",
+    "NO_MATCH",
+    "UNSUPPORTED"
+  ],
+  "provenance": "Tested through answer contract, content-derived database snapshot, interpretation version, methodology version and generation metadata.",
+  "quantitative": "Calculation lineage and unit checks executed; quantitative mutations killed.",
+  "causal": "Causal questions remain separate from observed change and are presented conservatively.",
+  "contradictions": "Preserved rather than collapsed into a single winner.",
+  "corrections": "Correction lineage remains inspectable where present.",
+  "as_of": "Historical as_of semantics are preserved in the interpreted query and answer contract.",
+  "review_separation": "Review is marked NOT_A_SOURCE and remains separate from evidence.",
+  "negative_knowledge": "UNKNOWN, UNVERIFIED, DISPUTED, INSUFFICIENT_EVIDENCE, INCOMPLETE, INCOMPARABLE, NO_MATCH and UNSUPPORTED remain distinct.",
+  "candidate_isolation": "Only the three validated candidate IDs are permitted; Candidate 4 remains blocked.",
+  "limitations": [
+    "Presentation remains limited to semantic routes already supported by the deterministic retrieval engine.",
+    "This phase does not claim unrestricted natural-language research or production readiness."
+  ],
+  "known_failures": [],
+  "artifact": {
+    "artifact_id": 9737193424,
+    "artifact_sha256": "d80efd5db0ca455ff0307a5ecd0c489b4e22b5336d8a1a328edf22aabb709e5f",
+    "report_hashes": {
+      "reports/phase-3-evidence-answer-experience.md": "19aff86a505504870777ae87c4609344cd7d1167c5a10909a34d5db7278a9920",
+      "reports/phase-3-evidence-answer-experience.json": "af06f3ce5f82078fc5fff2ac4af8c68c2ad088197dbf73f1edfb2e4ef5af049f",
+      "reports/phase-3-evidence-answer-demo.md": "89757dc0bb8bcd5ad22242a8cdefeb0ba076a6eee788695f873fcd9f96e1da63"
+    }
+  }
+}
