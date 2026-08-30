@@ -1,0 +1,78 @@
+name: System-Level Retrieval
+on:
+  push:
+    branches: [main, system-level-retrieval-round]
+  pull_request:
+    branches: [main]
+
+jobs:
+  retrieval:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16.15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: retrieval_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d retrieval_test"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Initialize PostgreSQL reference schema
+        env:
+          PGPASSWORD: postgres
+        run: psql -h 127.0.0.1 -U postgres -d retrieval_test -f db/round5_reference.sql
+      - name: Record execution identity
+        run: |
+          mkdir -p evidence/system-retrieval
+          python - <<'PY'
+          import os,platform,subprocess
+          print('commit='+os.environ['GITHUB_SHA'])
+          print('python='+platform.python_version())
+          print('postgres_image=postgres:16.15')
+          print('workflow='+os.environ['GITHUB_WORKFLOW'])
+          PY
+      - name: Run deterministic retrieval and integrity tests
+        id: tests
+        continue-on-error: true
+        run: |
+          pytest -q tests/test_system_level_retrieval.py | tee evidence/system-retrieval/pytest.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+      - name: Generate machine-readable evidence
+        if: always()
+        run: |
+          python - <<'PY'
+          import json,os,re
+          p='evidence/system-retrieval/pytest.txt'
+          text=open(p,encoding='utf-8').read() if os.path.exists(p) else ''
+          m=re.search(r'(\d+) passed(?:, (\d+) failed)?',text)
+          passed=int(m.group(1)) if m else 0
+          failed=int(m.group(2) or 0) if m else (1 if 'failed' in text else 0)
+          evidence={
+            'tested_commit':os.environ['GITHUB_SHA'],'workflow':os.environ['GITHUB_WORKFLOW'],
+            'run_id':os.environ['GITHUB_RUN_ID'],'repository':os.environ['GITHUB_REPOSITORY'],
+            'postgres':'16.15','python':'3.12','passed':passed,'failed':failed,
+            'pytest_output':'pytest.txt','test_command':'pytest -q tests/test_system_level_retrieval.py',
+            'candidate_scope':['bola-ahmed-tinubu','peter-gregory-obi','atiku-abubakar'],
+            'candidate_4':'BLOCKED'
+          }
+          json.dump(evidence,open('evidence/system-retrieval/execution.json','w'),indent=2)
+          PY
+      - name: Upload retrieval evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: system-level-retrieval-evidence-${{ github.sha }}
+          path: evidence/system-retrieval/
+      - name: Enforce test result
+        if: steps.tests.outputs.exit_code != '0'
+        run: exit 1
