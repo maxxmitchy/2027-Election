@@ -1,0 +1,1 @@
+We've now taught the evidence system to understand the question before answering it. Natural language interprets; evidence decides. We're moving from controlled questions toward real questions—without letting the language layer decide what is true.
