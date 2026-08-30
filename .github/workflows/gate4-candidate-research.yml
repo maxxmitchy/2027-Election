@@ -28,6 +28,7 @@ jobs:
         candidate:
           - bola-ahmed-tinubu
           - peter-gregory-obi
+          - atiku-abubakar
     runs-on: ubuntu-24.04
     env:
       CANDIDATE_ID: ${{ matrix.candidate }}
