@@ -19,3 +19,5 @@ The governing boundary remains:
 > Retrieval failure is not falsity.
 > Missing evidence is not negative evidence.
 > Temporal association is not causation.
+
+Phase 6 controlled execution trigger.
