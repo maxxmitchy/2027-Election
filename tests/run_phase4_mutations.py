@@ -1,10 +1,10 @@
 """Fail-closed Phase 4 research-depth and coverage mutations."""
 from __future__ import annotations
-import copy, json
+import copy, json, sys
 from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1]; sys.path.insert(0,str(ROOT))
 from answer_experience import present
 from evidence_coverage import coverage_report, VALID_CANDIDATES
-ROOT=Path(__file__).resolve().parents[1]
 
 def validate(m, expected, expected_answer):
     iq=m.get("interpreted_query",{}); cov=m.get("coverage",{})
