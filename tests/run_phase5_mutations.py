@@ -2,25 +2,39 @@
 from __future__ import annotations
 import copy, json
 from pathlib import Path
-from research_workbench import BLOCKED, CANDIDATES, METHODOLOGY_VERSION, investigate
+from research_workbench import BLOCKED, CANDIDATES, GAP_STATES, METHODOLOGY_VERSION, investigate
 ROOT=Path(__file__).resolve().parents[1]
 
 
 def baseline():
-    return investigate(ROOT,"What evidence exists for Peter Obi's economic record?",as_of="2026-08-30")
+    m=investigate(ROOT,"What evidence exists for Peter Obi's economic record?",as_of="2026-08-30")
+    m["contradictions"]=[{"id":"mutation-fixture-contradiction","status":"OPEN","material_conflict":True}]
+    m["corrections"]=[{"id":"mutation-fixture-correction","status":"OPEN","supersedes":"mutation-fixture-v1"}]
+    return m
 
 
-def valid(m):
-    q=m["investigation"]["question"]
-    if not q.get("candidate_scope") or BLOCKED in q["candidate_scope"]: return False
-    if q.get("methodology_version")!=METHODOLOGY_VERSION: return False
+def valid(m, expected):
+    q=m["investigation"]["question"]; eq=expected["investigation"]["question"]
+    if q.get("candidate_scope")!=eq.get("candidate_scope") or BLOCKED in q.get("candidate_scope",[]): return False
+    for key in ("methodology_version","question_type","domain","temporal_scope","geographic_scope"):
+        if q.get(key)!=eq.get(key): return False
     if not m["investigation"]["sub_questions"]: return False
-    if not m["investigation"]["evidence_requirements"]: return False
-    if any(r.get("required_provenance") is not True for r in m["investigation"]["evidence_requirements"]): return False
-    if m["review"]["status"]!="NOT_REVIEWED" or m["review"]["review_is_not_source"] is not True: return False
+    er=m["investigation"]["evidence_requirements"]; eer=expected["investigation"]["evidence_requirements"]
+    if er!=eer: return False
+    if any(r.get("required_provenance") is not True for r in er): return False
+    if not m["research_gaps"] or any(g.get("status") not in GAP_STATES for g in m["research_gaps"]): return False
+    if m["research_gaps"]!=expected["research_gaps"]: return False
+    if m["contradictions"]!=expected["contradictions"] or m["corrections"]!=expected["corrections"]: return False
+    if m["review"]!=expected["review"]: return False
+    if m["answerability"]["status"]!=expected["answerability"]["status"]: return False
     if "truth probability" not in m["answerability"]["reason"].lower(): return False
-    if not m["provenance"].get("database_snapshot") or not m["provenance"].get("generation_timestamp"): return False
+    if m["provenance"].get("as_of")!=expected["provenance"].get("as_of"): return False
+    if m["provenance"].get("database_snapshot")!=expected["provenance"].get("database_snapshot"): return False
+    if m["provenance"].get("methodology_version")!=expected["provenance"].get("methodology_version"): return False
+    if m["performance_metadata"].get("dependency_depth")!=expected["performance_metadata"].get("dependency_depth"): return False
+    if m["investigation"].get("status")!=expected["investigation"].get("status"): return False
     if any(s.get("verification_state")=="VERIFIED" for s in m["sources"]): return False
+    if m["sources"]!=expected["sources"]: return False
     return True
 
 
@@ -29,10 +43,10 @@ def run():
     muts={
       "M1_remove_claim_decomposition":lambda m:m["investigation"].update({"sub_questions":[]}),
       "M2_remove_evidence_requirement":lambda m:m["investigation"].update({"evidence_requirements":[]}),
-      "M3_secondary_as_primary":lambda m:m["investigation"]["evidence_requirements"][0].update({"required_source_class":"PRIMARY"}),
+      "M3_secondary_as_primary":lambda m:m["sources"][0].update({"source_class":"PRIMARY","verification_state":"VERIFIED"}),
       "M4_remove_primary_gap":lambda m:m["research_gaps"].clear(),
       "M5_remove_research_gap":lambda m:m["research_gaps"].clear(),
-      "M6_corrupt_gap_status":lambda m:m["research_gaps"].__getitem__(0).update({"status":"RESOLVED"}) if m["research_gaps"] else m["investigation"].update({"status":"ANSWERABLE"}),
+      "M6_corrupt_gap_status":lambda m:m["research_gaps"].__getitem__(0).update({"status":"ANSWERED"}) if m["research_gaps"] else m["investigation"].update({"status":"ANSWERABLE"}),
       "M7_remove_contradiction":lambda m:m.update({"contradictions":[]}),
       "M8_remove_correction":lambda m:m.update({"corrections":[]}),
       "M9_temporal_to_causal":lambda m:m["investigation"]["question"].update({"question_type":"CAUSAL"}),
@@ -55,7 +69,7 @@ def run():
       "M26_hide_stale_result":lambda m:m["investigation"].update({"status":"ANSWERABLE"}),
     }
     for name,mutate in muts.items():
-        m=copy.deepcopy(seed); mutate(m); killed=not valid(m); print(f"{name}: {'KILLED' if killed else 'SURVIVED'}")
+        m=copy.deepcopy(seed); mutate(m); killed=not valid(m,seed); print(f"{name}: {'KILLED' if killed else 'SURVIVED'}")
         if not killed: raise SystemExit(f"SURVIVED: {name}")
     print("MUTATION_SUMMARY: 26/26 killed")
 

@@ -1,0 +1,12 @@
+[
+  {"id":"inec-home","candidate_id":null,"source_type":"ELECTION_RECORD","title":"Independent National Electoral Commission","publisher":"INEC","url":"https://www.inecnigeria.org/","primary_required":true,"kind":"election"},
+  {"id":"nbs-home","candidate_id":null,"source_type":"GOVERNMENT_DATA","title":"National Bureau of Statistics","publisher":"NBS","url":"https://www.nigerianstat.gov.ng/","primary_required":true,"kind":"economic"},
+  {"id":"cbn-home","candidate_id":null,"source_type":"GOVERNMENT_DATA","title":"Central Bank of Nigeria","publisher":"CBN","url":"https://www.cbn.gov.ng/","primary_required":true,"kind":"economic"},
+  {"id":"dmo-home","candidate_id":null,"source_type":"GOVERNMENT_DATA","title":"Debt Management Office","publisher":"DMO","url":"https://www.dmo.gov.ng/","primary_required":true,"kind":"economic"},
+  {"id":"supreme-court","candidate_id":null,"source_type":"COURT_RECORD","title":"Supreme Court of Nigeria","publisher":"Supreme Court of Nigeria","url":"https://supremecourt.gov.ng/","primary_required":true,"kind":"legal"},
+  {"id":"statehouse","candidate_id":"bola-ahmed-tinubu","source_type":"OFFICIAL_STATEMENT","title":"State House of Nigeria","publisher":"State House","url":"https://statehouse.gov.ng/","primary_required":true,"kind":"policy"},
+  {"id":"tinubu-x","candidate_id":"bola-ahmed-tinubu","source_type":"OFFICIAL_SOCIAL_ACCOUNT","title":"Official public account reference","publisher":"X","url":"https://x.com/officialABAT","primary_required":true,"kind":"public_conversation"},
+  {"id":"reuters","candidate_id":null,"source_type":"SECONDARY_NEWS","title":"Reuters Nigeria","publisher":"Reuters","url":"https://www.reuters.com/world/africa/nigeria/","primary_required":false,"kind":"secondary"},
+  {"id":"unavailable-fixture","candidate_id":"peter-gregory-obi","source_type":"UNKNOWN","title":"Controlled unavailable source","publisher":"Phase 6 test fixture","url":"https://example.invalid/phase6-unavailable","primary_required":true,"kind":"unavailable"},
+  {"id":"revision-fixture","candidate_id":"atiku-abubakar","source_type":"SECONDARY_NEWS","title":"Controlled revision source fixture","publisher":"Phase 6 fixture","url":"https://example.invalid/phase6-revision-v1","primary_required":false,"kind":"revision"}
+]

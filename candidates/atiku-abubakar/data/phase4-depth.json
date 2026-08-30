@@ -1,0 +1,39 @@
+{
+  "research_layer":"phase4-research-depth-v1",
+  "candidate_id":"atiku-abubakar",
+  "status":"IMPLEMENTED",
+  "source_upgrades":[
+    {"id":"P4-SRC-DMO-DEBT-2007","title":"National Debt Management Framework 2008-2012","publisher":"Debt Management Office","tier":1,"type":"official_debt_strategy","url":"https://www.dmo.gov.ng/publications/other-publications/national-debt-management-framework/1769-national-debt-management-framework-2008-2012-1/file","primary_source_status":"LOCATED"},
+    {"id":"P4-SRC-DMO-DSA-2008","title":"2008 Debt Sustainability Analysis","publisher":"Debt Management Office","tier":1,"type":"official_debt_analysis","url":"https://www.dmo.gov.ng/publications/reports/debt-sustainability-analysis/1046-2008-debt-sustainability-analysis-dsa-report-1/file","primary_source_status":"LOCATED"},
+    {"id":"P4-SRC-CBN-ANNUAL-2007","title":"CBN Annual Report and Statement of Accounts 2007","publisher":"Central Bank of Nigeria","tier":1,"type":"official_central_bank_annual_report","url":"https://dc.cbn.gov.ng/cbn_annual_report/13/","primary_source_status":"LOCATED"},
+    {"id":"P4-SRC-NBS-INFLATION-2007-2010","title":"Historical inflation table 2006-2010","publisher":"National Bureau of Statistics","tier":1,"type":"official_statistics","url":"https://www.nigerianstat.gov.ng/download/40","primary_source_status":"LOCATED"},
+    {"id":"P4-SRC-NBS-GHS-2007","title":"General Household Survey 2007","publisher":"National Bureau of Statistics","tier":1,"type":"official_microdata","url":"https://microdata.nigerianstat.gov.ng/index.php/catalog/23","primary_source_status":"LOCATED"},
+    {"id":"P4-SRC-INEC-2019-RESULT","title":"2019 Presidential Election Declaration of Results","publisher":"Independent National Electoral Commission","tier":1,"type":"official_election_result","url":"https://www.inecnigeria.org/wp-content/uploads/2019/03/2019-GE-PRESIDENTIAL-ELECTION-RESULTS.pdf","primary_source_status":"LOCATED"},
+    {"id":"P4-SRC-INEC-2019-REPORT","title":"Report of the 2019 General Election","publisher":"Independent National Electoral Commission","tier":1,"type":"official_election_report","url":"https://www.inecnigeria.org/downloads-all/report-of-the-2019-general-election/","primary_source_status":"LOCATED"},
+    {"id":"P4-SRC-INEC-2007-HIGHLIGHTS","title":"Highlights of Nigeria's Presidential Elections Since 1999","publisher":"Independent National Electoral Commission","tier":1,"type":"official_election_history","url":"https://www.inecnigeria.org/wp-content/uploads/2019/02/2019-INEC-OBSERVER-BRIEFING.pdf","primary_source_status":"LOCATED","limitations":["This document provides historical election context but is not a substitute for a candidate-level 2007 result sheet."]}
+  ],
+  "observations":[
+    {"id":"p4-atiku-debt-2005","metric":"total_public_debt","definition":"Nigeria total public debt","value":32306.73,"unit":"USD_million","geography":"Nigeria","period":"2005-12-31","source_id":"P4-SRC-DMO-DEBT-2007","dataset_version":"DMO-NDMF-2008","observation_version":1},
+    {"id":"p4-atiku-debt-2006","metric":"total_public_debt","definition":"Nigeria total public debt","value":17349.69,"unit":"USD_million","geography":"Nigeria","period":"2006-12-31","source_id":"P4-SRC-DMO-DEBT-2007","dataset_version":"DMO-NDMF-2008","observation_version":1},
+    {"id":"p4-atiku-debt-2007","metric":"total_public_debt","definition":"Nigeria total public debt","value":22229.88,"unit":"USD_million","geography":"Nigeria","period":"2007-12-31","source_id":"P4-SRC-DMO-DEBT-2007","dataset_version":"DMO-NDMF-2008","observation_version":1},
+    {"id":"p4-atiku-inflation-2006","metric":"headline_inflation_annual","definition":"Headline inflation year-on-year","value":8.57,"unit":"percent","geography":"Nigeria","period":"2006","source_id":"P4-SRC-NBS-INFLATION-2007-2010","dataset_version":"NBS-HISTORICAL-INFLATION","observation_version":1},
+    {"id":"p4-atiku-inflation-2007","metric":"headline_inflation_annual","definition":"Headline inflation year-on-year","value":5.20,"unit":"percent","geography":"Nigeria","period":"2007","source_id":"P4-SRC-NBS-INFLATION-2007-2010","dataset_version":"NBS-HISTORICAL-INFLATION","observation_version":1},
+    {"id":"p4-atiku-inflation-2008","metric":"headline_inflation_annual","definition":"Headline inflation year-on-year","value":15.10,"unit":"percent","geography":"Nigeria","period":"2008","source_id":"P4-SRC-NBS-INFLATION-2007-2010","dataset_version":"NBS-HISTORICAL-INFLATION","observation_version":1},
+    {"id":"p4-atiku-inflation-2009","metric":"headline_inflation_annual","definition":"Headline inflation year-on-year","value":13.90,"unit":"percent","geography":"Nigeria","period":"2009","source_id":"P4-SRC-NBS-INFLATION-2007-2010","dataset_version":"NBS-HISTORICAL-INFLATION","observation_version":1},
+    {"id":"p4-atiku-inflation-2010","metric":"headline_inflation_annual","definition":"Headline inflation year-on-year","value":11.80,"unit":"percent","geography":"Nigeria","period":"2010","source_id":"P4-SRC-NBS-INFLATION-2007-2010","dataset_version":"NBS-HISTORICAL-INFLATION","observation_version":1}
+  ],
+  "calculations":[
+    {"id":"p4-atiku-debt-change-2006-2007","operation":"absolute_change","formula":"22229.88 - 17349.69","result":4880.19,"unit":"USD_million","input_observations":["p4-atiku-debt-2006","p4-atiku-debt-2007"],"qualification":"The debt change is a national fiscal observation during Atiku's vice-presidential period; it is not evidence that Atiku personally caused the change."},
+    {"id":"p4-atiku-inflation-change-2006-2007","operation":"difference","formula":"5.20 - 8.57","result":-3.37,"unit":"percentage_points","input_observations":["p4-atiku-inflation-2006","p4-atiku-inflation-2007"]}
+  ],
+  "election_primary_source_upgrades":[
+    {"election":"2019","candidate":"Atiku Abubakar","status":"PRIMARY_SOURCE_LOCATED","source_id":"P4-SRC-INEC-2019-RESULT"},
+    {"election":"2007","candidate":"Atiku Abubakar","status":"PRIMARY_RESULT_SHEET_NOT_LOCATED","secondary_anchor":"Existing NDI reproduction of INEC result retained; do not relabel it as an INEC primary source."}
+  ],
+  "coverage_notes":{
+    "strong_areas":["1999-2007 vice-presidential period","2007 national debt documentation","2006-2010 historical inflation","2019 official election result","2023 official election result","legal/public-conversation records already present"],
+    "partial_areas":["2007 candidate-level primary election result","1999/2003 presidential vote detail for running-mate role","policy implementation outcomes","selected consumer prices","unemployment and poverty during 1999-2007"],
+    "primary_source_gaps":["direct 2007 candidate-level INEC result sheet not located in this research pass"],
+    "causal_discipline":"Federal macroeconomic observations are associated with the relevant period only. No personal causation is inferred."
+  }
+}
