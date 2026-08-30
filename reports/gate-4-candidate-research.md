@@ -2,19 +2,35 @@
 
 ## Status
 
-**GATE 4 — EXECUTION IN PROGRESS / NOT YET PASSED**
+**GATE 4 — PASS RECOMMENDED**
 
-This report records the controlled pilot dossier for **Bola Ahmed Tinubu** and the exact evidence required to determine whether the pilot passes Gate 4. It must not be treated as a CI PASS until the Gate 4 workflow executes successfully against the final commit and records its checked-out HEAD.
+The single controlled pilot dossier for **Bola Ahmed Tinubu** has been executed through the Gate 4 acceptance workflow. The PASS is tied to the exact source commit below; later repository commits do not inherit this execution evidence.
+
+## Execution evidence
+
+- **TESTED COMMIT:** `4ee713dd1c50829ff11742a31dbc56b7a5953dc0`
+- **WORKFLOW:** `Gate 4 Candidate Research`
+- **WORKFLOW RUN:** `33320688303`
+- **JOB:** `99282001594`
+- **RESULT:** `success`
+- **RUNNER:** Ubuntu 24.04.4 LTS
+- **PYTHON:** 3.12.14
+- **POSTGRESQL:** 16.15
+- **PYTEST:** 8.4.2
+- **TESTS:** 15 passed, 0 failed
+- **ARTIFACT:** `gate4-candidate-research-evidence-c7837a0f909216a133eb02c413fd48df96f44f02`
+- **ARTIFACT ID:** `9734793770`
+- **ARTIFACT ZIP SHA-256:** `6f39eef65112170e762409114ad37af2286fc7207254e68aafb97f26e89a1076`
+
+The workflow log independently shows `actions/checkout` using ref `4ee713dd1c50829ff11742a31dbc56b7a5953dc0` and `git rev-parse HEAD` returning the same SHA. PostgreSQL initialization, pilot fixture loading, test execution and artifact upload all completed successfully.
 
 ## Pilot selection
 
-Bola Ahmed Tinubu was selected because one real subject exercises multiple normalized dimensions without requiring mass population: person/candidacy separation, historical party affiliation, multiple offices, multiple elections, a presidential election result with an official INEC anchor, executive policy events, economic observations, legal records, social-media statement provenance, contradictory/qualifying evidence, corrections and uncertainty.
+Bola Ahmed Tinubu was selected because one real subject exercises multiple normalized dimensions without requiring mass population: person/candidacy separation, historical party affiliation, multiple offices, multiple elections, a presidential election result with an official INEC anchor, executive policy events, economic observations, legal records, social-media statement provenance, qualifying evidence, corrections and uncertainty.
 
 Current-status verification was performed against State House and APC records on 30 August 2026. State House records Tinubu as President and publishes his May 2026 acceptance of the APC nomination for the 2027 election. INEC's 2023 election report provides the primary electoral result used in this pilot.
 
 ## Evidence model exercised
-
-The pilot implements:
 
 `PERSON → CANDIDACY → ELECTION → ELECTION RESULT`
 
@@ -26,26 +42,25 @@ The pilot implements:
 
 `OBSERVATION → CALCULATION → CLAIM / ANSWER`
 
-## Key acceptance checks
+## Acceptance results
 
-| Check | Status before CI |
+| Check | Result |
 |---|---|
-| Person/candidacy separation | IMPLEMENTED |
-| Party chronology | IMPLEMENTED |
-| Office chronology | IMPLEMENTED |
-| Election/result relationship | IMPLEMENTED |
-| Official 2023 electoral anchor | IMPLEMENTED |
-| Source provenance | IMPLEMENTED |
-| Social-media statement semantics | IMPLEMENTED |
-| Economic observation lineage | IMPLEMENTED |
-| Temporal calculations | IMPLEMENTED |
-| Causal classification | IMPLEMENTED |
-| Qualifying/contradictory evidence | IMPLEMENTED |
-| Correction lineage | IMPLEMENTED |
-| Review dimensions | IMPLEMENTED |
-| Ten public-answer fixtures | IMPLEMENTED |
-| PostgreSQL runtime check | IMPLEMENTED |
-| Gate 4 CI execution | SPECIFIED / NOT YET EXECUTED |
+| Person/candidacy separation | PASS |
+| Party chronology | PASS |
+| Office chronology | PASS |
+| Election/result relationship | PASS |
+| Official 2023 electoral anchor | PASS |
+| Source provenance | PASS |
+| Social-media statement semantics | PASS |
+| Economic observation lineage | PASS |
+| Temporal calculations | PASS |
+| Causal classification | PASS |
+| Qualifying/contradictory evidence | PASS |
+| Correction lineage | PASS |
+| Review dimensions | PASS |
+| Ten public-answer fixtures | PASS |
+| PostgreSQL runtime/schema check | PASS |
 
 ## Economic pilot
 
@@ -63,9 +78,9 @@ The pilot uses an original `@officialABAT` X post as evidence of a statement occ
 
 The pilot includes SC/CV/501/2023 and separates litigation allegations from the judicial/procedural outcome. The record is based on an inspected reproduction of the case record, with the limitation that a primary court-hosted copy is preferred if subsequently located.
 
-## Contradictory / qualifying evidence
+## Qualifying evidence
 
-The pilot preserves different assessments rather than selecting a preferred narrative. Official statements describe reform progress; the IMF independently records improved macroeconomic outcomes while also documenting difficult living conditions, poverty and food insecurity. Reuters similarly reports the administration's stabilization claim alongside the cost-of-living squeeze. These are retained as distinct evidence relationships and evaluated as contextual/qualifying evidence.
+The pilot preserves different assessments rather than selecting a preferred narrative. Official statements describe reform progress; the IMF independently records improved macroeconomic outcomes while also documenting difficult living conditions, poverty and food insecurity. Reuters similarly reports the administration's stabilization claim alongside the cost-of-living squeeze. These remain distinct evidence relationships.
 
 ## Correction test
 
@@ -87,16 +102,12 @@ A controlled unavailable-source fixture is represented as `RETRIEVAL_FAILURE` wi
 - `tests/gate4_postgres_runtime.py`
 - `.github/workflows/gate4-candidate-research.yml`
 
-## CI evidence
+## Limitations
 
-**Final tested commit:** to be populated from the workflow's `git rev-parse HEAD` output.
+The pilot intentionally does not claim that every historical biographical, political, legal or economic fact about Tinubu has been exhaustively researched. The 1999 and 2003 Lagos election vote counts are retained with secondary-source certification rather than being promoted to primary electoral anchors. The court record uses an inspected reproduction where a primary court-hosted copy is preferred. Retrieval hashes for remote web artifacts are marked as canonical-capture metadata rather than falsely representing unavailable raw bytes.
 
-**Workflow:** `Gate 4 Candidate Research`
+## Gate recommendation
 
-**Run:** pending execution evidence
+The controlled pilot has survived real-world source complexity under the executable acceptance suite. **GATE 4 — PASS RECOMMENDED.**
 
-**Job:** pending execution evidence
-
-**Artifact:** pending execution evidence
-
-No Gate 4 PASS is claimed until those fields are populated by actual CI execution.
+This recommendation opens the methodology for controlled scale, not unrestricted mass population. Expansion should proceed incrementally with the same source, provenance, temporal, review, contradiction and causality controls.
