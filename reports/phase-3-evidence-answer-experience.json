@@ -1,0 +1,16 @@
+{
+  "phase": "3",
+  "name": "Evidence Answer Experience",
+  "status": "UNTESTED",
+  "tested_commit": null,
+  "workflow": ".github/workflows/phase-3-evidence-answer.yml",
+  "run_id": null,
+  "job_id": null,
+  "environment": {},
+  "tests": {"count": null,"passed": null,"failed": null},
+  "mutations": {"count": 18,"killed": null,"survived": null},
+  "candidate_scope": ["bola-ahmed-tinubu","peter-gregory-obi","atiku-abubakar"],
+  "candidate_4": "BLOCKED",
+  "limitations": ["Authoritative status requires actual CI execution."],
+  "known_failures": []
+}
