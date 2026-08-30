@@ -8,7 +8,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | Bola Ahmed Tinubu | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | PASS | PASS | PUBLISHED |
 | Peter Gregory Obi | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | PASS | PASS | VALIDATED |
-| Atiku Abubakar | IN_PROGRESS | IN_PROGRESS | IN_PROGRESS | IN_PROGRESS | IN_PROGRESS | IN_PROGRESS | NOT_STARTED | IN_PROGRESS | IN_PROGRESS | IN_PROGRESS | IN_PROGRESS | IN_PROGRESS | IN_PROGRESS | IN_PROGRESS | IN_PROGRESS | IN_PROGRESS | IN_PROGRESS | NOT_STARTED | NOT_STARTED | IN_PROGRESS |
+| Atiku Abubakar | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | NOT_STARTED | NOT_STARTED | RESEARCH_COMPLETE |
 
 ## Candidate status vocabulary
 
@@ -40,20 +40,18 @@ The first Peter Obi execution at commit `d22adfd03470046fb72644109dcac6a1f203e4e
 
 Selection details are recorded in `reports/candidate-3-selection.md`.
 
-## Atiku initial research state
+## Atiku research completion
 
-The standardized dossier has been opened at `candidates/atiku-abubakar/`. Initial research anchors cover identity, office history, presidential-election history, party history, 2027 candidacy, RELATED PUBLIC CONVERSATION, federal policy/economic research and the ADC legal record.
+Atiku's standardized dossier is now **RESEARCH_COMPLETE**. The machine-readable fixture contains temporal party memberships, officeholdings, candidacies, primary contests, official election-result anchors, sources, retrieval events, evidence relationships, quantitative observations/calculations, causal classification, contradictions, correction lineage, uncertainty states, review dimensions, RELATED PUBLIC CONVERSATION records, and a ten-answer provenance fixture.
 
-The 2027 ADC status is being treated as a temporal research problem. ADC and INEC-related records identify Atiku as its 2027 presidential candidate, while the 2026 deregistration litigation and related party leadership proceedings are retained as separate legal/procedural evidence. No single narrative is being promoted as fact before the underlying records are reconciled.
-
-The machine-readable candidate scaffold is intentionally `IN_PROGRESS`. No validation claim has been made.
+The Adamawa record explicitly distinguishes elected governor/governor-elect from sworn officeholder. The ADC record preserves the June 15 Federal High Court order, June 16 stay, July 2 leadership judgment, and July 28 appellate nullification as separate legal events. The dossier does not collapse those events into a binary deregistration label.
 
 ## Current controlled candidate
 
-**Atiku Abubakar**
+**Atiku Abubakar — RESEARCH_COMPLETE**
 
 Candidate 4 remains blocked. No Candidate 4 research, ingestion or validation has begun.
 
 ## Gate discipline
 
-Only Atiku Abubakar is active in this controlled-ingestion round. The generalized validator will be run only after the candidate's standardized research requirements are genuinely complete. A Candidate 3 failure must remain visible and must not be hidden by altering common acceptance criteria.
+The common validator remains unchanged. The workflow matrix now contains Tinubu, Peter Obi and Atiku. Atiku has **not** been marked `VALIDATED`; CI evidence must establish the independent result before that transition can occur. A Candidate 3 failure must remain visible and must not be hidden by altering common acceptance criteria.
