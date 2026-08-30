@@ -32,40 +32,9 @@ def validate(m, expected, expected_answer):
 def set_answer_text(m,text): m["answer_text"]=text
 
 def run():
-    seed=present("What evidence is the system coverage for Tinubu, Obi and Atiku?",ROOT)
-    expected=coverage_report(ROOT)
+    seed=present("What evidence is the system coverage for Tinubu, Obi and Atiku?",ROOT); expected=coverage_report(ROOT)
     mutations={
-      "M1_remove_primary_source_classification":lambda m:[s.pop("primary_source_status",None) for s in m["sources"]],
-      "M2_false_primary_source":lambda m:[s.update({"tier":2,"type":"secondary_report"}) for s in m["sources"][:1]],
-      "M3_remove_research_gap":lambda m:m["coverage"]["known_gaps"].update({"bola-ahmed-tinubu":[]}),
-      "M4_sparse_to_high":lambda m:m["coverage"]["candidates"]["peter-gregory-obi"]["domains"][0].update({"coverage":"HIGH"}),
-      "M5_unknown_to_false":lambda m:(m.update({"answer_status":"ANSWERED"}),set_answer_text(m,"FALSE")),
-      "M6_remove_contradiction":lambda m:m["coverage"]["candidates"]["peter-gregory-obi"].update({"contradiction_coverage":"HIGH"}),
-      "M7_remove_correction_history":lambda m:m["coverage"]["candidates"]["atiku-abubakar"].update({"correction_coverage":"HIGH"}),
-      "M8_remove_economic_provenance":lambda m:m["coverage"]["candidates"]["bola-ahmed-tinubu"]["economic_metrics"].pop("inflation",None),
-      "M9_change_economic_geography":lambda m:m["sources"][0].update({"geography":"Anambra State"}),
-      "M10_change_metric_unit":lambda m:m["coverage"]["candidates"]["bola-ahmed-tinubu"]["economic_metrics"]["exchange_rate"].update({"unit":"percent"}),
-      "M11_change_observation_period":lambda m:m["sources"][0].update({"period":"1999"}),
-      "M12_temporal_to_causal":lambda m:set_answer_text(m,"Tinubu caused the economic outcomes."),
-      "M13_remove_policy_status":lambda m:m["coverage"]["candidates"]["peter-gregory-obi"]["domains"][7].update({"coverage":"HIGH"}),
-      "M14_proposed_to_implemented":lambda m:m["coverage"]["candidates"]["peter-gregory-obi"]["domains"][7].update({"domain":"IMPLEMENTED_POLICY","coverage":"HIGH"}),
-      "M15_implemented_to_success":lambda m:m["coverage"]["candidates"]["bola-ahmed-tinubu"]["domains"][7].update({"coverage":"HIGH","status":"DOCUMENTED_OUTCOME"}),
-      "M16_remove_legal_event":lambda m:m["coverage"]["candidates"]["atiku-abubakar"]["domains"][9].update({"coverage":"HIGH"}),
-      "M17_allegation_to_finding":lambda m:set_answer_text(m,"The allegation is established as fact."),
-      "M18_remove_social_semantics":lambda m:m["coverage"]["candidates"]["bola-ahmed-tinubu"]["domains"][6].update({"coverage":"HIGH"}),
-      "M19_fabricate_primary_availability":lambda m:m["sources"][0].update({"primary_source_status":"LOCATED","availability":"AVAILABLE"}),
-      "M20_remove_limitation":lambda m:m["limitations"].pop(),
-      "M21_partial_to_complete":lambda m:m["coverage"]["candidates"]["atiku-abubakar"].update({"quantitative_coverage":"HIGH","temporal_coverage":"HIGH"}),
-      "M22_current_for_historical":lambda m:m["interpreted_query"].update({"as_of":"2026-08-30"}),
-      "M23_remove_source_version":lambda m:m["sources"][0].pop("id",None),
-      "M24_alter_quantitative_input":lambda m:m["coverage"]["candidates"]["bola-ahmed-tinubu"]["economic_metrics"]["inflation"].update({"observation_count":999}),
-      "M25_alter_calculation_output":lambda m:set_answer_text(m,"Coverage calculation result: 999"),
-      "M26_remove_candidate_isolation":lambda m:m["interpreted_query"].update({"candidate_scope":["bola-ahmed-tinubu","peter-gregory-obi","atiku-abubakar"]}),
-      "M27_cross_contaminate":lambda m:m["evidence"][0].update({"candidate_id":"atiku-abubakar"}),
-      "M28_remove_review_separation":lambda m:m["coverage"]["candidates"]["bola-ahmed-tinubu"].update({"review_coverage":"HIGH"}),
-      "M29_remove_methodology_version":lambda m:m["provenance"].update({"methodology_version":None}),
-      "M30_remove_research_gap_status":lambda m:m["coverage"]["candidates"]["atiku-abubakar"]["research_gaps"][0].pop("status",None),
-    }
+      "M1_remove_primary_source_classification":lambda m:[s.pop("primary_source_status",None) for s in m["sources"]],"M2_false_primary_source":lambda m:[s.update({"tier":2,"type":"secondary_report"}) for s in m["sources"][:1]],"M3_remove_research_gap":lambda m:m["coverage"]["known_gaps"].update({"bola-ahmed-tinubu":[]}),"M4_sparse_to_high":lambda m:m["coverage"]["candidates"]["peter-gregory-obi"]["domains"][0].update({"coverage":"HIGH"}),"M5_unknown_to_false":lambda m:(m.update({"answer_status":"ANSWERED"}),set_answer_text(m,"FALSE")),"M6_remove_contradiction":lambda m:m["coverage"]["candidates"]["peter-gregory-obi"].update({"contradiction_coverage":"HIGH"}),"M7_remove_correction_history":lambda m:m["coverage"]["candidates"]["atiku-abubakar"].update({"correction_coverage":"HIGH"}),"M8_remove_economic_provenance":lambda m:m["coverage"]["candidates"]["bola-ahmed-tinubu"]["economic_metrics"].pop("inflation",None),"M9_change_economic_geography":lambda m:m["sources"][0].update({"geography":"Anambra State"}),"M10_change_metric_unit":lambda m:m["coverage"]["candidates"]["bola-ahmed-tinubu"]["economic_metrics"]["exchange_rate"].update({"unit":"percent"}),"M11_change_observation_period":lambda m:m["sources"][0].update({"period":"1999"}),"M12_temporal_to_causal":lambda m:set_answer_text(m,"Tinubu caused the economic outcomes."),"M13_remove_policy_status":lambda m:m["coverage"]["candidates"]["peter-gregory-obi"]["domains"][7].update({"coverage":"HIGH"}),"M14_proposed_to_implemented":lambda m:m["coverage"]["candidates"]["peter-gregory-obi"]["domains"][7].update({"domain":"IMPLEMENTED_POLICY","coverage":"HIGH"}),"M15_implemented_to_success":lambda m:m["coverage"]["candidates"]["bola-ahmed-tinubu"]["domains"][7].update({"coverage":"HIGH","status":"DOCUMENTED_OUTCOME"}),"M16_remove_legal_event":lambda m:m["coverage"]["candidates"]["atiku-abubakar"]["domains"][9].update({"coverage":"UNKNOWN"}),"M17_allegation_to_finding":lambda m:set_answer_text(m,"The allegation is established as fact."),"M18_remove_social_semantics":lambda m:m["coverage"]["candidates"]["bola-ahmed-tinubu"]["domains"][6].update({"coverage":"HIGH"}),"M19_fabricate_primary_availability":lambda m:m["sources"][0].update({"primary_source_status":"LOCATED","availability":"AVAILABLE"}),"M20_remove_limitation":lambda m:m["limitations"].pop(),"M21_partial_to_complete":lambda m:m["coverage"]["candidates"]["atiku-abubakar"].update({"quantitative_coverage":"HIGH","temporal_coverage":"HIGH"}),"M22_current_for_historical":lambda m:m["interpreted_query"].update({"as_of":"2026-08-30"}),"M23_remove_source_version":lambda m:m["sources"][0].pop("id",None),"M24_alter_quantitative_input":lambda m:m["coverage"]["candidates"]["bola-ahmed-tinubu"]["economic_metrics"]["inflation"].update({"observation_count":999}),"M25_alter_calculation_output":lambda m:set_answer_text(m,"Coverage calculation result: 999"),"M26_remove_candidate_isolation":lambda m:m["interpreted_query"].update({"candidate_scope":["bola-ahmed-tinubu","peter-gregory-obi","atiku-abubakar"]}),"M27_cross_contaminate":lambda m:m["evidence"][0].update({"candidate_id":"atiku-abubakar"}),"M28_remove_review_separation":lambda m:m["coverage"]["candidates"]["bola-ahmed-tinubu"].update({"review_coverage":"HIGH"}),"M29_remove_methodology_version":lambda m:m["provenance"].update({"methodology_version":None}),"M30_remove_research_gap_status":lambda m:m["coverage"]["candidates"]["atiku-abubakar"]["research_gaps"][0].pop("status",None)}
     for name,mutate in mutations.items():
         m=copy.deepcopy(seed); mutate(m); killed=not validate(m,expected,seed); print(f"{name}: {'KILLED' if killed else 'SURVIVED'}")
         if not killed: raise SystemExit(f"SURVIVED: {name}")
