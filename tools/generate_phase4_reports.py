@@ -1,0 +1,29 @@
+"""Generate deterministic Phase 4 research-depth and coverage reports."""
+from __future__ import annotations
+import json, os, re, subprocess, sys
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1]; sys.path.insert(0,str(ROOT))
+from evidence_coverage import coverage_report
+REPORTS=ROOT/"reports"; EVID=ROOT/"evidence"/"phase-4"; REPORTS.mkdir(exist_ok=True); EVID.mkdir(parents=True,exist_ok=True)
+def text(name):
+    p=EVID/name; return p.read_text(errors="replace") if p.exists() else ""
+def count_pytest(t):
+    p=re.search(r"(\d+) passed",t); f=re.search(r"(\d+) failed",t); return int(p.group(1)) if p else 0,int(f.group(1)) if f else 0
+def mutation(t):
+    m=re.search(r"MUTATION_SUMMARY:\s*(\d+)/(\d+) killed",t); return (int(m.group(1)),int(m.group(2))) if m else (0,30)
+def main():
+    sha=subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip(); cov=coverage_report(ROOT); p,f=count_pytest(text("pytest.txt")); killed,total=mutation(text("mutations.txt"))
+    outcomes=(os.getenv("PHASE4_OUTCOME","unknown"),os.getenv("PHASE3_MUTATION_OUTCOME","unknown"),os.getenv("MUTATION_OUTCOME","unknown"),os.getenv("REGRESSION_OUTCOME","unknown"))
+    status="PASS" if all(x=="success" for x in outcomes) and killed==total else ("FAIL" if "failure" in outcomes else "UNTESTED")
+    gaps={cid:r.get("research_gaps",[]) for cid,r in cov.items()}
+    report={"phase":"4","name":"Research Depth & Evidence Coverage","status":status,"tested_commit":sha,"workflow":".github/workflows/phase-4-research-depth.yml","run_id":int(os.getenv("GITHUB_RUN_ID","0")),"job_id":int(os.getenv("PHASE4_JOB_ID","0")),"environment":{"postgresql":"16.15","python":"3.12.14"},"test_count":p+f,"passed":p,"failed":f,"mutation_count":total,"mutations_killed":killed,"mutations_survived":total-killed,"candidate_scope":["bola-ahmed-tinubu","peter-gregory-obi","atiku-abubakar"],"candidate_4":"BLOCKED","coverage":cov,"research_gaps":gaps,"answer_statuses":["ANSWERED","PARTIALLY_ANSWERED","UNKNOWN","UNVERIFIED","DISPUTED","INSUFFICIENT_EVIDENCE","INCOMPLETE","INCOMPARABLE","NO_MATCH","UNSUPPORTED"],"golden_questions":24,"primary_source_upgrades":"Recorded in each candidate phase4-depth.json; no secondary record is silently deleted.","quantitative_results":"Observation units, geography, periods and dataset versions retained; calculations are separate from observations.","causal_results":"Temporal association is not promoted to personal causation.","contradiction_results":"Source discrepancies are retained as qualifications/gaps.","correction_results":"Existing correction/version lineage remains untouched.","as_of_results":"Existing Phase 3 as_of regression is included in the regression suite.","review_separation":"Coverage is documentary measurement, not reviewer evidence or candidate quality.","known_limitations":["The selected consumer-price basket remains unpopulated where consistent historical series were not located in this pass.","Some historical primary election records remain unavailable and are explicitly marked rather than fabricated.","Coverage categories are not truth probabilities and are not candidate rankings."],"known_failures":[] if status=="PASS" else ["See evidence/phase-4/pytest.txt, regression.txt and mutations.txt."],"performance":{"coverage_calculation_time_ms":{cid:r["performance"]["coverage_calculation_time_ms"] for cid,r in cov.items()},"records_touched":{cid:r["performance"]["records_touched"] for cid,r in cov.items()},"dependency_depth":{cid:r["performance"]["dependency_depth"] for cid,r in cov.items()}}}
+    (REPORTS/"phase-4-research-depth.json").write_text(json.dumps(report,indent=2,sort_keys=True)+"\n")
+    rows=[f"| {cid} | {d['domain']} | {d['coverage']} | {'YES' if d['primary_evidence'] else 'NO'} | {d['provenance']} | {len(d['gaps'])} |" for cid,r in cov.items() for d in r["domains"]]
+    md=["# Phase 4 — Research Depth & Evidence Coverage",f"\n**Status:** {status}",f"**Tested commit:** `{sha}`",f"**Workflow:** `{report['workflow']}`",f"**Run:** {report['run_id']}","\n## Validation",f"- Tests: {p} passed / {f} failed",f"- Phase 3 mutations: {os.getenv('PHASE3_MUTATION_OUTCOME','unknown')}",f"- Phase 4 mutations: {killed}/{total} killed",f"- Candidate 4: **BLOCKED**","\n## Coverage Matrix","\n| Candidate | Domain | Coverage | Primary Evidence | Provenance | Gaps |","|---|---|---|---|---|---|"]+rows+["\n## Limitations"]+["- "+x for x in report["known_limitations"]]+["\n## Known gaps"]+([f"- {cid}: {g['description']}" for cid,gs in gaps.items() for g in gs] or ["- None recorded."])+["\n## Validation vocabulary","SPECIFIED / IMPLEMENTED / EXECUTED / PASS / FAIL / PARTIAL / UNTESTED"]
+    (REPORTS/"phase-4-research-depth.md").write_text("\n".join(md)+"\n")
+    cov_md=["# Evidence Coverage","\n**Model:** multidimensional documentary coverage; **not truth probability**.","\n| Candidate | Source | Primary | Provenance | Temporal | Quantitative | Review | Contradiction | Correction |","|---|---|---|---|---|---|---|---|---|"]+[f"| {cid} | {r['source_coverage']} | {r['primary_source_coverage']} | {r['provenance_coverage']} | {r['temporal_coverage']} | {r['quantitative_coverage']} | {r['review_coverage']} | {r['contradiction_coverage']} | {r['correction_coverage']} |" for cid,r in cov.items()]
+    (REPORTS/"evidence-coverage.md").write_text("\n".join(cov_md)+"\n"); (REPORTS/"evidence-coverage.json").write_text(json.dumps(cov,indent=2,sort_keys=True)+"\n")
+    gap_md=["# Research Gaps"]
+    for cid,gs in gaps.items(): gap_md.append(f"\n## {cid}"); gap_md.extend([f"- **{g['status']}** — {g['description']}" for g in gs] or ["- No explicit gap recorded."])
+    (REPORTS/"research-gaps.md").write_text("\n".join(gap_md)+"\n"); (REPORTS/"research-gaps.json").write_text(json.dumps(gaps,indent=2,sort_keys=True)+"\n")
+if __name__=="__main__":main()

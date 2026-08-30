@@ -1,0 +1,29 @@
+{
+  "research_layer":"phase4-research-depth-v1",
+  "candidate_id":"peter-gregory-obi",
+  "status":"IMPLEMENTED",
+  "source_upgrades":[
+    {"id":"P4-SRC-NBS-IGR-2013","title":"Internally Generated Revenue Tables at State Level 2013","publisher":"National Bureau of Statistics","tier":1,"type":"official_state_revenue_statistics","url":"https://www.nigerianstat.gov.ng/elibrary/read/242","primary_source_status":"LOCATED"},
+    {"id":"P4-SRC-DMO-ANAMBRA-DOM-2013","title":"Total Domestic Debt Stock for the 36 States and FCT for 2013 (Revised)","publisher":"Debt Management Office","tier":1,"type":"official_state_debt_statistics","url":"https://www.dmo.gov.ng/debt-profile/sub-national-debts/1082-total-domestic-debt-stock-for-the-36-states-and-fct-for-2013-revised","primary_source_status":"LOCATED"},
+    {"id":"P4-SRC-DMO-ANAMBRA-EXT-2013","title":"Federal and State Governments External Debt Stock as at 31 December 2013","publisher":"Debt Management Office","tier":1,"type":"official_state_debt_statistics","url":"https://www.dmo.gov.ng/debt-profile/sub-nationals-debts/1068-federal-and-state-governments-external-debt-stock-as-at-31st-december-2013/file","primary_source_status":"LOCATED"},
+    {"id":"P4-SRC-NBS-IGR-2015","title":"Internally Generated Revenue at State Level 2015","publisher":"National Bureau of Statistics","tier":1,"type":"official_state_revenue_statistics","url":"https://www.nigerianstat.gov.ng/pdfuploads/IGR%20Tables%202015%20complete.pdf","primary_source_status":"LOCATED"}
+  ],
+  "observations":[
+    {"id":"p4-obi-igr-2011","metric":"state_igr","definition":"Anambra internally generated revenue","value":6148922395.00,"unit":"NGN","geography":"Anambra State","period":"2011","source_id":"P4-SRC-NBS-IGR-2015","dataset_version":"NBS-IGR-2015","observation_version":1},
+    {"id":"p4-obi-igr-2012","metric":"state_igr","definition":"Anambra internally generated revenue","value":7601585012.15,"unit":"NGN","geography":"Anambra State","period":"2012","source_id":"P4-SRC-NBS-IGR-2015","dataset_version":"NBS-IGR-2015","observation_version":1},
+    {"id":"p4-obi-igr-2013","metric":"state_igr","definition":"Anambra internally generated revenue","value":8731599912.43,"unit":"NGN","geography":"Anambra State","period":"2013","source_id":"P4-SRC-NBS-IGR-2015","dataset_version":"NBS-IGR-2015","observation_version":1,"qualification":"A separate NBS 2013 summary snapshot displays NGN 8,731,599,912.43; another detailed table displays NGN 8,731,599,921.43, a NGN 9.00 source discrepancy retained for review."},
+    {"id":"p4-obi-igr-2014","metric":"state_igr","definition":"Anambra internally generated revenue","value":10454312316.18,"unit":"NGN","geography":"Anambra State","period":"2014","source_id":"P4-SRC-NBS-IGR-2015","dataset_version":"NBS-IGR-2015","observation_version":1},
+    {"id":"p4-obi-domestic-debt-2013","metric":"state_domestic_debt_stock","definition":"Anambra State domestic debt stock reported by DMO","value":3025797046.67,"unit":"NGN","geography":"Anambra State","period":"2013-12-31","source_id":"P4-SRC-DMO-ANAMBRA-DOM-2013","dataset_version":"DMO-STATE-DOMESTIC-DEBT-2013-REVISED","observation_version":1},
+    {"id":"p4-obi-external-debt-2013","metric":"state_external_debt_stock","definition":"Anambra State external debt stock reported by DMO","value":30323574.40,"unit":"USD","geography":"Anambra State","period":"2013-12-31","source_id":"P4-SRC-DMO-ANAMBRA-EXT-2013","dataset_version":"DMO-STATE-EXTERNAL-DEBT-2013","observation_version":1}
+  ],
+  "calculations":[
+    {"id":"p4-obi-igr-growth-2011-2014","operation":"percent_change","formula":"(10454312316.18 - 6148922395.00) / 6148922395.00 * 100","result":70.0205,"unit":"percent","input_observations":["p4-obi-igr-2011","p4-obi-igr-2014"],"qualification":"This is a change in the reported Anambra IGR series, not proof that any individual caused the change."}
+  ],
+  "coverage_notes":{
+    "strong_areas":["Anambra state debt 2013","Anambra IGR 2011-2014","judicial office chronology","2023 election result"],
+    "partial_areas":["state expenditure","state GDP/economic output","selected consumer prices","unemployment","poverty","complete 2006-2014 quarterly fiscal series"],
+    "primary_source_gaps":["some election-result details for the 2010 Anambra governorship remain anchored to secondary reporting pending direct result capture","policy implementation and documented outcomes require additional primary records"],
+    "contested_data":"The NGN 9.00 IGR discrepancy is retained as source disagreement rather than silently selecting a winner.",
+    "causal_discipline":"The IGR and debt observations describe the Anambra record during the relevant period; they do not establish that Peter Obi personally caused any measured change."
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "research_layer": "phase4-research-depth-v1",
+  "candidate_id": "bola-ahmed-tinubu",
+  "status": "IMPLEMENTED",
+  "source_upgrades": [
+    {"id":"P4-SRC-NBS-CPI-2024-12","title":"CPI December 2024","publisher":"National Bureau of Statistics","tier":1,"type":"official_statistics","url":"https://microdata.nigerianstat.gov.ng/index.php/catalog/154/download/1126/CPI_DEC_2024.pdf","primary_source_status":"LOCATED","limitations":["December 2024 CPI belongs to the pre-2025 rebasing series; later rebased values must not be silently substituted."]},
+    {"id":"P4-SRC-NBS-GDP-2024-Q1","title":"National Gross Domestic Product Q1 2024","publisher":"National Bureau of Statistics","tier":1,"type":"official_statistics","url":"https://www.nigerianstat.gov.ng/elibrary/read/1241506","primary_source_status":"LOCATED"},
+    {"id":"P4-SRC-NBS-GDP-2024-Q2","title":"Nigeria Gross Domestic Product Q2 2024","publisher":"National Bureau of Statistics","tier":1,"type":"official_statistics","url":"https://www.nigerianstat.gov.ng/elibrary/read/1241549","primary_source_status":"LOCATED"},
+    {"id":"P4-SRC-CBN-ECO-Q4-2024","title":"Economic Report Q4 2024","publisher":"Central Bank of Nigeria","tier":1,"type":"official_economic_report","url":"https://www.cbn.gov.ng/Out/2025/RSD/Fourth%20Quarter%202024%20Economic%20Report.pdf","primary_source_status":"LOCATED"},
+    {"id":"P4-SRC-CBN-FSR-2024","title":"Financial Stability Report December 2024","publisher":"Central Bank of Nigeria","tier":1,"type":"official_financial_report","url":"https://www.cbn.gov.ng/Out/2025/FPRD/DECEMBER%202024%20FINANCIAL%20STABILITY%20REPORT%20FINAL.pdf","primary_source_status":"LOCATED"},
+    {"id":"P4-SRC-DMO-DEBT-2024","title":"Nigeria's Total Public Debt Stock as at December 31, 2024","publisher":"Debt Management Office","tier":1,"type":"official_debt_statistics","url":"https://www.dmo.gov.ng/debt-profile/total-public-debt","primary_source_status":"LOCATED","limitations":["The DMO index contains multiple dated publications; the exact December 2024 document must be retained as the source version used by an observation."]}
+  ],
+  "observations": [
+    {"id":"p4-tinubu-cpi-headline-2024-12","metric":"headline_inflation_yoy","definition":"NBS headline CPI year-on-year rate, pre-2025 CPI series","value":34.80,"unit":"percent","geography":"Nigeria","period":"2024-12","source_id":"P4-SRC-NBS-CPI-2024-12","dataset_version":"NBS-CPI-PRE-REBASING-2024","observation_version":1},
+    {"id":"p4-tinubu-cpi-food-2024-12","metric":"food_inflation_yoy","definition":"NBS food inflation year-on-year rate, pre-2025 CPI series","value":39.84,"unit":"percent","geography":"Nigeria","period":"2024-12","source_id":"P4-SRC-NBS-CPI-2024-12","dataset_version":"NBS-CPI-PRE-REBASING-2024","observation_version":1},
+    {"id":"p4-tinubu-gdp-q1-2024","metric":"real_gdp_growth_yoy","definition":"NBS quarterly real GDP growth","value":2.98,"unit":"percent","geography":"Nigeria","period":"2024-Q1","source_id":"P4-SRC-NBS-GDP-2024-Q1","dataset_version":"NBS-GDP-2024-Q1","observation_version":1},
+    {"id":"p4-tinubu-gdp-q2-2024","metric":"real_gdp_growth_yoy","definition":"NBS quarterly real GDP growth","value":3.19,"unit":"percent","geography":"Nigeria","period":"2024-Q2","source_id":"P4-SRC-NBS-GDP-2024-Q2","dataset_version":"NBS-GDP-2024-Q2","observation_version":1},
+    {"id":"p4-tinubu-fx-q4-2024","metric":"nfem_average_exchange_rate","definition":"CBN reported average NFEM exchange rate during Q4 2024","value":1623.26,"unit":"NGN_per_USD","geography":"Nigeria","period":"2024-Q4","source_id":"P4-SRC-CBN-ECO-Q4-2024","dataset_version":"CBN-ECO-Q4-2024","observation_version":1},
+    {"id":"p4-tinubu-fx-end-2024","metric":"end_period_exchange_rate","definition":"CBN reported end-December 2024 naira per US dollar rate","value":1535.82,"unit":"NGN_per_USD","geography":"Nigeria","period":"2024-12-31","source_id":"P4-SRC-CBN-FSR-2024","dataset_version":"CBN-FSR-DEC-2024","observation_version":1}
+  ],
+  "calculations": [
+    {"id":"p4-calc-headline-2023-2024","operation":"difference","formula":"34.80 - 28.92","result":5.88,"unit":"percentage_points","input_observations":["obs-cpi-2023-12","p4-tinubu-cpi-headline-2024-12"],"qualification":"The NBS December 2024 report states 5.87 percentage points because the displayed rates are rounded; the deterministic calculation from the displayed values is 5.88 percentage points."},
+    {"id":"p4-calc-food-2023-2024","operation":"difference","formula":"39.84 - 33.93","result":5.91,"unit":"percentage_points","input_observations":["p4-tinubu-cpi-food-2024-12","obs-cpi-food-2023-12"]},
+    {"id":"p4-calc-gdp-q1-q2","operation":"difference","formula":"3.19 - 2.98","result":0.21,"unit":"percentage_points","input_observations":["p4-tinubu-gdp-q1-2024","p4-tinubu-gdp-q2-2024"]}
+  ],
+  "coverage_notes": {
+    "strong_areas":["2023-2024 inflation","2024 food inflation","2024 quarterly GDP","2024 exchange-rate documentation","federal debt source availability"],
+    "partial_areas":["selected consumer prices","unemployment","poverty","federal revenue/expenditure time series","policy-to-outcome causal evidence"],
+    "primary_source_gaps":["selected price basket requires consistent historical series before comparison","some historical legal and policy records remain secondary-source anchored"],
+    "causal_discipline":"Economic observations are administration-period observations and are not treated as proof of personal causation."
+  }
+}

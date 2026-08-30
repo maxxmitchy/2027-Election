@@ -1,0 +1,127 @@
+name: Phase 4 Research Depth & Evidence Coverage
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["phase-4-research-depth"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  phase-4:
+    name: research-depth
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16.15
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_USER: postgres
+          POSTGRES_DB: retrieval_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d retrieval_test"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres@localhost:5432/retrieval_test
+      PYTHONHASHSEED: "0"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12.14"}
+      - name: Install pinned dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Initialize PostgreSQL 16 reference schema
+        run: psql -h 127.0.0.1 -U postgres -d retrieval_test -f db/round5_reference.sql
+      - name: Record execution identity
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p evidence/phase-4
+          git rev-parse HEAD | tee evidence/phase-4/sha.txt
+          python --version | tee evidence/phase-4/versions.txt
+          psql --version >> evidence/phase-4/versions.txt
+          python -m pip freeze >> evidence/phase-4/versions.txt
+          JOB_ID=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs?per_page=100" --paginate | jq -r '.jobs[] | select(.name=="research-depth") | .id' | tail -1)
+          echo "PHASE4_JOB_ID=${JOB_ID}" >> "$GITHUB_ENV"
+      - name: Run Phase 3 and Phase 4 golden suites
+        id: phase4tests
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python -m pytest -q tests/test_query_interpreter.py tests/query_semantics.py tests/test_system_demo.py tests/test_answer_experience.py tests/test_phase3_golden.py tests/test_phase4_research_depth.py | tee evidence/phase-4/pytest.txt
+      - name: Run existing database integrity regression
+        id: regression
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python -m pytest -q tests/test_round5_runtime.py | tee evidence/phase-4/regression.txt
+      - name: Run Phase 3 mutation regression
+        id: phase3mutations
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python tests/run_phase3_mutations.py | tee evidence/phase-4/phase3-mutations.txt
+      - name: Run Phase 4 adversarial mutation audit
+        id: mutations
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python tests/run_phase4_mutations.py | tee evidence/phase-4/mutations.txt
+      - name: Generate machine-readable Phase 4 reports
+        if: always()
+        env:
+          PHASE4_OUTCOME: ${{ steps.phase4tests.outcome }}
+          REGRESSION_OUTCOME: ${{ steps.regression.outcome }}
+          PHASE3_MUTATION_OUTCOME: ${{ steps.phase3mutations.outcome }}
+          MUTATION_OUTCOME: ${{ steps.mutations.outcome }}
+        run: python tools/generate_phase4_reports.py
+      - name: Verify reports, coverage contract and candidate boundary
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from jsonschema import Draft202012Validator
+          from answer_experience import present
+          from evidence_coverage import coverage_report, validate_coverage, VALID_CANDIDATES
+          root=Path('.')
+          a=present("What is the evidence coverage for Tinubu, Obi and Atiku?",root)
+          assert a['interpreted_query']['operation']=='COVERAGE'
+          assert a['coverage']['is_truth_probability'] is False
+          assert set(a['coverage']['candidates'])==VALID_CANDIDATES
+          ok,msg=validate_coverage(coverage_report(root)); assert ok,msg
+          assert not (root/'candidates'/'candidate-4').exists()
+          for p in ('reports/phase-4-research-depth.json','reports/phase-4-research-depth.md','reports/evidence-coverage.json','reports/evidence-coverage.md','reports/research-gaps.json','reports/research-gaps.md'):
+              assert Path(p).exists() and Path(p).stat().st_size>0, p
+          schema=json.loads(Path('schemas/answer.schema.json').read_text())
+          Draft202012Validator(schema).validate(present('How many votes did Tinubu get in 2023?',root))
+          report=json.loads(Path('reports/phase-4-research-depth.json').read_text())
+          assert report['tested_commit']==Path('evidence/phase-4/sha.txt').read_text().strip()
+          assert report['candidate_4']=='BLOCKED'
+          PY
+      - name: Hash Phase 4 evidence
+        if: always()
+        run: sha256sum reports/phase-4-research-depth.md reports/phase-4-research-depth.json reports/evidence-coverage.md reports/evidence-coverage.json reports/research-gaps.md reports/research-gaps.json > evidence/phase-4/report-hashes.txt
+      - name: Upload Phase 4 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase-4-evidence-${{ github.sha }}
+          path: |
+            reports/phase-4-research-depth.md
+            reports/phase-4-research-depth.json
+            reports/evidence-coverage.md
+            reports/evidence-coverage.json
+            reports/research-gaps.md
+            reports/research-gaps.json
+            candidates/*/data/phase4-depth.json
+            evidence/phase-4/
+          if-no-files-found: error
+      - name: Fail CI if Phase 4 validation failed
+        if: steps.phase4tests.outcome != 'success' || steps.regression.outcome != 'success' || steps.phase3mutations.outcome != 'success' || steps.mutations.outcome != 'success'
+        run: exit 1
