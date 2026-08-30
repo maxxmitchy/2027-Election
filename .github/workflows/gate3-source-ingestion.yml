@@ -1,0 +1,46 @@
+name: Gate 3 Source Ingestion
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'sources/gate3/**'
+      - 'evidence/gate3/**'
+      - 'reviews/gate3/**'
+      - 'tests/gate3_source_ingestion.py'
+      - '.github/workflows/gate3-source-ingestion.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'sources/gate3/**'
+      - 'evidence/gate3/**'
+      - 'reviews/gate3/**'
+      - 'tests/gate3_source_ingestion.py'
+      - '.github/workflows/gate3-source-ingestion.yml'
+  workflow_dispatch:
+
+jobs:
+  validate-ingestion:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.14'
+      - name: Install test dependency
+        run: python -m pip install pytest==8.4.2
+      - name: Record exact commit and environment
+        run: |
+          mkdir -p reports
+          echo "commit=$(git rev-parse HEAD)" | tee reports/gate3-execution.txt
+          echo "python=$(python --version)" | tee -a reports/gate3-execution.txt
+          pytest --version | tee -a reports/gate3-execution.txt
+      - name: Execute Gate 3 ingestion tests
+        run: python -m pytest -q tests/gate3_source_ingestion.py
+      - name: Upload Gate 3 execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gate3-source-ingestion-evidence
+          path: reports/gate3-execution.txt
