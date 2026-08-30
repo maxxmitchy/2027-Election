@@ -76,6 +76,7 @@ jobs:
         env:
           PHASE4_OUTCOME: ${{ steps.phase4tests.outcome }}
           REGRESSION_OUTCOME: ${{ steps.regression.outcome }}
+          PHASE3_MUTATION_OUTCOME: ${{ steps.phase3mutations.outcome }}
           MUTATION_OUTCOME: ${{ steps.mutations.outcome }}
         run: python tools/generate_phase4_reports.py
       - name: Verify reports, coverage contract and candidate boundary
@@ -88,7 +89,7 @@ jobs:
           from answer_experience import present
           from evidence_coverage import coverage_report, validate_coverage, VALID_CANDIDATES
           root=Path('.')
-          a=present("What evidence do you have about Tinubu's economic record?",root)
+          a=present("What is the evidence coverage for Tinubu, Obi and Atiku?",root)
           assert a['interpreted_query']['operation']=='COVERAGE'
           assert a['coverage']['is_truth_probability'] is False
           assert set(a['coverage']['candidates'])==VALID_CANDIDATES
@@ -104,8 +105,7 @@ jobs:
           PY
       - name: Hash Phase 4 evidence
         if: always()
-        run: |
-          sha256sum reports/phase-4-research-depth.md reports/phase-4-research-depth.json reports/evidence-coverage.md reports/evidence-coverage.json reports/research-gaps.md reports/research-gaps.json > evidence/phase-4/report-hashes.txt
+        run: sha256sum reports/phase-4-research-depth.md reports/phase-4-research-depth.json reports/evidence-coverage.md reports/evidence-coverage.json reports/research-gaps.md reports/research-gaps.json > evidence/phase-4/report-hashes.txt
       - name: Upload Phase 4 evidence
         if: always()
         uses: actions/upload-artifact@v4
