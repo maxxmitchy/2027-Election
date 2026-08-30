@@ -9,12 +9,12 @@
     "accessed_at": "2026-08-30T00:00:00Z",
     "source_tier": 3,
     "availability_status": "available",
-    "provenance_notes": "Independent news report inspected directly. It attributes the 15.43% July headline figure to the NBS CPI release.",
+    "provenance_notes": "Independent news report inspected directly. It attributes the 15.43% July headline figure to the NBS CPI release. Hash covers the canonical captured representation used for this controlled ingestion experiment.",
     "account_authenticity": "not_applicable",
     "archive_url": null,
     "retrieval_event_refs": ["RET-G3-PREMIUMTIMES-JULY-2026"],
     "content_hash_algorithm": "sha256",
-    "content_hash": "7f4f2d8e2b3f1a4c3a7a3f4c1f9f4c0b0f3d2a2f6a8f9f4e3d1b2c5a6d7e8f9a0",
+    "content_hash": "b7faf4f730661782d25ce02e8a8ab40599e0fbb9acc9dc7fd320c5579fc4b141",
     "version": 1,
     "previous_version_id": null
   }
