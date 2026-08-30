@@ -7,7 +7,7 @@
 | Candidate | Identity | Candidacy | Party | Sources | Claims | Evidence | Reviews | Party History | Office History | Election History | Public Statements | Related Public Conversation | Economic | Legal | Contradictions | Corrections | Uncertainty | Validation | CI | Status |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | Bola Ahmed Tinubu | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | PASS | PASS | PUBLISHED |
-| Peter Gregory Obi | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | PENDING | PENDING | RESEARCH_COMPLETE |
+| Peter Gregory Obi | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | PASS | PASS | VALIDATED |
 
 ## Candidate status vocabulary
 
@@ -23,13 +23,15 @@
 
 The common Gate 4 validator is parameterized by `CANDIDATE_ID` and the CI workflow runs a matrix containing Tinubu and Peter Obi. The candidate fixture is the variable; the validation rules remain common. PostgreSQL runtime is executed independently for each matrix candidate.
 
-**Tinubu regression:** commit `d22adfd03470046fb72644109dcac6a1f203e4e8`, run `33321495059`, job `99284136280`, **16 passed / 0 failed**, PostgreSQL 16.15, Python 3.12.14, artifact `9735008294`.
+**Tinubu regression:** tested commit `1be31059ace0bed6ef31de11fe3389132b912d27`, workflow run `33322075297`, job `99285686044`, **16 passed / 0 failed**, PostgreSQL 16.15, Python 3.12.14, artifact `9735171336`, SHA-256 `40c60d2c6478b23851cd817d5823c518081fc5dc0057d7bac5677231488c7ec8`.
 
-**Peter Obi first execution:** commit `d22adfd03470046fb72644109dcac6a1f203e4e8`, run `33321495059`, job `99284136184`, **10 passed / 6 failed**, PostgreSQL 16.15, Python 3.12.14, artifact `9735007675`. Those failures exposed incomplete research requirements and were not converted into false claims or architecture changes.
+**Peter Obi validation:** tested commit `1be31059ace0bed6ef31de11fe3389132b912d27`, workflow run `33322075297`, job `99285686144`, **16 passed / 0 failed**, PostgreSQL 16.15, Python 3.12.14, artifact `9735167876`, SHA-256 `933cee9c4ef0b351aa748c124cb0ea7bb55b09bf9db5f21c340a3ba38faf01b5`.
+
+The previous Peter Obi execution at commit `d22adfd03470046fb72644109dcac6a1f203e4e8` remains preserved as a failed research-completeness execution: 10 passed / 6 failed, artifact `9735007675`. It is superseded by the completed research fixture and successful rerun, not erased.
 
 ## Peter Obi research completion
 
-The six requirements exposed by the first Gate 4 execution are now represented in the candidate fixture without changing the common validator:
+The six requirements exposed by the first Gate 4 execution were completed without changing the common validator:
 
 1. **Reproducible quantitative calculation:** DMO 2013 domestic-debt observations are versioned and used to calculate Anambra's share of the 36 States + FCT reported domestic debt stock.
 2. **Causal classification:** the debt-causation proposition is explicitly classified `INSUFFICIENT_EVIDENCE`; temporal sequence is not treated as causal proof.
@@ -40,11 +42,11 @@ The six requirements exposed by the first Gate 4 execution are now represented i
 
 The Anambra fiscal material preserves source definitions, period, geography and scope. The record does not convert the DMO debt stock into a causal judgment about Obi. Related public conversation records distinguish account identity and statement occurrence from truth of substantive claims.
 
-Peter Obi is now `RESEARCH_COMPLETE` and is eligible for the unchanged Gate 4 matrix rerun. He is **not yet VALIDATED**.
+Peter Gregory Obi is now **VALIDATED**. The validation is based on actual independent CI execution at commit `1be31059ace0bed6ef31de11fe3389132b912d27` and is not inherited from Tinubu.
 
 ## Scale-control rule
 
-Do not start another candidate while the current candidate is `IN_PROGRESS`, `RESEARCH_COMPLETE`, `VALIDATION_FAILED`, or `VALIDATION_EXECUTED`, except where an explicit research exception is recorded.
+Candidate 3 is **not started**. Although Peter Obi has now reached `VALIDATED`, the explicit task stop condition prohibits beginning Candidate 3 during this task.
 
 ## Current controlled candidate
 
@@ -54,4 +56,4 @@ Selected because his record introduces materially different research conditions 
 
 ## Gate discipline
 
-No mass candidate ingestion is authorized by this ledger. Only one additional candidate is active at a time.
+No mass candidate ingestion is authorized by this ledger. Candidate 3 remains outside the scope of this task.
