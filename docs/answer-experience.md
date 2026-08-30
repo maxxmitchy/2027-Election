@@ -51,3 +51,7 @@ The answer contains a content-derived query ID, interpreted query, database snap
 ## Future language models
 
 An LLM could later be placed before this module as an optional interface. Its only permitted output would be a validated structured query. Retrieval and evidence assessment would remain deterministic.
+
+## Validation gate
+
+Phase 3 status is authoritative only after the dedicated GitHub Actions workflow executes the exact commit and preserves its test, mutation and report artifacts. Files existing in the repository are not themselves evidence of PASS.
