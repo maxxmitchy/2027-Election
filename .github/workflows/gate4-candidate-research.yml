@@ -2,6 +2,15 @@ name: Gate 4 Candidate Research
 
 on:
   push:
+    branches: [main]
+    paths:
+      - 'candidates/bola-ahmed-tinubu/**'
+      - 'tests/gate4_candidate_acceptance.py'
+      - 'tests/gate4_postgres_runtime.py'
+      - 'db/round5_reference.sql'
+      - '.github/workflows/gate4-candidate-research.yml'
+  pull_request:
+    branches: [main]
     paths:
       - 'candidates/bola-ahmed-tinubu/**'
       - 'tests/gate4_candidate_acceptance.py'
@@ -30,15 +39,22 @@ jobs:
       PGPASSWORD: postgres
       GATE4_POSTGRES_DSN: postgresql://postgres:postgres@localhost:5432/election
     steps:
-      - name: Checkout
+      - name: Checkout exact source commit
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.14'
 
       - name: Record execution identity
         run: |
           mkdir -p reports/gate4-ci
           echo "$(git rev-parse HEAD)" | tee reports/gate4-ci/commit.txt
+          echo "run=${GITHUB_RUN_ID}" | tee -a reports/gate4-ci/commit.txt
           python --version | tee reports/gate4-ci/python.txt
           psql --version | tee reports/gate4-ci/psql-client.txt
 
@@ -72,7 +88,6 @@ jobs:
           SQL
 
       - name: Run Gate 4 acceptance tests
-        id: tests
         run: |
           set -o pipefail
           python -m pytest tests/gate4_candidate_acceptance.py tests/gate4_postgres_runtime.py -q --junitxml=reports/gate4-ci/junit.xml 2>&1 | tee reports/gate4-ci/pytest.log
@@ -91,6 +106,7 @@ jobs:
               'run_id': os.environ.get('GITHUB_RUN_ID'),
               'job_id': os.environ.get('GITHUB_JOB'),
               'runner': os.environ.get('RUNNER_OS'),
+              'python': os.popen('python --version').read().strip(),
               'status': 'generated_after_test_step',
           }
           (p/'execution.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
