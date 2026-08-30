@@ -1,0 +1,37 @@
+{
+  "gate": "GATE_4",
+  "pilot": "Bola Ahmed Tinubu",
+  "status": "EXECUTION_IN_PROGRESS",
+  "tested_commit": null,
+  "workflow": "Gate 4 Candidate Research",
+  "run_id": null,
+  "job_id": null,
+  "test_count": null,
+  "pass_count": null,
+  "fail_count": null,
+  "artifact": null,
+  "artifact_hash": null,
+  "qualification": "No Gate 4 PASS is claimed until CI execution is completed against the final tested commit.",
+  "implemented_components": [
+    "person_candidacy_separation",
+    "temporal_party_membership",
+    "temporal_officeholding",
+    "election_result_relationship",
+    "source_retrieval_provenance",
+    "social_media_statement_semantics",
+    "economic_observation_lineage",
+    "causal_classification",
+    "qualifying_evidence",
+    "correction_lineage",
+    "review_dimensions",
+    "ten_public_answer_fixtures",
+    "postgresql_runtime_check"
+  ],
+  "critical_status": {
+    "candidate_representation": "IMPLEMENTED",
+    "machine_readable_lineage": "IMPLEMENTED",
+    "human_readable_dossier": "IMPLEMENTED",
+    "ci_execution": "UNTESTED",
+    "final_gate_decision": "UNTESTED"
+  }
+}
