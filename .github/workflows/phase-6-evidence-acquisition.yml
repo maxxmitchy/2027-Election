@@ -84,9 +84,10 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
-          from phase6_acquisition import CANDIDATES, BLOCKED, METHODOLOGY_VERSION, TASK_STATES
+          from phase6_acquisition import CANDIDATES, METHODOLOGY_VERSION, TASK_STATES
           b=json.loads(Path('reports/phase-6-evidence-acquisition.json').read_text())
-          assert b['candidate_4']==BLOCKED
+          assert b['candidate_4']=='BLOCKED'
+          assert 'candidate-4' not in b['candidate_scope']
           assert b['candidate_scope']==list(CANDIDATES)
           assert b['methodology_version']==METHODOLOGY_VERSION
           assert b['summary']['tasks_executed']==10
