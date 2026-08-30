@@ -1,0 +1,22 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"Research Investigation",
+  "type":"object",
+  "required":["investigation","claims_to_test","sources","evidence","research_gaps","review","answerability","performance_metadata","provenance"],
+  "properties":{
+    "investigation":{"type":"object","required":["question","status","sub_questions","evidence_requirements"]},
+    "claims_to_test":{"type":"array"},
+    "sources":{"type":"array"},
+    "evidence":{"type":"array"},
+    "contradictions":{"type":"array"},
+    "corrections":{"type":"array"},
+    "research_gaps":{"type":"array"},
+    "quantitative_analysis":{"type":"array"},
+    "causal_assessment":{},
+    "review":{"type":"object","required":["required","status","review_is_not_source"]},
+    "answerability":{"type":"object","required":["status","reason"]},
+    "performance_metadata":{"type":"object","required":["planning_ms","records_touched","dependency_depth","number_of_sources","number_of_evidence_records","number_of_research_gaps","number_of_contradictions"]},
+    "provenance":{"type":"object","required":["methodology_version","interpretation_version","database_snapshot","generation_timestamp"]}
+  },
+  "additionalProperties":true
+}
