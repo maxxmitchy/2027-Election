@@ -39,7 +39,8 @@ jobs:
       - name: Record exact execution identity
         run: |
           mkdir -p evidence/phase-5
-          git rev-parse HEAD | tee evidence/phase-5/sha.txt
+          printf 'github.sha=%s\n' "$GITHUB_SHA" | tee evidence/phase-5/github-sha.txt
+          printf 'checked_out_sha=%s\n' "$(git rev-parse HEAD)" | tee evidence/phase-5/sha.txt
           python --version | tee evidence/phase-5/versions.txt
           psql --version >> evidence/phase-5/versions.txt
           python -m pip freeze >> evidence/phase-5/versions.txt
@@ -103,7 +104,7 @@ jobs:
               p=Path('evidence/phase-5')/n
               return p.read_text(errors='replace') if p.exists() else ''
           outcomes={k:os.environ.get(k) for k in ('PHASE3_OUTCOME','PHASE4_OUTCOME','PHASE5_OUTCOME','MUTATION_OUTCOME')}
-          report={'phase':'5','name':'Research Workbench & Evidence Investigation','tested_sha':txt('sha.txt').strip(),'workflow':'.github/workflows/phase-5-research-workbench.yml','run_id':int(os.environ.get('GITHUB_RUN_ID','0')),'environment':{'python':'3.12.14','postgresql':'16'},'execution':outcomes,'candidate_scope':['bola-ahmed-tinubu','peter-gregory-obi','atiku-abubakar'],'candidate_4':'BLOCKED','methodology_version':'phase5-research-workbench-v1','failure_evidence':{'phase3':txt('phase3.txt')[-4000:],'phase4':txt('phase4.txt')[-4000:],'phase5':txt('phase5.txt')[-4000:],'mutations':txt('mutations.txt')[-4000:]},'status':'PASS' if all(v=='success' for v in outcomes.values()) else 'FAILED'}
+          report={'phase':'5','name':'Research Workbench & Evidence Investigation','implementation_sha':os.environ.get('GITHUB_SHA',''),'tested_sha':txt('sha.txt').strip(),'workflow':'.github/workflows/phase-5-research-workbench.yml','run_id':int(os.environ.get('GITHUB_RUN_ID','0')),'environment':{'python':'3.12.14','postgresql':'16'},'execution':outcomes,'candidate_scope':['bola-ahmed-tinubu','peter-gregory-obi','atiku-abubakar'],'candidate_4':'BLOCKED','methodology_version':'phase5-research-workbench-v1','failure_evidence':{'phase3':txt('phase3.txt')[-4000:],'phase4':txt('phase4.txt')[-4000:],'phase5':txt('phase5.txt')[-4000:],'mutations':txt('mutations.txt')[-4000:]},'status':'PASS' if all(v=='success' for v in outcomes.values()) else 'FAILED'}
           Path('reports/phase-5-research-workbench.json').write_text(json.dumps(report,indent=2)+'\n')
           Path('reports/phase-5-research-workbench.md').write_text('# Phase 5 — Research Workbench Validation\n\n'+json.dumps(report,indent=2)+'\n')
           PY
