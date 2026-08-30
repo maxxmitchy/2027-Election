@@ -1,0 +1,148 @@
+name: Phase 5 Research Workbench
+on:
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  phase-5:
+    name: research-workbench
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: retrieval_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d retrieval_test"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/retrieval_test
+      PGPASSWORD: postgres
+      PYTHONHASHSEED: "0"
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12.14"}
+      - name: Install pinned dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Initialize deterministic reference database
+        run: psql -h 127.0.0.1 -U postgres -d retrieval_test -f db/round5_reference.sql
+      - name: Record exact execution identity
+        run: |
+          mkdir -p evidence/phase-5
+          git rev-parse HEAD | tee evidence/phase-5/sha.txt
+          python --version | tee evidence/phase-5/versions.txt
+          psql --version >> evidence/phase-5/versions.txt
+          python -m pip freeze >> evidence/phase-5/versions.txt
+      - name: Run Phase 3 regression
+        id: phase3
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python -m pytest -q tests/test_query_interpreter.py tests/query_semantics.py tests/test_system_demo.py tests/test_answer_experience.py tests/test_phase3_golden.py | tee evidence/phase-5/phase3.txt
+      - name: Run Phase 4 regression
+        id: phase4
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python -m pytest -q tests/test_phase4_*.py tests/gate4_candidate_acceptance.py tests/gate4_postgres_runtime.py | tee evidence/phase-5/phase4.txt
+      - name: Run Phase 5 tests
+        id: phase5
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python -m pytest -q tests/test_phase5_research_workbench.py | tee evidence/phase-5/phase5.txt
+      - name: Generate Phase 5 reports
+        if: always()
+        run: python reports/phase-5-generate.py
+      - name: Validate investigation schema and isolation
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from jsonschema import Draft202012Validator
+          from research_workbench import BLOCKED, CANDIDATES, METHODOLOGY_VERSION
+          schema=json.loads(Path('schemas/research-investigation.schema.json').read_text())
+          for cid in CANDIDATES:
+              assert (Path('candidates')/cid).exists(), cid
+          assert not (Path('candidates')/BLOCKED).exists()
+          for name in ('research-investigations.json','research-tasks.json','research-coverage.json','phase-5-research-workbench.json','phase-5-mutation-results.json'):
+              assert Path('reports',name).exists(), name
+          report=json.loads(Path('reports/phase-5-research-workbench.json').read_text())
+          assert report['methodology_version']==METHODOLOGY_VERSION
+          assert report['candidate_4']=='BLOCKED'
+          cov=json.loads(Path('reports/research-coverage.json').read_text())
+          assert cov['model']=='multidimensional-documentary-coverage-v1'
+          assert cov['is_truth_probability'] is False
+          PY
+      - name: Run mutation audit
+        id: mutations
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python tests/run_phase5_mutations.py | tee evidence/phase-5/mutations.txt
+      - name: Generate execution report
+        if: always()
+        run: |
+          python - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          def txt(n):
+              p=Path('evidence/phase-5')/n
+              return p.read_text(errors='replace') if p.exists() else ''
+          phase3=txt('phase3.txt'); phase4=txt('phase4.txt'); phase5=txt('phase5.txt'); mutations=txt('mutations.txt')
+          report={
+            'phase':'5','name':'Research Workbench & Evidence Investigation',
+            'tested_sha':txt('sha.txt').strip(),
+            'workflow':'.github/workflows/phase-5-research-workbench.yml',
+            'run_id':int(os.environ.get('GITHUB_RUN_ID','0')),
+            'environment':{'python':'3.12.14','postgresql':'16'},
+            'execution':{'phase3':'success' if os.environ.get('PHASE3_OUTCOME')=='success' else 'failure_or_unavailable','phase4':'success' if os.environ.get('PHASE4_OUTCOME')=='success' else 'failure_or_unavailable','phase5':'success' if os.environ.get('PHASE5_OUTCOME')=='success' else 'failure_or_unavailable','mutations':'success' if os.environ.get('MUTATION_OUTCOME')=='success' else 'failure_or_unavailable'},
+            'candidate_scope':list(CANDIDATES) if False else ['bola-ahmed-tinubu','peter-gregory-obi','atiku-abubakar'],
+            'candidate_4':'BLOCKED','methodology_version':'phase5-research-workbench-v1',
+            'failure_evidence':{'phase3':phase3[-4000:],'phase4':phase4[-4000:],'phase5':phase5[-4000:],'mutations':mutations[-4000:]},
+            'status':'PASS' if all(os.environ.get(k)=='success' for k in ('PHASE3_OUTCOME','PHASE4_OUTCOME','PHASE5_OUTCOME','MUTATION_OUTCOME')) else 'FAILED'
+          }
+          Path('reports/phase-5-research-workbench.json').write_text(json.dumps(report,indent=2)+'\n')
+          Path('reports/phase-5-research-workbench.md').write_text('# Phase 5 — Research Workbench Validation\n\n'+json.dumps(report,indent=2)+'\n')
+          PY
+        env:
+          PHASE3_OUTCOME: ${{ steps.phase3.outcome }}
+          PHASE4_OUTCOME: ${{ steps.phase4.outcome }}
+          PHASE5_OUTCOME: ${{ steps.phase5.outcome }}
+          MUTATION_OUTCOME: ${{ steps.mutations.outcome }}
+      - name: Hash evidence and reports
+        if: always()
+        run: |
+          sha256sum reports/phase-5-research-workbench.md reports/phase-5-research-workbench.json reports/research-investigations.json reports/research-tasks.json reports/research-coverage.json reports/phase-5-mutation-results.json > evidence/phase-5/report-hashes.txt
+      - name: Upload Phase 5 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase-5-evidence-${{ github.sha }}
+          path: |
+            reports/phase-5-research-workbench.md
+            reports/phase-5-research-workbench.json
+            reports/research-investigations.md
+            reports/research-investigations.json
+            reports/research-tasks.md
+            reports/research-tasks.json
+            reports/research-coverage.md
+            reports/research-coverage.json
+            reports/phase-5-mutation-results.md
+            reports/phase-5-mutation-results.json
+            methodology/phase-5-research-workbench.md
+            schemas/research-investigation.schema.json
+            evidence/phase-5/
+          if-no-files-found: error
+      - name: Fail closed
+        if: steps.phase3.outcome != 'success' || steps.phase4.outcome != 'success' || steps.phase5.outcome != 'success' || steps.mutations.outcome != 'success'
+        run: exit 1
