@@ -2,6 +2,8 @@ name: Phase 4 Research Depth & Evidence Coverage
 on:
   pull_request:
     branches: ["main"]
+  push:
+    branches: ["phase-4-research-depth"]
   workflow_dispatch:
 permissions:
   contents: read
