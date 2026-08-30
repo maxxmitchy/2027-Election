@@ -1,0 +1,22 @@
+[
+  {
+    "derived_record_id": "DER-G3-CORRECTION-V1",
+    "record_type": "analysis",
+    "input_claim_version": "CLM-G3-CORRECTION-V1",
+    "statement": "Controlled analysis incorrectly treated 15.43% as the July 2026 month-on-month rate.",
+    "status": "superseded",
+    "version": 1,
+    "created_at": "2026-08-30T00:00:00Z",
+    "superseded_by": "DER-G3-CORRECTION-V2"
+  },
+  {
+    "derived_record_id": "DER-G3-CORRECTION-V2",
+    "record_type": "analysis",
+    "input_claim_version": "CLM-G3-CORRECTION-V2",
+    "statement": "Corrected analysis distinguishes the 15.43% year-on-year rate from the 1.57% month-on-month rate.",
+    "status": "valid",
+    "version": 2,
+    "previous_version_id": "DER-G3-CORRECTION-V1",
+    "created_at": "2026-08-30T00:00:00Z"
+  }
+]
