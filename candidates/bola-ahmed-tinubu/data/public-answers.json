@@ -1,0 +1,15 @@
+{
+  "pilot_id":"gate4-bola-ahmed-tinubu-v2",
+  "answers":[
+    {"id":"qa01","question":"Who is Bola Ahmed Tinubu?","answer":"Nigeria's current president and APC's nominated presidential candidate for the 2027 election as of 30 August 2026.","dependencies":["claim-office-president","claim-2027-nominee"]},
+    {"id":"qa02","question":"What offices has he held?","answer":"The pilot records Senator for Lagos West, Governor of Lagos State, and President of Nigeria, with separate temporal officeholding records.","dependencies":["oh-001","oh-002","oh-003"]},
+    {"id":"qa03","question":"Which political parties has he belonged to?","answer":"The pilot records Social Democratic Party, Alliance for Democracy, Action Congress/ACN, and APC, with temporal membership intervals and uncertainty where exact transition dates are not established.","dependencies":["pm-001","pm-002","pm-003","pm-004"]},
+    {"id":"qa04","question":"What elections has he contested?","answer":"The pilot records Lagos governorship contests in 1999 and 2003, the 2023 presidential election, and the 2027 APC presidential candidacy.","dependencies":["cand-1999","cand-2003","cand-2023","cand-2027"]},
+    {"id":"qa05","question":"What was his 2023 presidential result?","answer":"INEC records 8,794,726 votes and marks him ELECTED.","dependencies":["res-2023","SRC-INEC-2023"]},
+    {"id":"qa06","question":"What major policy action is represented in the pilot?","answer":"The CBN's 14 June 2023 FX-market reform is represented as a policy event; its documented intent is kept separate from independently measured outcomes.","dependencies":["SRC-CBN-FX"]},
+    {"id":"qa07","question":"How did inflation change from December 2022 to December 2023?","answer":"Headline inflation increased from 21.34% to 28.92%, or 7.58 percentage points.","dependencies":["obs-cpi-2022-12","obs-cpi-2023-12","calc-cpi-2022-2023"]},
+    {"id":"qa08","question":"How did the exchange-rate framework change in June 2023?","answer":"The CBN introduced a willing-buyer/willing-seller model and later described the framework as NFEM, with market segments consolidated.","dependencies":["SRC-CBN-FX"]},
+    {"id":"qa09","question":"Which claims are qualified or disputed?","answer":"Claims that attribute observed economic changes directly to the presidency are classified as insufficiently evidenced unless causal evidence is separately established; IMF and official accounts provide different emphases on macroeconomic improvement versus household hardship.","dependencies":["claim-inflation-causation","claim-reform-assessment","SRC-IMF-2026","SRC-STATEHOUSE-BIO"]},
+    {"id":"qa10","question":"What evidence supports the 2023 election result?","answer":"The primary electoral anchor is INEC's 2023 General Election report, which records 8,794,726 votes and ELECTED for Tinubu.","dependencies":["res-2023","SRC-INEC-2023","ev-2023-result"]}
+  ]
+}
