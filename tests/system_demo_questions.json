@@ -1,0 +1,24 @@
+{
+  "version": "system-demo-v1",
+  "candidate_ids": ["bola-ahmed-tinubu", "peter-gregory-obi", "atiku-abubakar"],
+  "questions": [
+    {"id":"Q1","category":"single_candidate_factual","question":"What offices has Tinubu held?","candidate_scope":["bola-ahmed-tinubu"]},
+    {"id":"Q2","category":"single_candidate_factual","question":"What offices has Atiku held?","candidate_scope":["atiku-abubakar"]},
+    {"id":"Q3","category":"single_candidate_factual","question":"What parties has Peter Obi been associated with?","candidate_scope":["peter-gregory-obi"]},
+    {"id":"Q4","category":"cross_candidate","question":"Compare the presidential election results of Tinubu, Obi and Atiku in 2023.","candidate_scope":["bola-ahmed-tinubu","peter-gregory-obi","atiku-abubakar"]},
+    {"id":"Q5","category":"cross_candidate","question":"Who received the most votes among the three in 2023?","candidate_scope":["bola-ahmed-tinubu","peter-gregory-obi","atiku-abubakar"]},
+    {"id":"Q6","category":"cross_candidate","question":"How many presidential general elections are represented for each candidate in the database?","candidate_scope":["bola-ahmed-tinubu","peter-gregory-obi","atiku-abubakar"]},
+    {"id":"Q7","category":"economic","question":"How did Nigeria's headline inflation change during the selected Tinubu period?","candidate_scope":["bola-ahmed-tinubu"]},
+    {"id":"Q8","category":"economic","question":"What economic observations are available for Peter Obi's Anambra period?","candidate_scope":["peter-gregory-obi"]},
+    {"id":"Q9","category":"economic","question":"What economic evidence is associated with Atiku's federal policy record?","candidate_scope":["atiku-abubakar"]},
+    {"id":"Q10","category":"causal","question":"Did Tinubu cause inflation to rise?","candidate_scope":["bola-ahmed-tinubu"]},
+    {"id":"Q11","category":"causal","question":"Did Peter Obi's administration cause Anambra's debt position?","candidate_scope":["peter-gregory-obi"]},
+    {"id":"Q12","category":"causal","question":"Did Atiku personally cause the outcomes associated with NCP activity?","candidate_scope":["atiku-abubakar"]},
+    {"id":"Q13","category":"contradiction","question":"What conflicting evidence exists about Anambra's debt during Obi's tenure?","candidate_scope":["peter-gregory-obi"]},
+    {"id":"Q14","category":"contradiction_correction","question":"What changed in the evidence concerning ADC's legal status during Atiku's 2026 candidacy?","candidate_scope":["atiku-abubakar"]},
+    {"id":"Q15","category":"public_conversation","question":"What statements by the candidates are preserved in RELATED PUBLIC CONVERSATION, and what evidence exists independently of those statements?","candidate_scope":["bola-ahmed-tinubu","peter-gregory-obi","atiku-abubakar"]},
+    {"id":"Q16","category":"as_of","question":"As of 2026-05-01, what party was Peter Obi recorded as belonging to?","candidate_scope":["peter-gregory-obi"],"as_of":"2026-05-01T23:59:59Z"},
+    {"id":"Q17","category":"negative_knowledge","question":"Does the database establish that Peter Obi left Anambra with zero debt?","candidate_scope":["peter-gregory-obi"]},
+    {"id":"Q18","category":"social_semantics","question":"Did a candidate's X statement prove the statement true?","candidate_scope":["bola-ahmed-tinubu","peter-gregory-obi","atiku-abubakar"]}
+  ]
+}
