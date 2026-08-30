@@ -24,6 +24,12 @@ Every material assertion should be traceable through:
 
 Evidence relationships are typed. Social-media records and archived artifacts retain provenance metadata. Cryptographic hashes can be verified later without redesigning the domain model.
 
+## Controlled source-ingestion experiment
+
+Gate 3 has now exercised the model against real public artifacts: an official NBS CPI publication, the NBS CPI dataset catalog, a Reuters report, a Proshare X statement, a CBN homepage snapshot and an independent Premium Times report. The experiment preserves source/retrieval metadata, hashes, typed evidence relationships, contradiction, correction, source revision and retrieval failure states.
+
+The experiment is **not candidate research**. Candidate dossiers and political research remain prohibited until Gate 4.
+
 ## Economic analysis
 
 Economic observations preserve definitions, units, geography, observation periods, publication dates, source and dataset versions. Derived calculations retain exact input versions. Temporal change is explicitly separated from causal attribution.
@@ -44,9 +50,9 @@ The answer record retains exact dependency versions so corrections to source dat
 
 - `methodology/` — research, source, verification, economic, review, correction, temporal, dependency and integrity standards.
 - `schemas/` — machine-readable contracts for canonical entities and derived records.
-- `tests/` — automated/property-testing acceptance criteria and future executable test suites.
-- `candidates/` — candidate-facing views built from structured evidence.
-- `administrations/` — administration periods and governance analysis.
+- `tests/` — automated/property-testing acceptance criteria and executable integrity/ingestion tests.
+- `candidates/` — candidate-facing views; not populated during the foundation/ingestion gates.
+- `administrations/` — administration periods and governance analysis; not populated during the foundation/ingestion gates.
 - `economy/` — indicators, observations, prices, inflation, exchange rates, debt and other measurable series.
 - `events/` — dated historical events.
 - `sources/` — source metadata and archival references.
@@ -54,6 +60,10 @@ The answer record retains exact dependency versions so corrections to source dat
 - `reviews/` — independent reviews, separate from evidence.
 - `datasets/` — imported or curated datasets.
 
-## Status
+## Gate status
 
-**Foundation / integrity-hardening phase.** Round 4 has specified implementation-level controls but has not claimed runtime production readiness. The research gate remains closed pending independent review and execution of the database/CI enforcement layer.
+**GATE 2 — OPEN WITH DOCUMENTED EVIDENCE QUALIFICATION.** The independent Reviewer accepted accumulated runtime evidence while explicitly recording that commit `1c1dbc14dafd4b27e80aeaf86e496a23ae86d784` does **not** have a clean CI execution. The project does not claim otherwise.
+
+**GATE 3 — CONTROLLED SOURCE INGESTION PASS (recommended).** The ingestion validator executed successfully against commit `b26cccd58b9e6ea1c8e28ecbdd8affe5ea162328` in GitHub Actions run `33319986354`, job `99280145039`, with 7/7 tests passing and evidence artifact `9734598011` uploaded.
+
+This Gate 3 result authorizes only controlled ingestion experiments. It does **not** authorize candidate research. Candidate research remains gated behind Gate 4.
