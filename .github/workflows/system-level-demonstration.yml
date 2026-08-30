@@ -1,0 +1,64 @@
+name: System-Level Demonstration
+on:
+  push:
+    branches: [system-level-demonstration]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  demonstration:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16.15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: retrieval_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d retrieval_test"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/retrieval_test
+      PGPASSWORD: postgres
+      PYTHONHASHSEED: '0'
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12.14'}
+      - name: Install pinned dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Initialize PostgreSQL reference schema
+        run: psql -h 127.0.0.1 -U postgres -d retrieval_test -f db/round5_reference.sql
+      - name: Record execution identity
+        run: |
+          mkdir -p evidence/system-demo
+          printf 'github_sha=%s\n' "$GITHUB_SHA" > evidence/system-demo/execution.txt
+          printf 'git_rev_parse_head=%s\n' "$(git rev-parse HEAD)" >> evidence/system-demo/execution.txt
+          python --version >> evidence/system-demo/execution.txt
+          psql --version >> evidence/system-demo/execution.txt
+          python -m pip freeze >> evidence/system-demo/execution.txt
+      - name: Run golden question tests
+        run: python -m pytest -q tests/test_system_demo.py | tee evidence/system-demo/pytest.txt
+      - name: Run mutation sensitivity audit
+        run: python tests/run_system_demo_mutations.py | tee evidence/system-demo/mutations.txt
+      - name: Generate machine-readable and human-readable reports
+        run: python tools/generate_system_demo.py
+      - name: Record final report hashes
+        run: |
+          sha256sum reports/system-demo-question-set.md reports/system-demo.md reports/system-demo.json reports/system-demo-answers.json reports/system-level-demonstration.md reports/system-level-demonstration.json > evidence/system-demo/report-hashes.txt
+      - name: Upload demonstration evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: system-level-demonstration-evidence-${{ github.sha }}
+          path: |
+            reports/system-demo-question-set.md
+            reports/system-demo.md
+            reports/system-demo.json
+            reports/system-demo-answers.json
+            reports/system-level-demonstration.md
+            reports/system-level-demonstration.json
+            evidence/system-demo/
