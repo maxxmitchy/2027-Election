@@ -20,4 +20,4 @@ The governing boundary remains:
 > Missing evidence is not negative evidence.
 > Temporal association is not causation.
 
-Phase 6 controlled execution trigger.
+Phase 6 final CI validation trigger.
