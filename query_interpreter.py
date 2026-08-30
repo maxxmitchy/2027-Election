@@ -34,15 +34,13 @@ def _domain_entity(ql):
     if "adc" in ql:return "legal","adc_legal_status","Nigeria"
     if "ncp" in ql:return "politics","ncp_role","Nigeria"
     if "office" in ql:return "political_history","office_holding",None
-    if "party" in ql:return "political_history","party_membership",None
+    if re.search(r"\bpart(?:y|ies)\b",ql):return "political_history","party_membership",None
     if "election" in ql:return "election","presidential_election",None
     if "economy" in ql:return "economy",None,"Nigeria"
     return None,None,None
 
 def interpret(raw_question):
-    raw=raw_question.strip();ql=raw.lower();scope=_scope(raw);public_request=bool(PUBLIC_REQUEST_RE.search(raw)) and ("adc" in ql or "ncp" in ql or "statement" in ql or "said" in ql)
-    causal=any(p in ql for p in CAUSAL_PHRASES) and not public_request
-    domain,entity,geography=_domain_entity(ql);t=_time(raw);ambiguities=[];unsupported=[]
+    raw=raw_question.strip();ql=raw.lower();scope=_scope(raw);public_request=bool(PUBLIC_REQUEST_RE.search(raw)) and ("adc" in ql or "ncp" in ql or "statement" in ql or "said" in ql);causal=any(p in ql for p in CAUSAL_PHRASES) and not public_request;domain,entity,geography=_domain_entity(ql);t=_time(raw);ambiguities=[];unsupported=[]
     if SUBJECTIVE_RE.search(raw):status="UNSUPPORTED";operation="FACTUAL_LOOKUP";unsupported.append("Subjective ranking or evaluation is not defined by the validated methodology.")
     elif public_request and not TRUTH_ASSESSMENT_RE.search(raw):status="INTERPRETED";operation="PUBLIC_CONVERSATION"
     elif causal:status="INTERPRETED";operation="CAUSAL_ATTRIBUTION"
