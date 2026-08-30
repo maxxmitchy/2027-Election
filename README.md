@@ -12,13 +12,17 @@ This project is being built as **evidence infrastructure**, not as a political b
 
 The canonical model separates durable **People** from **Candidacies** and **Elections**, and separates **Offices**, **OfficeHoldings** and **Administrations**. Claims, evidence and sources are distinct objects. Economic research separates metrics, observations, calculations, analyses and results. Reviews are independent from evidence. Material changes create new versions rather than destructive edits.
 
+## Integrity architecture
+
+Round 4 establishes implementation-level contracts for bitemporal history, append-only versions, selective dependency invalidation, dataset revisions, cryptographic provenance metadata and automated invariant testing. All temporal intervals use `[start,end)` semantics; transaction time is distinct from valid time.
+
 ## Evidence and provenance
 
 Every material assertion should be traceable through:
 
-`CLAIM → EVIDENCE → SOURCE → VERIFICATION → VERSION → REVIEW → CORRECTION HISTORY`
+`CLAIM → EVIDENCE → SOURCE → RETRIEVAL → VERSION → REVIEW → CORRECTION HISTORY`
 
-Evidence relationships are typed. For example, a source may report a claim, directly establish a fact, contain an official determination, record a person's own statement, provide indirect evidence, contradict a claim, or provide context. Social-media records receive additional provenance treatment and screenshots are not treated as equivalent to original platform records.
+Evidence relationships are typed. Social-media records and archived artifacts retain provenance metadata. Cryptographic hashes can be verified later without redesigning the domain model.
 
 ## Economic analysis
 
@@ -26,20 +30,21 @@ Economic observations preserve definitions, units, geography, observation period
 
 ## Historical integrity
 
-The project uses both Git history and domain-level version history. Valid time (when a fact applied) is distinct from transaction time (when a version was recorded). This supports historical questions and `as_of` reconstruction without silently rewriting the past.
+Valid time answers when a represented fact applied. Transaction time answers when the database recorded or knew a version. Bitemporal reconstruction first selects the transaction-visible snapshot and then evaluates valid time within that snapshot.
 
 ## AI retrieval target
 
 A future answer should be concise but traceable:
 
-**ANSWER → EVIDENCE → CALCULATION → SOURCES → CONFIDENCE → CONTEXT/LIMITATIONS → DATABASE VERSION**
+**ANSWER → EVIDENCE → CALCULATION → SOURCES → CONFIDENCE → CONTEXT/LIMITATIONS → DATABASE SNAPSHOT**
 
-The answer record will retain exact dependency references so corrections to source data can identify stale downstream answers.
+The answer record retains exact dependency versions so corrections to source data can identify stale downstream answers while preserving historical answers for reconstruction.
 
 ## Repository structure
 
-- `methodology/` — research, source, verification, economic, review, correction, temporal and dependency standards.
+- `methodology/` — research, source, verification, economic, review, correction, temporal, dependency and integrity standards.
 - `schemas/` — machine-readable contracts for canonical entities and derived records.
+- `tests/` — automated/property-testing acceptance criteria and future executable test suites.
 - `candidates/` — candidate-facing views built from structured evidence.
 - `administrations/` — administration periods and governance analysis.
 - `economy/` — indicators, observations, prices, inflation, exchange rates, debt and other measurable series.
@@ -47,8 +52,8 @@ The answer record will retain exact dependency references so corrections to sour
 - `sources/` — source metadata and archival references.
 - `evidence/` — structured claim/evidence records.
 - `reviews/` — independent reviews, separate from evidence.
-- `datasets/` — imported or curated datasets with provenance.
+- `datasets/` — imported or curated datasets.
 
 ## Status
 
-**Foundation phase.** The information architecture and provenance model are being hardened before large-scale candidate or economic-data population begins.
+**Foundation / integrity-hardening phase.** Round 4 has specified implementation-level controls but has not claimed runtime production readiness. The research gate remains closed pending independent review and execution of the database/CI enforcement layer.
