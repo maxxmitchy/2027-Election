@@ -33,6 +33,7 @@
     "availability_status": "unknown",
     "title": "NBS July 2026 CPI direct download retrieval attempt",
     "url": "https://microdata.nigerianstat.gov.ng/index.php/catalog/154/download/1432",
-    "notes": "The direct download request timed out during inspection, while the NBS catalog page remained accessible. This is recorded as source-unavailable-for-this-retrieval, not as evidence that the underlying source is false."
+    "notes": "The direct download request timed out during inspection, while the NBS catalog page remained accessible. This is recorded as source-unavailable-for-this-retrieval, not as evidence that the underlying source is false.",
+    "ci_trigger": "gate3-validation"
   }
 ]
