@@ -3,7 +3,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 source=(ROOT/'tools/evidence_product.py').read_text(); html=(ROOT/'product/index.html').read_text()
 def guard(s,h):
-    required_s=('candidate_scope','as_of','review_status','independent','NOT_A_SOURCE','INSUFFICIENT_EVIDENCE')
+    required_s=('candidate_scope','as_of','review_status','independent','NOT_A_SOURCE','INSUFFICIENT_EVIDENCE','correction')
     required_h=('Key evidence','Contradictions / qualifications','Calculation','Review','Provenance','Limitations')
     return all(x in s for x in required_s) and all(x in h for x in required_h)
 mutations={
