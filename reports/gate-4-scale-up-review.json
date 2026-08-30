@@ -1,0 +1,155 @@
+{
+  "gate": "GATE_4_SCALE_UP_REVIEW",
+  "pilot": "Bola Ahmed Tinubu",
+  "decision": "READY_FOR_CONTROLLED_SCALE_UP",
+  "scope": "operational_review_only",
+  "additional_candidates_populated": 0,
+  "pilot_execution": {
+    "tested_commit": "4ee713dd1c50829ff11742a31dbc56b7a5953dc0",
+    "workflow": "Gate 4 Candidate Research",
+    "run_id": "33320688303",
+    "job_id": "99282001594",
+    "result": "SUCCESS",
+    "test_count": 15,
+    "pass_count": 15,
+    "fail_count": 0,
+    "artifact_id": 9734793770,
+    "artifact_hash": "6f39eef65112170e762409114ad37af2286fc7207254e68aafb97f26e89a1076"
+  },
+  "pilot_lessons": [
+    "Provenance should be captured at ingestion rather than retrofitted into narrative text.",
+    "Search is for discovery; primary or institutional sources should anchor material claims where available.",
+    "Secondary sources remain useful for context but retain explicit evidentiary status.",
+    "Social media should be modeled as related public conversation evidence/context, not as an automatic truth source.",
+    "Contradictory evidence must be preserved and typed.",
+    "Corrections must preserve predecessor versions and identify stale downstream dependencies.",
+    "Economic observations require explicit definition, unit, geography, period, dataset and version metadata.",
+    "Legal records must separate allegations, court findings and procedural outcomes.",
+    "Human review is concentrated around evidentiary interpretation, ambiguity and causal attribution."
+  ],
+  "standard_dossier_sections": [
+    "Identity",
+    "Political History",
+    "Party History",
+    "Office History",
+    "Election History",
+    "Public Statements / Related Public Conversation",
+    "Major Documented Actions and Policies",
+    "Economic Record",
+    "Legal Record",
+    "Contested / Contradictory Claims",
+    "Corrections",
+    "Uncertainty",
+    "Sources",
+    "Reviews"
+  ],
+  "related_public_conversation_relationships": [
+    "support_context",
+    "contradict",
+    "clarify",
+    "correct",
+    "provide_primary_source",
+    "provide_data",
+    "quote",
+    "respond_to",
+    "contextualize",
+    "report_event"
+  ],
+  "economic_standard": {
+    "lineage": "ADMINISTRATION -> TIME PERIOD -> METRIC -> OBSERVATION -> CALCULATION -> ANALYSIS -> RESULT",
+    "required_metadata": [
+      "metric_definition",
+      "value",
+      "unit",
+      "geography",
+      "period_start",
+      "period_end",
+      "dataset",
+      "dataset_version",
+      "observation_version",
+      "methodology_version",
+      "source",
+      "retrieval_event"
+    ],
+    "required_distinctions": [
+      "percentage_change_vs_percentage_point_change",
+      "temporal_association_vs_causal_attribution"
+    ]
+  },
+  "review_standard": [
+    "evidence_quality",
+    "factual_accuracy",
+    "calculation_accuracy",
+    "context_completeness",
+    "source_quality",
+    "reviewer_confidence"
+  ],
+  "automation_opportunities": [
+    "dossier_scaffolding",
+    "required_section_checks",
+    "identifier_generation",
+    "relationship_validation",
+    "provenance_completeness",
+    "duplicate_detection",
+    "source_version_hash_capture",
+    "retrieval_event_creation",
+    "schema_validation",
+    "temporal_interval_validation",
+    "economic_scope_validation",
+    "change_type_validation",
+    "stale_dependency_detection",
+    "answer_dependency_validation",
+    "CI_execution",
+    "report_generation"
+  ],
+  "human_review_requirements": [
+    "identity_resolution",
+    "primary_source_authority",
+    "historical_party_and_office_interpretation",
+    "evidence_relationship_classification",
+    "legal_allegation_vs_finding_classification",
+    "contradiction_assessment",
+    "correction_approval",
+    "causal_attribution_assessment",
+    "context_completeness",
+    "public_answer_evidentiary_fidelity"
+  ],
+  "repeated_primary_evidence_gaps": [
+    "older historical electoral records",
+    "some historical political chronology",
+    "court-hosted copies for some legal material",
+    "volatile or unavailable social-media material"
+  ],
+  "operational_risks": [
+    "variable primary-source availability",
+    "social-media deletion or access changes",
+    "historical chronology reconciliation",
+    "statistical dataset revisions",
+    "legal-summary compression of allegations and findings",
+    "scope or methodology differences between apparently contradictory sources",
+    "stale downstream answers after corrections",
+    "researcher workload at scale",
+    "current-status verification drift",
+    "unsupported synthesis at answer level"
+  ],
+  "principles": [
+    "The database records what the evidence establishes. It does not record what the researcher wishes the evidence established.",
+    "absence of evidence != evidence of absence",
+    "unverified != false",
+    "disputed != false",
+    "source authority != automatic truth",
+    "temporal association != causation",
+    "candidate statement != factual proof",
+    "review != evidence",
+    "AI answer != source of truth"
+  ],
+  "status_matrix": {
+    "specified": "Controlled future-candidate workflow and operational standards are specified.",
+    "implemented": "Core patterns are implemented in the Tinubu pilot.",
+    "executed": "Tinubu acceptance execution completed successfully.",
+    "pass": "Gate 4 pilot acceptance.",
+    "partial": "Repeated-ingestion operational standardization is defined here but not yet exercised across multiple candidates.",
+    "untested": "Full-scale throughput, multi-researcher consistency and sustained ingestion volume."
+  },
+  "next_phase_constraint": "Do not begin mass candidate ingestion automatically; require separate approval for controlled ingestion of additional presidential candidates."
+}
