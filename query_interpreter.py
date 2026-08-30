@@ -6,16 +6,14 @@ SUBJECTIVE_RE=re.compile(r"\b(best|worst|most competent|least competent|performe
 SECURITY_RE=re.compile(r"\b(ignore|assume|don't mention|do not mention|everyone knows|give me the most favorable)\b[^.?!]*",re.I)
 TRUTH_ASSESSMENT_RE=re.compile(r"\b(was|is|were|are)\s+(what|that)\b.*\b(true|correct|accurate)\b",re.I)
 PUBLIC_REQUEST_RE=re.compile(r"\b(what did|what .* said|what .* say|what public statement|what .*statement|what statement)\b",re.I)
-COVERAGE_RE=re.compile(r"\b(coverage|poorly documented|well documented|how well documented|evidence do you have|what evidence .* record|what evidence .* economic|evidence .* missing|research gap|primary-source coverage|primary-source evidence|primary source evidence|secondary-only|secondary source|what information is unavailable|which claims .* disputed|corrections .* dossier)\b",re.I)
+COVERAGE_RE=re.compile(r"\b(coverage|poorly documented|well documented|how well documented|evidence do you have|what evidence .* record|what evidence .* economic|evidence .* missing|research gap|primary-source coverage|primary-source evidence|primary source evidence|secondary-only|secondary sources?|what information is unavailable|which claims .* disputed|corrections .* dossier)\b",re.I)
 CAUSAL_PHRASES=("cause ","caused ","causes ","causing ","because of","responsible for","lead to","led to","resulted in","make ","made ","created ","due to","as a result of")
-
 def _scope(q):
     ql=q.lower();found=[]
     for cid,aliases in CANDIDATE_ALIASES.items():
         if any(re.search(r"\b"+re.escape(a)+r"\b",ql) for a in aliases):found.append(cid)
     if "three candidates" in ql or all(x in ql for x in ("tinubu","obi","atiku")):return list(CANDIDATE_ALIASES)
     return found
-
 def _time(q):
     ql=q.lower();m=re.search(r"as of\s+([A-Za-z]+\s+\d{4}|\d{4}-\d{2}-\d{2})",q,re.I)
     if m:return {"as_of_expression":m.group(1)}
@@ -26,7 +24,6 @@ def _time(q):
     if years:return {"year":years[0],"expression":years[0]}
     if re.search(r"during\s+tinubu(?:'s)?\s+presidency",q,re.I):return {"expression":"during Tinubu's presidency","administrative_scope":"tinubu_presidency"}
     return None
-
 def _domain_entity(ql):
     if "inflation" in ql:return "economy","headline_inflation","Nigeria"
     if "anambra" in ql and "debt" in ql:return "economy","debt","Anambra State"
@@ -39,12 +36,10 @@ def _domain_entity(ql):
     if "election" in ql:return "election","presidential_election",None
     if "economy" in ql:return "economy",None,"Nigeria"
     return None,None,None
-
 def interpret(raw_question):
     raw=raw_question.strip();ql=raw.lower();scope=_scope(raw);public_request=bool(PUBLIC_REQUEST_RE.search(raw)) and ("adc" in ql or "ncp" in ql or "statement" in ql or "said" in ql);causal=any(p in ql for p in CAUSAL_PHRASES) and not public_request;domain,entity,geography=_domain_entity(ql);t=_time(raw);ambiguities=[];unsupported=[]
     if SUBJECTIVE_RE.search(raw):status="UNSUPPORTED";operation="FACTUAL_LOOKUP";unsupported.append("Subjective ranking or evaluation is not defined by the validated methodology.")
-    elif bool(COVERAGE_RE.search(raw)):
-        status="INTERPRETED";operation="COVERAGE"
+    elif COVERAGE_RE.search(raw):status="INTERPRETED";operation="COVERAGE"
     elif public_request and not TRUTH_ASSESSMENT_RE.search(raw):status="INTERPRETED";operation="PUBLIC_CONVERSATION"
     elif causal:status="INTERPRETED";operation="CAUSAL_ATTRIBUTION"
     elif TRUTH_ASSESSMENT_RE.search(raw):status="INTERPRETED";operation="FACTUAL_LOOKUP"
@@ -67,6 +62,5 @@ def interpret(raw_question):
     if re.search(r"under tinubu|during tinubu",ql) and not causal and operation=="FACTUAL_LOOKUP" and domain=="economy":operation="CHANGE"
     as_of=t.get("as_of_expression") if t and "as_of_expression" in t else None
     return {"query_id":"query-"+hashlib.sha256(raw.encode()).hexdigest()[:16],"raw_question":raw,"candidate_scope":scope,"person_scope":scope,"domain":domain,"entity":entity,"operation":operation,"geography":geography,"time_range":t,"as_of":as_of,"comparison_scope":scope if operation in {"COMPARISON","COUNT","COVERAGE"} and len(scope)>1 else [],"evidence_type":["PUBLIC_STATEMENT"] if operation=="PUBLIC_CONVERSATION" else ["PRIMARY_OR_VALIDATED_RECORD"],"causal_request":causal,"requested_output":"answer_with_evidence_status_and_provenance","interpretation_status":status,"ambiguities":ambiguities,"unsupported_elements":unsupported,"methodology_version":"query-interpreter-v2-coverage" if operation=="COVERAGE" else "query-interpreter-v1"}
-
 def interpret_and_validate(raw_question):
     q=interpret(raw_question);q["validation"]={"deterministic_retrieval_only":True,"llm_dependency":False,"raw_question_is_evidence":False,"security_instructions_ignored":bool(SECURITY_RE.search(raw_question or ""))};return q
