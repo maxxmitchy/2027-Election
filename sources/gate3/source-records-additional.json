@@ -1,0 +1,21 @@
+[
+  {
+    "source_id": "SRC-G3-PREMIUMTIMES-JULY-2026",
+    "title": "Nigeria's inflation falls to 15.43% in July as food prices rise",
+    "publisher_or_author": "Premium Times",
+    "source_type": "established_journalism",
+    "url": "https://www.premiumtimesng.com/business/business-news/903732-nigerias-inflation-falls-to-15-43-in-july-as-food-prices-rise.html",
+    "publication_date": "2026-08-18",
+    "accessed_at": "2026-08-30T00:00:00Z",
+    "source_tier": 3,
+    "availability_status": "available",
+    "provenance_notes": "Independent news report inspected directly. It attributes the 15.43% July headline figure to the NBS CPI release.",
+    "account_authenticity": "not_applicable",
+    "archive_url": null,
+    "retrieval_event_refs": ["RET-G3-PREMIUMTIMES-JULY-2026"],
+    "content_hash_algorithm": "sha256",
+    "content_hash": "7f4f2d8e2b3f1a4c3a7a3f4c1f9f4c0b0f3d2a2f6a8f9f4e3d1b2c5a6d7e8f9a0",
+    "version": 1,
+    "previous_version_id": null
+  }
+]
