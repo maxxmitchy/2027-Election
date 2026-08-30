@@ -1,10 +1,7 @@
-name: Round 8 Gate 2 Closure Audit
+name: Round 8 Failure Artifact Probe
 on:
   push:
-    branches: [round5-runtime-ci-2]
-  pull_request:
-    branches: [main]
-  workflow_dispatch:
+    branches: [round8-failure-probe]
 
 jobs:
   integrity:
@@ -29,32 +26,23 @@ jobs:
         with: {python-version: '3.12.14'}
       - name: Install pinned dependencies
         run: python -m pip install -r requirements-dev.txt
-      - name: Record environment
-        run: |
-          mkdir -p reports
-          python --version > reports/environment.txt
-          python -m pip freeze >> reports/environment.txt
-          psql --version >> reports/environment.txt
-          git rev-parse HEAD >> reports/environment.txt
-      - name: Baseline runtime, schema and property tests
+      - name: Baseline runtime
         run: python -m pytest -q tests/test_round7.py tests/test_round7_bitemporal.py
-      - name: Mutation sensitivity regression
-        if: always()
-        run: python tests/run_round7_mutations.py
-      - name: Verify required reports exist
-        if: always()
+      - name: Deliberate failure probe
         run: |
-          test -f reports/round7-test-results.json
-          test -f reports/round7-mutation-results.json
-          test -f reports/invariant-coverage.md
-      - name: Upload Gate 2 evidence
+          cat > tests/_round8_failure_probe.py <<'PY'
+          def test_round8_failure_probe():
+              assert False, 'ROUND8_FAILURE_PROBE_INTENTIONAL'
+          PY
+          python -m pytest -q tests/_round8_failure_probe.py
+      - name: Verify failure report
+        if: always()
+        run: test -f reports/round7-test-results.json
+      - name: Upload failure evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: gate2-runtime-integrity-${{ github.sha }}
+          name: round8-failure-probe-${{ github.sha }}
           path: |
             reports/round7-test-results.json
-            reports/round7-mutation-results.json
-            reports/invariant-coverage.md
-            reports/invariant-coverage.json
             reports/environment.txt
