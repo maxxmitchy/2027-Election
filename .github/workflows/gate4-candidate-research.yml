@@ -1,0 +1,105 @@
+name: Gate 4 Candidate Research
+
+on:
+  push:
+    paths:
+      - 'candidates/bola-ahmed-tinubu/**'
+      - 'tests/gate4_candidate_acceptance.py'
+      - 'tests/gate4_postgres_runtime.py'
+      - 'db/round5_reference.sql'
+      - '.github/workflows/gate4-candidate-research.yml'
+  workflow_dispatch:
+
+jobs:
+  gate4:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: election
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d election"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    env:
+      PGPASSWORD: postgres
+      GATE4_POSTGRES_DSN: postgresql://postgres:postgres@localhost:5432/election
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Record execution identity
+        run: |
+          mkdir -p reports/gate4-ci
+          echo "$(git rev-parse HEAD)" | tee reports/gate4-ci/commit.txt
+          python --version | tee reports/gate4-ci/python.txt
+          psql --version | tee reports/gate4-ci/psql-client.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Initialize PostgreSQL reference schema
+        run: psql -h localhost -U postgres -d election -v ON_ERROR_STOP=1 -f db/round5_reference.sql
+
+      - name: Load pilot identity fixture into PostgreSQL
+        run: |
+          psql -h localhost -U postgres -d election -v ON_ERROR_STOP=1 <<'SQL'
+          INSERT INTO person(person_id) VALUES ('person-bola-ahmed-tinubu') ON CONFLICT DO NOTHING;
+          INSERT INTO office(office_id, single_occupancy) VALUES
+            ('office-senator-lagos-west', true),
+            ('office-governor-lagos', true),
+            ('office-president-nigeria', true)
+          ON CONFLICT DO NOTHING;
+          INSERT INTO election(election_id, office_id) VALUES
+            ('election-ng-pres-2023','office-president-nigeria'),
+            ('election-ng-pres-2027','office-president-nigeria'),
+            ('election-lagos-gov-1999','office-governor-lagos'),
+            ('election-lagos-gov-2003','office-governor-lagos')
+          ON CONFLICT DO NOTHING;
+          INSERT INTO candidacy(candidacy_id, person_id, election_id, status) VALUES
+            ('cand-1999','person-bola-ahmed-tinubu','election-lagos-gov-1999','registered'),
+            ('cand-2003','person-bola-ahmed-tinubu','election-lagos-gov-2003','registered'),
+            ('cand-2023','person-bola-ahmed-tinubu','election-ng-pres-2023','elected'),
+            ('cand-2027','person-bola-ahmed-tinubu','election-ng-pres-2027','nominated')
+          ON CONFLICT DO NOTHING;
+          SQL
+
+      - name: Run Gate 4 acceptance tests
+        id: tests
+        run: |
+          set -o pipefail
+          python -m pytest tests/gate4_candidate_acceptance.py tests/gate4_postgres_runtime.py -q --junitxml=reports/gate4-ci/junit.xml 2>&1 | tee reports/gate4-ci/pytest.log
+
+      - name: Generate execution report
+        if: always()
+        run: |
+          python - <<'PY'
+          import json, os, pathlib, subprocess
+          p = pathlib.Path('reports/gate4-ci')
+          p.mkdir(parents=True, exist_ok=True)
+          commit = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
+          report = {
+              'tested_commit': commit,
+              'workflow': os.environ.get('GITHUB_WORKFLOW'),
+              'run_id': os.environ.get('GITHUB_RUN_ID'),
+              'job_id': os.environ.get('GITHUB_JOB'),
+              'runner': os.environ.get('RUNNER_OS'),
+              'status': 'generated_after_test_step',
+          }
+          (p/'execution.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
+          PY
+
+      - name: Upload Gate 4 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gate4-candidate-research-evidence-${{ github.sha }}
+          path: reports/gate4-ci/
+          if-no-files-found: error
