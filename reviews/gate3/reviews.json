@@ -1,0 +1,82 @@
+[
+  {
+    "review_id": "REV-G3-NBS-JULY",
+    "target_type": "claim",
+    "target_id": "CLM-G3-NBS-JULY-INFLATION",
+    "created_at": "2026-08-30T00:00:00Z",
+    "reviewer_id": "gate3-controlled-review",
+    "category": "accurate",
+    "dimensions": {
+      "evidence_quality": "strong",
+      "factual_accuracy": "strong",
+      "calculation_accuracy": "not_applicable",
+      "context_completeness": "adequate",
+      "source_quality": "strong",
+      "reviewer_confidence": "high"
+    },
+    "reason": "The primary NBS release directly reports the July 2026 headline rate and an independent news report corroborates the published figure. The observation period and annual definition are explicit.",
+    "proposed_action": null,
+    "version": 1,
+    "previous_version_id": null
+  },
+  {
+    "review_id": "REV-G3-X-STATEMENT",
+    "target_type": "claim",
+    "target_id": "CLM-G3-X-STATEMENT",
+    "created_at": "2026-08-30T00:00:00Z",
+    "reviewer_id": "gate3-controlled-review",
+    "category": "accurate",
+    "dimensions": {
+      "evidence_quality": "adequate",
+      "factual_accuracy": "strong",
+      "calculation_accuracy": "not_applicable",
+      "context_completeness": "strong",
+      "source_quality": "adequate",
+      "reviewer_confidence": "high"
+    },
+    "reason": "The review concerns only whether the account published the statement. It does not endorse the truth of the underlying inflation proposition.",
+    "proposed_action": null,
+    "version": 1,
+    "previous_version_id": null
+  },
+  {
+    "review_id": "REV-G3-CBN-DISPUTE",
+    "target_type": "claim",
+    "target_id": "CLM-G3-CBN-CURRENT-INFLATION",
+    "created_at": "2026-08-30T00:00:00Z",
+    "reviewer_id": "gate3-controlled-review",
+    "category": "context_problem",
+    "dimensions": {
+      "evidence_quality": "strong",
+      "factual_accuracy": "not_assessed",
+      "calculation_accuracy": "not_applicable",
+      "context_completeness": "poor",
+      "source_quality": "strong",
+      "reviewer_confidence": "high"
+    },
+    "reason": "The CBN page snapshot is authentic evidence of what the page displayed, but the claim omits observation/publication timing. It must not be treated as an undated current statistic when a later NBS release reports a different observation.",
+    "proposed_action": "Retain both source records and require explicit observation/retrieval dates in any current-statistic answer.",
+    "version": 1,
+    "previous_version_id": null
+  },
+  {
+    "review_id": "REV-G3-CORRECTION",
+    "target_type": "claim",
+    "target_id": "CLM-G3-CORRECTION",
+    "created_at": "2026-08-30T00:00:00Z",
+    "reviewer_id": "gate3-controlled-review",
+    "category": "partially_accurate",
+    "dimensions": {
+      "evidence_quality": "strong",
+      "factual_accuracy": "poor",
+      "calculation_accuracy": "not_applicable",
+      "context_completeness": "strong",
+      "source_quality": "strong",
+      "reviewer_confidence": "high"
+    },
+    "reason": "V1 incorrectly labels 15.43% as the month-on-month rate. V2 corrects the semantic label and records the actual 1.57% month-on-month value. V1 remains preserved as historical state.",
+    "proposed_action": "Supersede V1 with V2 and invalidate downstream records derived from the incorrect rate label.",
+    "version": 1,
+    "previous_version_id": null
+  }
+]
