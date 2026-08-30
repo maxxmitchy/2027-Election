@@ -4,24 +4,10 @@
   "type":"object",
   "required":["question","interpreted_query","answer_status","answer_text","evidence_status","database_snapshot","limitations","provenance","generation_version"],
   "properties":{
-    "question":{"type":"string"},
-    "interpreted_query":{"type":"object"},
-    "answer_status":{"enum":["ANSWERED","PARTIALLY_ANSWERED","UNKNOWN","UNVERIFIED","DISPUTED","INSUFFICIENT_EVIDENCE","INCOMPLETE","INCOMPARABLE","NO_MATCH","UNSUPPORTED"]},
-    "answer_text":{"type":"string"},
-    "evidence_status":{"type":"string"},
-    "qualification":{"type":"array"},
-    "claims":{"type":"array"},"evidence":{"type":"array"},"sources":{"type":"array"},
-    "observations":{"type":"array"},"calculations":{"type":"array"},"analyses":{"type":"array"},"results":{"type":"array"},
-    "methodology":{"type":"array"},
-    "as_of":{"type":["string","null"]},
-    "database_snapshot":{"type":"string","pattern":"^sha256:"},
-    "limitations":{"type":"array","items":{"type":"string"}},
-    "contradictions":{"type":"array"},"corrections":{"type":"array"},"related_public_conversation":{"type":"array"},
-    "review_information":{"type":"object"},
-    "provenance":{"type":"object","required":["answer_id","query_id","interpretation_version","methodology_version","database_snapshot","generation_timestamp"]},
-    "performance_metadata":{"type":"object"},
-    "generation_version":{"type":"string"},
-    "why_this_answer":{"type":"object"},
-    "retrieval_plan":{"type":"object"}
+    "question":{"type":"string"},"interpreted_query":{"type":"object"},
+    "answer_status":{"enum":["ANSWERED","PARTIALLY_ANSWERED","UNKNOWN","UNVERIFIED","DISPUTED","INSUFFICIENT_EVIDENCE","INCOMPLETE","INCOMPARABLE","NO_MATCH","UNSUPPORTED"]},"answer_text":{"type":"string"},"evidence_status":{"type":"string"},
+    "qualification":{"type":"array"},"claims":{"type":"array"},"evidence":{"type":"array"},"sources":{"type":"array"},"observations":{"type":"array"},"calculations":{"type":"array"},"calculation":{"type":["object","null"]},"analyses":{"type":"array"},"results":{"type":"array"},"methodology":{"type":"array"},
+    "as_of":{"type":["string","null"]},"database_snapshot":{"type":"string","pattern":"^sha256:"},"limitations":{"type":"array","items":{"type":"string"}},"contradictions":{"type":"array"},"corrections":{"type":"array"},"related_public_conversation":{"type":"array"},"review_information":{"type":"object"},
+    "provenance":{"type":"object","required":["answer_id","query_id","interpretation_version","methodology_version","database_snapshot","generation_timestamp"]},"performance_metadata":{"type":"object"},"generation_version":{"type":"string"},"why_this_answer":{"type":"object"},"retrieval_plan":{"type":"object"}
   }
 }
