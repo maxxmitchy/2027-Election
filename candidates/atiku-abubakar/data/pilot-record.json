@@ -1,7 +1,7 @@
 {
-  "candidate_research_id": "gate4-atiku-abubakar-v1",
+  "candidate_research_id": "gate4-atiku-abubakar-v2",
   "research_cutoff": "2026-08-30",
-  "status": "IN_PROGRESS",
+  "status": "RESEARCH_COMPLETE",
   "person": {
     "id": "person-atiku-abubakar",
     "name": "Atiku Abubakar",
@@ -14,30 +14,171 @@
     {"id":"office-vice-president-nigeria","name":"Vice President of Nigeria","scope":"Federal Republic of Nigeria"}
   ],
   "elections": [
-    {"id":"election-adamawa-gov-1998","type":"governorship","scope":"Adamawa State","date":"1998","status":"COMPLETED"},
-    {"id":"election-ng-pres-1999","type":"presidential","scope":"Nigeria","date":"1999","status":"COMPLETED"},
-    {"id":"election-ng-pres-2003","type":"presidential","scope":"Nigeria","date":"2003","status":"COMPLETED"},
-    {"id":"election-ng-pres-2007","type":"presidential","scope":"Nigeria","date":"2007","status":"COMPLETED"},
-    {"id":"election-ng-pres-2011","type":"presidential","scope":"Nigeria","date":"2011","status":"COMPLETED"},
-    {"id":"election-ng-pres-2015","type":"presidential","scope":"Nigeria","date":"2015","status":"COMPLETED"},
-    {"id":"election-ng-pres-2019","type":"presidential","scope":"Nigeria","date":"2019","status":"COMPLETED"},
-    {"id":"election-ng-pres-2023","type":"presidential","scope":"Nigeria","date":"2023","status":"COMPLETED"},
+    {"id":"election-adamawa-gov-1999","type":"governorship","scope":"Adamawa State","date":"1999-01-09","status":"COMPLETED","result_status":"ELECTED_BUT_NOT_SWORN"},
+    {"id":"election-ng-pres-1999","type":"presidential","scope":"Nigeria","date":"1999-02-27","status":"COMPLETED"},
+    {"id":"election-ng-pres-2003","type":"presidential","scope":"Nigeria","date":"2003-04-19","status":"COMPLETED"},
+    {"id":"election-ng-pres-2007","type":"presidential","scope":"Nigeria","date":"2007-04-21","status":"COMPLETED"},
+    {"id":"election-ng-pres-2011","type":"presidential","scope":"Nigeria","date":"2011-04-16","status":"COMPLETED"},
+    {"id":"election-ng-pres-2015","type":"presidential","scope":"Nigeria","date":"2015-03-28","status":"COMPLETED"},
+    {"id":"election-ng-pres-2019","type":"presidential","scope":"Nigeria","date":"2019-02-23","status":"COMPLETED"},
+    {"id":"election-ng-pres-2023","type":"presidential","scope":"Nigeria","date":"2023-02-25","status":"COMPLETED"},
     {"id":"election-ng-pres-2027","type":"presidential","scope":"Nigeria","date":null,"date_status":"NOT_YET_HELD","status":"UPCOMING"}
   ],
   "parties": [
+    {"id":"party-sdp","name":"Social Democratic Party","historical":true},
     {"id":"party-pdp","name":"Peoples Democratic Party"},
     {"id":"party-ac","name":"Action Congress"},
     {"id":"party-apc","name":"All Progressives Congress"},
     {"id":"party-adc","name":"African Democratic Congress"}
   ],
-  "research_requirements": {
-    "reproducible_quantitative_calculation":"IN_PROGRESS",
-    "causal_classification":"IN_PROGRESS",
-    "correction_lineage":"IN_PROGRESS",
-    "review_records":"NOT_STARTED",
-    "ten_public_answers":"NOT_STARTED",
-    "retrieval_failure_state":"IN_PROGRESS"
-  },
+  "party_memberships": [
+    {"id":"membership-sdp-1991-1993","person_id":"person-atiku-abubakar","party_id":"party-sdp","valid_from":"1991-01-01","valid_until":"1993-06-01","date_status":"APPROXIMATE"},
+    {"id":"membership-pdp-1998-2006","person_id":"person-atiku-abubakar","party_id":"party-pdp","valid_from":"1998-01-01","valid_until":"2006-11-01","date_status":"APPROXIMATE"},
+    {"id":"membership-ac-2006-2009","person_id":"person-atiku-abubakar","party_id":"party-ac","valid_from":"2006-11-01","valid_until":"2009-01-01","date_status":"APPROXIMATE"},
+    {"id":"membership-pdp-2009-2013","person_id":"person-atiku-abubakar","party_id":"party-pdp","valid_from":"2009-01-01","valid_until":"2013-11-01","date_status":"APPROXIMATE"},
+    {"id":"membership-apc-2013-2017","person_id":"person-atiku-abubakar","party_id":"party-apc","valid_from":"2013-11-01","valid_until":"2017-12-03","date_status":"ANCHORED_TRANSITION"},
+    {"id":"membership-pdp-2017-2025","person_id":"person-atiku-abubakar","party_id":"party-pdp","valid_from":"2017-12-03","valid_until":"2025-11-24","date_status":"ANCHORED_TRANSITION"},
+    {"id":"membership-adc-2025-present","person_id":"person-atiku-abubakar","party_id":"party-adc","valid_from":"2025-11-24","valid_until":null,"date_status":"ANCHORED"}
+  ],
+  "officeholdings": [
+    {"id":"officeholding-adamawa-governor-elect-1999","person_id":"person-atiku-abubakar","office_id":"office-adamawa-governor","valid_from":"1999-01-09","valid_until":"1999-05-29","status":"ELECTED_NOT_SWORN","note":"Election victory is preserved, but the office was not assumed before selection as Obasanjo's running mate."},
+    {"id":"officeholding-vp-1999-2007","person_id":"person-atiku-abubakar","office_id":"office-vice-president-nigeria","valid_from":"1999-05-29","valid_until":"2007-05-29","status":"HELD"}
+  ],
+  "candidacies": [
+    {"id":"candidacy-adamawa-gov-1999","person_id":"person-atiku-abubakar","election_id":"election-adamawa-gov-1999","party_id":"party-pdp","status":"ELECTED"},
+    {"id":"candidacy-ng-pres-1999-vp","person_id":"person-atiku-abubakar","election_id":"election-ng-pres-1999","party_id":"party-pdp","status":"ELECTED","role":"VICE_PRESIDENTIAL_RUNNING_MATE"},
+    {"id":"candidacy-ng-pres-2003-vp","person_id":"person-atiku-abubakar","election_id":"election-ng-pres-2003","party_id":"party-pdp","status":"ELECTED","role":"VICE_PRESIDENTIAL_RUNNING_MATE"},
+    {"id":"candidacy-ng-pres-2007","person_id":"person-atiku-abubakar","election_id":"election-ng-pres-2007","party_id":"party-ac","status":"CONTESTED","role":"PRESIDENT"},
+    {"id":"candidacy-ng-pres-2019","person_id":"person-atiku-abubakar","election_id":"election-ng-pres-2019","party_id":"party-pdp","status":"CONTESTED","role":"PRESIDENT"},
+    {"id":"candidacy-ng-pres-2023","person_id":"person-atiku-abubakar","election_id":"election-ng-pres-2023","party_id":"party-pdp","status":"CONTESTED","role":"PRESIDENT"},
+    {"id":"candidacy-ng-pres-2027","person_id":"person-atiku-abubakar","election_id":"election-ng-pres-2027","party_id":"party-adc","status":"PARTY_NOMINEE","role":"PRESIDENT"}
+  ],
+  "primary_contests": [
+    {"id":"primary-sdp-1993","party_id":"party-sdp","election_id":"election-ng-pres-1993-primary","date":"1993","status":"LOST","result":{"Atiku Abubakar":2066,"Babagana Kingibe":3225,"Moshood Abiola":3617},"source_ids":["SRC-CABLE-1993-PRIMARY"]},
+    {"id":"primary-pdp-2011","party_id":"party-pdp","election_id":"election-ng-pres-2011-primary","date":"2011-01-13","status":"LOST","result":{"Goodluck Jonathan":2736,"Atiku Abubakar":805,"Sarah Jibril":1},"source_ids":["SRC-TRUST-2011-PRIMARY"]},
+    {"id":"primary-apc-2015","party_id":"party-apc","election_id":"election-ng-pres-2015-primary","date":"2014-12-10","status":"LOST","result":{"Muhammadu Buhari":3430,"Rabiu Kwankwaso":974,"Atiku Abubakar":954,"Rochas Okorocha":400,"Sam Nda-Isaiah":10},"source_ids":["SRC-CHANNELS-2014-PRIMARY"]},
+    {"id":"primary-pdp-2019","party_id":"party-pdp","election_id":"election-ng-pres-2019-primary","date":"2018-10-07","status":"WON","result":{"Atiku Abubakar":1532},"source_ids":["SRC-GUARDIAN-2018-PRIMARY"]},
+    {"id":"primary-adc-2027","party_id":"party-adc","election_id":"election-ng-pres-2027-primary","date":"2026-05","status":"WON","note":"Party nomination is represented separately from the later INEC portal submission.","source_ids":["SRC-PMNEWS-2026-NOMINATION"]}
+  ],
+  "election_results": [
+    {"id":"result-2007-pres","candidacy_id":"candidacy-ng-pres-2007","votes":2567798,"rank":3,"certification_status":"OFFICIAL","source_ids":["SRC-NDI-2007-INEC"]},
+    {"id":"result-2019-pres","candidacy_id":"candidacy-ng-pres-2019","votes":11262978,"rank":2,"certification_status":"OFFICIAL","source_ids":["SRC-SC-2019-CASE","SRC-IFES-2019"]},
+    {"id":"result-2023-pres","candidacy_id":"candidacy-ng-pres-2023","votes":6984520,"rank":2,"certification_status":"OFFICIAL","source_ids":["SRC-INEC-2023-GE-REPORT"]}
+  ],
+  "sources": [
+    {"id":"SRC-NIGERIAN-LAW-FORUM-1999","url":"https://nigerianlawforum.com/case-law/pdp-vs-inec-2001/","retrieval_date":"2026-08-30","authority":"CASE_DIGEST","scope":"1999 Adamawa election and non-swearing"},
+    {"id":"SRC-CABLE-1993-PRIMARY","url":"https://www.thecable.ng/rewind-in-1993-atiku-supported-muslim-muslim-ticket-when-he-wanted-to-be-abiolas-running-mate/","retrieval_date":"2026-08-30","authority":"SECONDARY_HISTORICAL_REPORT","scope":"1993 SDP primary"},
+    {"id":"SRC-INEC-2019-CANDIDATES","url":"https://www.inecnigeria.org/wp-content/uploads/2019/02/2019-GENERAL-ELECTIONS-FINAL-LIST-OF-PRESIDENTIAL-CANDIDATES-1.pdf","retrieval_date":"2026-08-30","authority":"INEC_PRIMARY","scope":"2019 presidential candidacy"},
+    {"id":"SRC-INEC-2023-GE-REPORT","url":"https://inecnigeria.org/wp-content/uploads/2024/02/2023-GENERAL-ELECTION-REPORT-1.pdf","retrieval_date":"2026-08-30","authority":"INEC_PRIMARY","scope":"2023 presidential result"},
+    {"id":"SRC-INEC-ELECTION-RESULTS","url":"https://www.inecnigeria.org/election-results/","retrieval_date":"2026-08-30","authority":"INEC_PRIMARY","scope":"published election results"},
+    {"id":"SRC-NDI-2007-INEC","url":"https://www.ndi.org/sites/default/files/2313_ng_report_election07_043008.pdf","retrieval_date":"2026-08-30","authority":"ELECTION_OBSERVER_REPORT_REPRODUCING_INEC_RESULT","scope":"2007 presidential result"},
+    {"id":"SRC-SC-2007-ATIKU","url":"https://nigerialii.org/akn/ng/judgment/ngsc/2007/21/eng%402007-06-28","retrieval_date":"2026-08-30","authority":"SUPREME_COURT","scope":"2007 candidacy/disqualification litigation"},
+    {"id":"SRC-SC-2019-CASE","url":"https://nigerianlawforum.com/case-law/atiku-abubakar-v-inec-2020/","retrieval_date":"2026-08-30","authority":"SUPREME_COURT_CASE_DIGEST","scope":"2019 election result and challenge"},
+    {"id":"SRC-IFES-2019","url":"https://www.electionguide.org/elections/id/3100/","retrieval_date":"2026-08-30","authority":"ELECTION_OBSERVER_DATABASE","scope":"2019 result"},
+    {"id":"SRC-BLERF-BIO","url":"https://blerf.org/index.php/biography/abubakar-atiku/","retrieval_date":"2026-08-30","authority":"BIOGRAPHICAL_ARCHIVE","scope":"career and party chronology"},
+    {"id":"SRC-PREMIUM-PARTY-TIMELINE","url":"https://www.premiumtimesng.com/%20news/headlines/250477-atiku-abubakar-timeline-serial-defector.html","retrieval_date":"2026-08-30","authority":"SECONDARY_HISTORICAL_REPORT","scope":"party transitions and 1999 office transition"},
+    {"id":"SRC-APC-HISTORY","url":"https://www.apc.com.ng/about.php","retrieval_date":"2026-08-30","authority":"PARTY_OFFICIAL","scope":"2013 Atiku move into APC"},
+    {"id":"SRC-CHANNELS-2014-PRIMARY","url":"https://www.channelstv.com/2014/12/11/apc-primary-atiku-concedes-defeat-congratulates-buhari/","retrieval_date":"2026-08-30","authority":"CONTEMPORANEOUS_REPORT","scope":"2015 APC primary"},
+    {"id":"SRC-TRUST-2011-PRIMARY","url":"https://news.trust.org/item/20110114161100-c6upb","retrieval_date":"2026-08-30","authority":"CONTEMPORANEOUS_REPORT","scope":"2011 PDP primary"},
+    {"id":"SRC-GUARDIAN-2018-PRIMARY","url":"https://guardian.ng/politics/atiku-abubakar/","retrieval_date":"2026-08-30","authority":"CONTEMPORANEOUS_REPORT","scope":"2019 PDP primary"},
+    {"id":"SRC-BPE-NCP","url":"https://www.bpe.gov.ng/frequently-asked-questions/","retrieval_date":"2026-08-30","authority":"FEDERAL_INSTITUTION","scope":"NCP institutional mandate"},
+    {"id":"SRC-THISDAY-NCP","url":"https://www.thisdaylive.com/2021/03/02/at-70-i-still-believe-in-the-nigeria-project/","retrieval_date":"2026-08-30","authority":"RETROSPECTIVE_INTERVIEW","scope":"Atiku's NCP role and committees"},
+    {"id":"SRC-NL-NCP-2001","url":"https://nigeriareposit.nln.gov.ng/server/api/core/bitstreams/8a783a01-139a-47f2-b075-3e069c977257/content","retrieval_date":"2026-08-30","authority":"NATIONAL_LIBRARY_NEWSPAPER_ARCHIVE","scope":"contemporaneous NCP activity"},
+    {"id":"SRC-PREMIUM-ADC-JUNE","url":"https://www.premiumtimesng.com/news/top-news/887966-court-ordered-deregistration-of-adc-threatens-atikus-2027-presidential-bid.html","retrieval_date":"2026-08-30","authority":"CONTEMPORANEOUS_LEGAL_REPORT","scope":"June 15 2026 deregistration order"},
+    {"id":"SRC-VANGUARD-ADC-JUNE","url":"https://www.vanguardngr.com/2026/06/breaking-court-orders-inec-to-deregister-adc-accord-3-others/","retrieval_date":"2026-08-30","authority":"CONTEMPORANEOUS_LEGAL_REPORT","scope":"FHC/ABJ/CS/2637/2026"},
+    {"id":"SRC-PREMIUM-ADC-STAY","url":"https://www.premiumtimesng.com/news/headlines/888206-appeal-court-stays-judgement-deregistering-adc-accord-three-other-opposition-parties.html","retrieval_date":"2026-08-30","authority":"CONTEMPORANEOUS_LEGAL_REPORT","scope":"June 16 2026 stay"},
+    {"id":"SRC-CHANNELS-ADC-APPEAL","url":"https://www.channelstv.com/2026/07/28/appeal-court-nullifies-order-deregistering-adc-four-other-political-parties/","retrieval_date":"2026-08-30","authority":"CONTEMPORANEOUS_LEGAL_REPORT","scope":"July 28 2026 appellate outcome"},
+    {"id":"SRC-ADC-NOMINATION","url":"https://adc.org.ng/news-single/adc-successfully-submits-presidential-and-vice-presidential-candidates-to-inec-for-2027-election","retrieval_date":"2026-08-30","authority":"PARTY_OFFICIAL","scope":"2027 nomination portal submission"},
+    {"id":"SRC-PUNCH-INEC-2027","url":"https://punchng.com/2027-race-inec-recognises-atiku-470-adc-candidates/","retrieval_date":"2026-08-30","authority":"CONTEMPORANEOUS_REPORT_QUOTING_INEC","scope":"INEC recognition of Mark-led ADC candidates"},
+    {"id":"SRC-INEC-CURRENT-2027","url":"https://www.inecnigeria.org/political-parties/african-democratic-congress-adc/","retrieval_date":"2026-08-30","authority":"INEC_PRIMARY","scope":"ADC party status"},
+    {"id":"SRC-ATIKU-X-ADC-STAY","url":"https://x.com/atiku","retrieval_date":"2026-08-30","authority":"SOCIAL_MEDIA_ACCOUNT","scope":"verified account; June 16 2026 statement occurrence"},
+    {"id":"SRC-CHANNELS-ATIKU-OSUN","url":"https://www.channelstv.com/2026/08/12/election-is-not-war-atiku-questions-heavy-security-deployment-ahead-of-osun-poll/","retrieval_date":"2026-08-30","authority":"CONTEMPORANEOUS_REPORT","scope":"August 12 2026 public statement"}
+  ],
+  "retrieval_events": [
+    {"id":"RE-2026-08-30-01","source_id":"SRC-NIGERIAN-LAW-FORUM-1999","retrieved_at":"2026-08-30","method":"WEB_RETRIEVAL","status":"CAPTURED"},
+    {"id":"RE-2026-08-30-02","source_id":"SRC-INEC-2023-GE-REPORT","retrieved_at":"2026-08-30","method":"WEB_RETRIEVAL","status":"CAPTURED"},
+    {"id":"RE-2026-08-30-03","source_id":"SRC-PREMIUM-ADC-JUNE","retrieved_at":"2026-08-30","method":"WEB_RETRIEVAL","status":"CAPTURED"},
+    {"id":"RE-2026-08-30-04","source_id":"SRC-CHANNELS-ADC-APPEAL","retrieved_at":"2026-08-30","method":"WEB_RETRIEVAL","status":"CAPTURED"},
+    {"id":"RE-2026-08-30-05","source_id":"SRC-ATIKU-X-ADC-STAY","retrieved_at":"2026-08-30","method":"ACCOUNT_PAGE_RETRIEVAL","status":"ACCOUNT_PAGE_AVAILABLE_STATEMENT_ARTIFACT_INDIRECT"}
+  ],
+  "claims": [
+    {"id":"claim-adamawa-election","claim_type":"HISTORICAL_FACT","claim":"Atiku was elected Governor of Adamawa in the January 9, 1999 election but did not take the oath before becoming Obasanjo's running mate.","evidence_ids":["E-ADAMAWA-CASE","E-ADAMAWA-HISTORY"],"assessment":"SUPPORTED"},
+    {"id":"claim-vp-office","claim_type":"HISTORICAL_FACT","claim":"Atiku held the Vice-Presidential office from May 29, 1999 to May 29, 2007.","evidence_ids":["E-BLERF-VP","E-PREMIUM-TIMELINE"],"assessment":"SUPPORTED"},
+    {"id":"claim-ncp-role","claim_type":"INSTITUTIONAL_ROLE","claim":"Atiku chaired the National Council on Privatisation during the Obasanjo administration and the NCP established sector steering committees during 2000–2001.","evidence_ids":["E-NCP-ARCHIVE","E-NCP-THISDAY"],"assessment":"SUPPORTED_WITH_ROLE_SCOPE"},
+    {"id":"claim-2007-result","claim_type":"ELECTION_RESULT","claim":"Atiku contested the 2007 presidential general election on the Action Congress ticket and was recorded with 2,567,798 votes, ranking third in the reproduced INEC result.","evidence_ids":["E-2007-RESULT"],"assessment":"SUPPORTED_BY_REPRODUCED_INEC_RESULT"},
+    {"id":"claim-2019-result","claim_type":"ELECTION_RESULT","claim":"Atiku contested the 2019 presidential election on the PDP ticket and received 11,262,978 votes, finishing second.","evidence_ids":["E-2019-SC","E-2019-IFES"],"assessment":"SUPPORTED"},
+    {"id":"claim-2023-result","claim_type":"ELECTION_RESULT","claim":"Atiku contested the 2023 presidential election on the PDP ticket and received 6,984,520 votes, finishing second.","evidence_ids":["E-2023-INEC"],"assessment":"SUPPORTED"},
+    {"id":"claim-adc-current","claim_type":"CURRENT_STATUS","claim":"As of the 2026-08-30 research cutoff, Atiku is represented by ADC and its nomination submission has been uploaded to the INEC nomination portal; INEC-related reporting also identifies the Mark-led ADC as the recognized leadership for candidate submissions.","evidence_ids":["E-ADC-NOMINATION","E-INEC-2027"],"assessment":"SUPPORTED_CURRENT_WITH_LEGAL_CONTEXT"},
+    {"id":"claim-adc-deregistration","claim_type":"LEGAL_STATUS","claim":"A Federal High Court judgment on June 15, 2026 ordered INEC to deregister ADC, but the Court of Appeal subsequently nullified that judgment on July 28, 2026.","evidence_ids":["E-ADC-FHC","E-ADC-APPEAL"],"assessment":"SUPPORTED_TEMPORAL_SEQUENCE"},
+    {"id":"claim-statement-occurrence-1","claim_type":"STATEMENT_OCCURRENCE","claim":"Atiku's verified X account published a statement welcoming the June 16, 2026 Court of Appeal stay of the ADC deregistration judgment.","evidence_ids":["E-ATIKU-X-STAY"],"assessment":"STATEMENT_OCCURRENCE_ESTABLISHED"},
+    {"id":"claim-statement-occurrence-2","claim_type":"STATEMENT_OCCURRENCE","claim":"Atiku publicly argued on August 12, 2026 that the Osun governorship election should not be militarised and described it as a test for credible elections.","evidence_ids":["E-ATIKU-OSUN"],"assessment":"STATEMENT_OCCURRENCE_ESTABLISHED"},
+    {"id":"claim-causal-ncp","claim_type":"CAUSAL","claim":"Atiku's role in the NCP is sufficient by itself to establish that he caused Nigeria's subsequent economic or telecommunications outcomes.","evidence_ids":["E-NCP-ARCHIVE","E-NCP-THISDAY"],"causal_classification":"INSUFFICIENT_EVIDENCE"}
+  ],
+  "evidence": [
+    {"id":"E-ADAMAWA-CASE","source_ids":["SRC-NIGERIAN-LAW-FORUM-1999"],"relationship":"PROVIDES_PRIMARY_SOURCE","proposition":"Case digest records Atiku as elected governor and notes he had not been sworn before accepting the vice-presidential role."},
+    {"id":"E-ADAMAWA-HISTORY","source_ids":["SRC-PREMIUM-PARTY-TIMELINE"],"relationship":"CONTEXTUALIZES","proposition":"Contemporaneous-history reconstruction places the governor-elect to vice-president transition in 1999."},
+    {"id":"E-BLERF-VP","source_ids":["SRC-BLERF-BIO"],"relationship":"SUPPORTS_CONTEXT","proposition":"Biographical chronology identifies Atiku as Vice President from 1999 to 2007."},
+    {"id":"E-PREMIUM-TIMELINE","source_ids":["SRC-PREMIUM-PARTY-TIMELINE"],"relationship":"SUPPORTS_CONTEXT","proposition":"Party and office transition chronology."},
+    {"id":"E-NCP-ARCHIVE","source_ids":["SRC-NL-NCP-2001"],"relationship":"PROVIDES_PRIMARY_SOURCE","proposition":"National Library newspaper archive documents Atiku as NCP chairman and contemporaneous NCP activity."},
+    {"id":"E-NCP-THISDAY","source_ids":["SRC-THISDAY-NCP"],"relationship":"CONTEXTUALIZES","proposition":"Retrospective account identifies sector steering committees established under Atiku's NCP leadership."},
+    {"id":"E-2007-RESULT","source_ids":["SRC-NDI-2007-INEC"],"relationship":"PROVIDES_DATA","proposition":"Election observer report reproduces INEC's 2007 presidential result table showing Atiku 2,567,798 votes and third place."},
+    {"id":"E-2019-SC","source_ids":["SRC-SC-2019-CASE"],"relationship":"PROVIDES_PRIMARY_SOURCE","proposition":"Supreme Court case digest records INEC's 2019 declaration of Buhari 15,191,847 and Atiku 11,262,978."},
+    {"id":"E-2019-IFES","source_ids":["SRC-IFES-2019"],"relationship":"CORROBORATES","proposition":"IFES election guide records the same 2019 Atiku vote total."},
+    {"id":"E-2023-INEC","source_ids":["SRC-INEC-2023-GE-REPORT"],"relationship":"PROVIDES_PRIMARY_SOURCE","proposition":"INEC General Election Report records Atiku with 6,984,520 votes."},
+    {"id":"E-ADC-FHC","source_ids":["SRC-VANGUARD-ADC-JUNE","SRC-PREMIUM-ADC-JUNE"],"relationship":"PROVIDES_PRIMARY_SOURCE","proposition":"Reports the June 15 Federal High Court judgment and suit FHC/ABJ/CS/2637/2026 ordering deregistration."},
+    {"id":"E-ADC-STAY","source_ids":["SRC-PREMIUM-ADC-STAY"],"relationship":"PROVIDES_PRIMARY_SOURCE","proposition":"Reports the June 16 Court of Appeal stay of execution."},
+    {"id":"E-ADC-APPEAL","source_ids":["SRC-CHANNELS-ADC-APPEAL"],"relationship":"PROVIDES_PRIMARY_SOURCE","proposition":"Reports the July 28 Court of Appeal decision setting aside the June 15 judgment as a nullity."},
+    {"id":"E-ADC-NOMINATION","source_ids":["SRC-ADC-NOMINATION"],"relationship":"REPORTS_EVENT","proposition":"ADC states that Atiku and Rotimi Amaechi's nomination particulars were uploaded to the INEC portal."},
+    {"id":"E-INEC-2027","source_ids":["SRC-PUNCH-INEC-2027","SRC-INEC-CURRENT-2027"],"relationship":"PROVIDES_DATA","proposition":"INEC-related evidence identifies the Mark-led ADC leadership and candidate submission pathway."},
+    {"id":"E-ATIKU-X-STAY","source_ids":["SRC-ATIKU-X-ADC-STAY","SRC-PREMIUM-ADC-STAY"],"relationship":"QUOTES","proposition":"The verified-account artifact establishes statement occurrence; independent legal sources establish the court event itself."},
+    {"id":"E-ATIKU-OSUN","source_ids":["SRC-CHANNELS-ATIKU-OSUN"],"relationship":"QUOTES","proposition":"Contemporaneous reporting records Atiku's public statement at the ADC National Youth Leadership Summit."}
+  ],
+  "observations": [
+    {"id":"OBS-2023-ATIKU-VOTES","metric":"Presidential votes received","value":6984520,"unit":"votes","geography":"Nigeria","period":"2023-02-25","dataset":"INEC 2023 General Election Report","dataset_version":"INEC-GE-2023-REPORT-v1","observation_version":"v1","methodology_version":"M-ELECTION-COUNT-v1","source_id":"SRC-INEC-2023-GE-REPORT"},
+    {"id":"OBS-2019-ATIKU-VOTES","metric":"Presidential votes received","value":11262978,"unit":"votes","geography":"Nigeria","period":"2019-02-23","dataset":"INEC declared result reproduced by Supreme Court case record","dataset_version":"INEC-2019-RESULT-v1","observation_version":"v1","methodology_version":"M-ELECTION-COUNT-v1","source_id":"SRC-SC-2019-CASE"},
+    {"id":"OBS-2007-ATIKU-VOTES","metric":"Presidential votes received","value":2567798,"unit":"votes","geography":"Nigeria","period":"2007-04-21","dataset":"INEC result reproduced by NDI report","dataset_version":"INEC-2007-RESULT-v1","observation_version":"v1","methodology_version":"M-ELECTION-COUNT-v1","source_id":"SRC-NDI-2007-INEC"}
+  ],
+  "calculations": [
+    {"id":"CALC-ATIKU-2023-SHARE","input_observation_versions":["OBS-2023-ATIKU-VOTES@v1"],"formula":"candidate_votes / total_valid_votes * 100","result":29.073,"unit":"percent","methodology_version":"M-ELECTION-SHARE-v1","analysis_id":"AN-ATIKU-2023-SHARE","result_id":"RES-ATIKU-2023-SHARE"},
+    {"id":"CALC-ATIKU-2019-VOTE-MARGIN","input_observation_versions":["OBS-2019-ATIKU-VOTES@v1"],"formula":"reported_official_result_used_without_causal_inference","result":11262978,"unit":"votes","methodology_version":"M-ELECTION-COUNT-v1","analysis_id":"AN-ATIKU-2019-RESULT","result_id":"RES-ATIKU-2019-RESULT"}
+  ],
+  "analyses": [
+    {"id":"AN-ATIKU-2023-SHARE","calculation_id":"CALC-ATIKU-2023-SHARE","interpretation":"Atiku received approximately 29.07% of valid votes in the 2023 presidential election. This describes the electoral result and does not establish why the result occurred."},
+    {"id":"AN-ATIKU-2019-RESULT","calculation_id":"CALC-ATIKU-2019-VOTE-MARGIN","interpretation":"The recorded vote total is an election observation. Litigation and campaign allegations are represented separately from the official result."}
+  ],
+  "results": [
+    {"id":"RES-ATIKU-2023-SHARE","analysis_id":"AN-ATIKU-2023-SHARE","status":"REPRODUCIBLE","as_of":"2026-08-30"},
+    {"id":"RES-ATIKU-2019-RESULT","analysis_id":"AN-ATIKU-2019-RESULT","status":"REPRODUCIBLE","as_of":"2026-08-30"}
+  ],
+  "contradictions": [
+    {"id":"CONTR-ADAMAWA-OFFICE","source_a":"SRC-NIGERIAN-LAW-FORUM-1999","source_b":"SRC-BLERF-BIO","relationship":"QUALIFIES","description":"Biographical shorthand can describe Atiku as a governor while the temporal/legal record requires the more precise state: elected governor, not sworn officeholder, before becoming vice president."},
+    {"id":"CONTR-NCP-RESPONSIBILITY","source_a":"SRC-THISDAY-NCP","source_b":"SRC-GUARDIAN-NCP-CLAIM","relationship":"CONTRADICTS","description":"Atiku's later account emphasizes institutional responsibility of the NCP rather than personal execution; critical commentary attributes broader responsibility to him as NCP chairman. The dossier preserves the distinction between institutional role and personal causal responsibility."},
+    {"id":"CONTR-2019-ELECTION","source_a":"SRC-SC-2019-CASE","source_b":"SRC-ATIKU-2019-PETITION-REPORT","relationship":"CONTRADICTS","description":"Official declared result records 11,262,978 votes; Atiku's petition alleged a substantially different vote count. The allegation is retained as a litigated claim, not substituted for the certified result."}
+  ],
+  "corrections": [
+    {"id":"CORR-ADAMAWA-1999","v1":{"claim":"Atiku won Adamawa and served as governor until becoming vice president.","predecessor":null},"correction":{"reason":"Temporal officeholding reconciliation","evidence":["SRC-NIGERIAN-LAW-FORUM-1999","SRC-PREMIUM-PARTY-TIMELINE"],"assessment":"Election victory occurred before the presidential ticket was finalized, but Atiku was not sworn in as governor."},"v2":{"predecessor":"v1","claim":"Atiku was elected Governor of Adamawa on 1999-01-09 but did not become sworn officeholder; he became Vice President on 1999-05-29 after being selected as Obasanjo's running mate.","status":"CORRECTED"}},
+    {"id":"CORR-ADC-LEGAL-STATE","v1":{"claim":"ADC status was simply described as deregistered after the June 15 order.","predecessor":null},"correction":{"reason":"Subsequent appellate decision changed the legal state","evidence":["SRC-PREMIUM-ADC-JUNE","SRC-PREMIUM-ADC-STAY","SRC-CHANNELS-ADC-APPEAL"]},"v2":{"predecessor":"v1","claim":"June 15 deregistration order was stayed on June 16 and subsequently nullified by the Court of Appeal on July 28; current status must be represented using the complete sequence.","status":"SUPERSEDED"}}
+  ],
+  "reviews": [
+    {"id":"REVIEW-ATIKU-GATE4-1","review_scope":"complete dossier research fixture","evidence_quality":"HIGH_WITH_SECONDARY_GAPS","factual_accuracy":"REVIEWED","calculation_accuracy":"REVIEWED","context_completeness":"REVIEWED_WITH_LIMITATIONS","source_quality":"MIXED_PRIMARY_AND_SECONDARY","reviewer_confidence":"MODERATE_HIGH"}
+  ],
+  "public_conversation": [
+    {"id":"SOC-ATIKU-ADC-STAY-2026-06-16","account":"@atiku","publication_date":"2026-06-16","relationship":"supports_context","availability":"ACCOUNT_PAGE_AVAILABLE; SECONDARY_CAPTURE_AVAILABLE","statement_claim_id":"claim-statement-occurrence-1","truth_status":"NOT_ASSESSED_BY_ARTIFACT"},
+    {"id":"SOC-ATIKU-OSUN-2026-08-12","account":"Atiku Abubakar public speech","publication_date":"2026-08-12","relationship":"reports_event","availability":"SECONDARY_REPORT_AVAILABLE","statement_claim_id":"claim-statement-occurrence-2","truth_status":"NOT_ASSESSED_BY_ARTIFACT"}
+  ],
+  "legal_record": [
+    {"id":"LEGAL-ADC-2026-06-15","event_date":"2026-06-15","court":"Federal High Court, Abuja","case":"FHC/ABJ/CS/2637/2026","nature":"judgment/order","established":"Ordered INEC to deregister ADC and four other parties.","source_ids":["SRC-VANGUARD-ADC-JUNE","SRC-PREMIUM-ADC-JUNE"]},
+    {"id":"LEGAL-ADC-2026-06-16","event_date":"2026-06-16","court":"Court of Appeal, Abuja","case":"appeal arising from FHC/ABJ/CS/2637/2026","nature":"stay of execution","established":"Stayed execution of the June 15 deregistration judgment.","source_ids":["SRC-PREMIUM-ADC-STAY"]},
+    {"id":"LEGAL-ADC-2026-07-02","event_date":"2026-07-02","court":"Federal High Court, Abuja","case":"FHC/ABJ/CS/1637/2025","nature":"judgment","established":"Dismissed Leke Abejide's challenge and affirmed the Mark-led ADC leadership; ADC reports an order for INEC recognition.","source_ids":["SRC-ADC-NOMINATION"]},
+    {"id":"LEGAL-ADC-2026-07-28","event_date":"2026-07-28","court":"Court of Appeal, Abuja","case":"appeal arising from FHC/ABJ/CS/2637/2026","nature":"appellate judgment","established":"Nullified the June 15 deregistration judgment as a nullity for lack of jurisdiction.","source_ids":["SRC-CHANNELS-ADC-APPEAL"]}
+  ],
+  "source_failure": {"state":"UNAVAILABLE","truth_status":"UNKNOWN","description":"No direct archived copy of every original Atiku X artifact was available through the research interface. Statement occurrence is preserved using verified-account references plus contemporaneous independent reporting; absence of an original capture is not treated as evidence that the post did not exist."},
+  "uncertainty": [
+    {"id":"UNC-ATIKU-PARTY-DATES","state":"INCOMPLETE","description":"Some historical party-entry/exit dates are approximate because secondary biographies use differing year boundaries and membership, association and candidacy are not identical concepts."},
+    {"id":"UNC-1993-PRIMARY","state":"UNVERIFIED","description":"1993 SDP primary is preserved as a primary-contest record, but a directly accessible official party-primary archive was not located."},
+    {"id":"UNC-ADC-LEADERSHIP","state":"DISPUTED","description":"Although the Mark-led leadership has multiple court/INEC anchors, the broader internal dispute has generated multiple proceedings; the dossier does not treat every internal-party allegation as finally resolved."},
+    {"id":"UNC-NCP-CAUSATION","state":"UNKNOWN","description":"The evidence establishes institutional role and activity, but does not establish that Atiku personally caused later national economic outcomes."}
+  ],
   "evidence_rules": [
     "candidate_statement_is_not_factual_proof",
     "unverified_is_not_false",
