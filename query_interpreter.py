@@ -11,7 +11,7 @@ CANDIDATE_ALIASES = {
     "peter-gregory-obi": ("obi", "peter obi", "peter gregory obi"),
     "atiku-abubakar": ("atiku", "atiku abubakar"),
 }
-CAUSAL_RE = re.compile(r"\b(caused?|causes?|causing|because of|responsible for|led to|resulted in|made|created|due to|as a result of)\b", re.I)
+CAUSAL_RE = re.compile(r"\b(caused?|causes?|causing|because of|responsible for|led to|resulted in|make|made|created|due to|as a result of)\b", re.I)
 SUBJECTIVE_RE = re.compile(r"\b(best|worst|most competent|least competent|performed better|most successful|better candidate|worse candidate|who performed best)\b", re.I)
 SECURITY_RE = re.compile(r"\b(ignore|assume|don't mention|do not mention|everyone knows|give me the most favorable)\b[^.?!]*", re.I)
 TRUTH_ASSESSMENT_RE = re.compile(r"\b(was|is|were|are)\s+(what|that)\b.*\b(true|correct|accurate)\b", re.I)
@@ -58,7 +58,7 @@ def interpret(raw_question: str) -> dict:
     elif causal: status="INTERPRETED"; operation="CAUSAL_ATTRIBUTION"
     elif TRUTH_ASSESSMENT_RE.search(raw): status="INTERPRETED"; operation="FACTUAL_LOOKUP"
     elif re.search(r"\bwhat did\b|\bwhat .* said\b|\bwhat .*say\b|\bstatement", ql) and ("adc" in ql or "ncp" in ql or "said" in ql): status="INTERPRETED"; operation="PUBLIC_CONVERSATION"
-    elif re.search(r"\bhow many\b|\bhow much\b|\bcount\b|\bnumber of", ql): status="INTERPRETED"; operation="COUNT"
+    elif re.search(r"\bhow many\b|\bhow much\b|\bcount\b|\bnumber of\b", ql) or (entity=="presidential_vote_count" and "total" in ql): status="INTERPRETED"; operation="COUNT"
     elif re.search(r"\b(increase|decrease|change|moved from|rose|fell)\b", ql): status="INTERPRETED"; operation="CHANGE"
     elif re.search(r"\bcompare\b|\bversus\b|\bvs\.?\b", ql): status="INTERPRETED"; operation="COMPARISON"
     elif re.search(r"\bconflicting evidence\b|\bcontradict", ql): status="INTERPRETED"; operation="CONTRADICTION"
