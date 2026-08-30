@@ -98,10 +98,8 @@ def make_question(question: str, *, candidate_scope: tuple[str,...] | None = Non
 
 
 def decompose(rq: ResearchQuestion) -> list[dict]:
-    q = rq.normalized_question
     items = [("scope", "What exactly is within the question's candidate, time and geographic scope?"),("facts", "Which factual propositions must be established?"),("evidence", "What evidence is required for each material claim?"),("primary", "Which claims require primary-source verification?"),("gaps", "What evidence is missing, unavailable or not yet investigated?")]
-    if rq.question_type in {"QUANTITATIVE","COMPARATIVE","ECONOMIC","COMPOSITE"}:
-        items += [("quantitative", "Which metrics, definitions, units, geographies, periods, datasets and versions are required?"), ("comparability", "Are the requested observations legitimately comparable?"), ("calculation", "What calculations and exact inputs would be required?")]
+    if rq.question_type in {"QUANTITATIVE","COMPARATIVE","ECONOMIC","COMPOSITE"}: items += [("quantitative", "Which metrics, definitions, units, geographies, periods, datasets and versions are required?"), ("comparability", "Are the requested observations legitimately comparable?"), ("calculation", "What calculations and exact inputs would be required?")]
     if rq.question_type in {"CAUSAL","COMPOSITE"}: items += [("causal", "What mechanism, competing explanations and causal evidence would be required?"), ("limitations", "What prevents temporal association from being treated as causation?")]
     if rq.question_type in {"POLICY","COMPOSITE"}: items += [("policy", "What was proposed, announced, legislated, approved, implemented, reversed or associated with a documented outcome?")]
     if rq.question_type in {"LEGAL","COMPOSITE"}: items += [("legal", "What is the procedural chronology and current legal status?")]
@@ -159,3 +157,19 @@ def task_queue(investigation: dict) -> list[dict]:
 
 def report_bundle(root: Path, question: str, *, as_of: str|None=None) -> dict:
     inv=investigate(root,question,as_of=as_of); tasks=task_queue(inv); payload={"investigation":inv,"tasks":tasks,"coverage":{"model":"multidimensional-documentary-coverage-v1","is_truth_probability":False,"candidate_scope":inv["investigation"]["question"]["candidate_scope"],"coverage_by_candidate":{cid:dossier_summary(root,cid) for cid in inv["investigation"]["question"]["candidate_scope"]}}}; raw=json.dumps(payload,sort_keys=True,default=str).encode(); payload["artifact_digest"]=hashlib.sha256(raw).hexdigest(); return payload
+
+# Phase 5 closure correction: a required primary-source dependency without linked
+# evidence remains an explicit OPEN research gap rather than disappearing.
+_original_investigate = investigate
+
+def investigate(root: Path, question: str, *, candidate_scope: tuple[str,...] | None=None, as_of: str | None=None) -> dict:
+    m = _original_investigate(root, question, candidate_scope=candidate_scope, as_of=as_of)
+    existing = {g.get("gap_id") for g in m.get("research_gaps", [])}
+    for req in m["investigation"]["evidence_requirements"]:
+        if req.get("preferred_primary_source") and req.get("requirement_id") not in existing:
+            m["research_gaps"].append({"gap_id":req["requirement_id"],"claim":req["target_claim"],"missing_evidence":"required primary-source evidence","preferred_evidence":"originating authoritative record","reason":"required evidence has not been linked to this investigation","severity":"HIGH","status":"OPEN","blocking":True,"candidate":m["investigation"]["question"]["candidate_scope"][0] if len(m["investigation"]["question"]["candidate_scope"])==1 else "MULTI_CANDIDATE"})
+    if m["research_gaps"]:
+        m["answerability"]["status"]="PARTIALLY_ANSWERABLE"
+        m["investigation"]["status"]="READY_FOR_REVIEW" if m["review"]["required"] else "PARTIALLY_ANSWERABLE"
+        m["performance_metadata"]["number_of_research_gaps"]=len(m["research_gaps"])
+    return m
