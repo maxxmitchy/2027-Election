@@ -6,7 +6,7 @@ SUBJECTIVE_RE=re.compile(r"\b(best|worst|most competent|least competent|performe
 SECURITY_RE=re.compile(r"\b(ignore|assume|don't mention|do not mention|everyone knows|give me the most favorable)\b[^.?!]*",re.I)
 TRUTH_ASSESSMENT_RE=re.compile(r"\b(was|is|were|are)\s+(what|that)\b.*\b(true|correct|accurate)\b",re.I)
 PUBLIC_REQUEST_RE=re.compile(r"\b(what did|what .* said|what .* say|what public statement|what .*statement|what statement)\b",re.I)
-CAUSAL_PHRASES=("cause ","caused ","causes ","causing ","because of","responsible for","led to","resulted in","make ","made ","created ","due to","as a result of")
+CAUSAL_PHRASES=("cause ","caused ","causes ","causing ","because of","responsible for","lead to","led to","resulted in","make ","made ","created ","due to","as a result of")
 
 def _scope(q):
     ql=q.lower();found=[]
