@@ -69,7 +69,7 @@ def _coverage_answer(question, interpreted, root):
     a["sources"]=[]
     for cid in scope:
         if cid in report:
-            candidate_path=Path(CANDIDATES[cid]); data_dir=(root/candidate_path).parent/"data" if candidate_path.suffix else root/candidate_path/"data"
+            candidate_path=Path(CANDIDATES[cid]); data_dir=(root/candidate_path).parent if candidate_path.suffix else root/candidate_path/"data"
             p4=json.loads((data_dir/"phase4-depth.json").read_text(encoding="utf-8"))
             a["sources"].extend(p4.get("source_upgrades",[]))
     a["research_gaps"]=gaps
