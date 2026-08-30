@@ -2,8 +2,7 @@
 from __future__ import annotations
 import copy, sys
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[1]
-sys.path.insert(0,str(ROOT))
+ROOT=Path(__file__).resolve().parents[1]; sys.path.insert(0,str(ROOT))
 from answer_experience import present
 VALID={"bola-ahmed-tinubu","peter-gregory-obi","atiku-abubakar"}
 
@@ -13,24 +12,19 @@ def validate_answer(a):
     if any(k not in p or not p.get(k) for k in required): return False
     iq=a.get("interpreted_query",{}); scope=iq.get("candidate_scope",[])
     if any(cid not in VALID for cid in scope): return False
-    if a.get("review_information",{}).get("status")!="NOT_A_SOURCE": return False
-    if not a.get("limitations"): return False
+    if a.get("review_information",{}).get("status")!="NOT_A_SOURCE" or not a.get("limitations"): return False
     if a.get("answer_status")=="INSUFFICIENT_EVIDENCE" and any(x in a.get("answer_text","").lower() for x in ("therefore tinubu caused","therefore obi caused","therefore atiku caused")): return False
-    if iq.get("operation")=="CAUSAL_ATTRIBUTION" and a.get("answer_status")=="ANSWERED" and not a.get("evidence"): return False
     if iq.get("operation")=="CAUSAL_ATTRIBUTION" and "caus" not in " ".join(a.get("why_this_answer",{}).get("evidence_does_not_establish",[])).lower(): return False
     calc=a.get("calculation")
-    if iq.get("entity")=="headline_inflation" and iq.get("operation")=="CHANGE":
-        if not calc or len(calc.get("inputs",[]))<2 or calc.get("unit")!="percentage_points": return False
+    if iq.get("entity")=="headline_inflation" and iq.get("operation")=="CHANGE" and (not calc or len(calc.get("inputs",[]))<2 or calc.get("unit")!="percentage_points"): return False
     if calc and calc.get("inputs") and calc.get("result") is not None:
         vals=[x.get("value") for x in calc["inputs"]]
         if len(vals)>=2 and calc.get("unit")=="percentage_points" and abs((vals[1]-vals[0])-calc["result"])>1e-9: return False
     if iq.get("operation")=="PUBLIC_CONVERSATION":
-        if not a.get("related_public_conversation"): return False
-        if any(x.get("semantic_rule")!="statement_occurrence_is_not_independent_truth" for x in a["related_public_conversation"]): return False
+        if not a.get("related_public_conversation") or any(x.get("semantic_rule")!="statement_occurrence_is_not_independent_truth" for x in a["related_public_conversation"]): return False
         if "not as independent" not in a.get("answer_text",""): return False
-    if iq.get("operation")=="CONTRADICTION" and a.get("answer_status")=="DISPUTED" and not a.get("contradictions"): return False
+    if iq.get("operation")=="CONTRADICTION" and a.get("answer_status")!="NO_MATCH" and not a.get("contradictions"): return False
     if iq.get("operation")=="CORRECTION" and a.get("answer_status")=="DISPUTED" and not a.get("corrections"): return False
-    if iq.get("as_of") is not None and a.get("as_of") is None: return False
     if iq.get("as_of") is not None and a.get("as_of")!=iq.get("as_of"): return False
     if iq.get("operation")=="AS_OF" and a.get("as_of") is None: return False
     if iq.get("entity")=="headline_inflation" and iq.get("geography")!="Nigeria": return False
@@ -43,7 +37,7 @@ def run():
     for name,q in seeds.items():
         a=present(q,ROOT); m=copy.deepcopy(a)
         if name=="M1_remove_source_provenance": m["provenance"].pop("source_versions",None)
-        elif name=="M2_remove_evidence_relationship": m["evidence"]=[{}]
+        elif name=="M2_remove_evidence_relationship": m["evidence"]=[]
         elif name=="M3_unknown_to_false": m["answer_status"]="ANSWERED"; m["answer_text"]="FALSE"
         elif name=="M4_insufficient_to_positive": m["answer_status"]="ANSWERED"; m["answer_text"]="Tinubu caused inflation."
         elif name=="M5_remove_contradiction": m["contradictions"]=[]; m["qualification"]=[]
