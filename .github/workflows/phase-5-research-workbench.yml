@@ -1,5 +1,7 @@
 name: Phase 5 Research Workbench
 on:
+  push:
+    branches: ["main"]
   pull_request:
     branches: ["main"]
   workflow_dispatch:
@@ -74,6 +76,8 @@ jobs:
           for cid in CANDIDATES:
               assert (Path('candidates')/cid).exists(), cid
           assert not (Path('candidates')/BLOCKED).exists()
+          sample=__import__('research_workbench').investigate(Path('.'),"What evidence exists for Peter Obi's economic record?",as_of="2026-08-30")
+          Draft202012Validator(schema).validate(sample)
           for name in ('research-investigations.json','research-tasks.json','research-coverage.json','phase-5-research-workbench.json','phase-5-mutation-results.json'):
               assert Path('reports',name).exists(), name
           report=json.loads(Path('reports/phase-5-research-workbench.json').read_text())
@@ -93,24 +97,13 @@ jobs:
         if: always()
         run: |
           python - <<'PY'
-          import json, os, subprocess
+          import json, os
           from pathlib import Path
           def txt(n):
               p=Path('evidence/phase-5')/n
               return p.read_text(errors='replace') if p.exists() else ''
-          phase3=txt('phase3.txt'); phase4=txt('phase4.txt'); phase5=txt('phase5.txt'); mutations=txt('mutations.txt')
-          report={
-            'phase':'5','name':'Research Workbench & Evidence Investigation',
-            'tested_sha':txt('sha.txt').strip(),
-            'workflow':'.github/workflows/phase-5-research-workbench.yml',
-            'run_id':int(os.environ.get('GITHUB_RUN_ID','0')),
-            'environment':{'python':'3.12.14','postgresql':'16'},
-            'execution':{'phase3':'success' if os.environ.get('PHASE3_OUTCOME')=='success' else 'failure_or_unavailable','phase4':'success' if os.environ.get('PHASE4_OUTCOME')=='success' else 'failure_or_unavailable','phase5':'success' if os.environ.get('PHASE5_OUTCOME')=='success' else 'failure_or_unavailable','mutations':'success' if os.environ.get('MUTATION_OUTCOME')=='success' else 'failure_or_unavailable'},
-            'candidate_scope':list(CANDIDATES) if False else ['bola-ahmed-tinubu','peter-gregory-obi','atiku-abubakar'],
-            'candidate_4':'BLOCKED','methodology_version':'phase5-research-workbench-v1',
-            'failure_evidence':{'phase3':phase3[-4000:],'phase4':phase4[-4000:],'phase5':phase5[-4000:],'mutations':mutations[-4000:]},
-            'status':'PASS' if all(os.environ.get(k)=='success' for k in ('PHASE3_OUTCOME','PHASE4_OUTCOME','PHASE5_OUTCOME','MUTATION_OUTCOME')) else 'FAILED'
-          }
+          outcomes={k:os.environ.get(k) for k in ('PHASE3_OUTCOME','PHASE4_OUTCOME','PHASE5_OUTCOME','MUTATION_OUTCOME')}
+          report={'phase':'5','name':'Research Workbench & Evidence Investigation','tested_sha':txt('sha.txt').strip(),'workflow':'.github/workflows/phase-5-research-workbench.yml','run_id':int(os.environ.get('GITHUB_RUN_ID','0')),'environment':{'python':'3.12.14','postgresql':'16'},'execution':outcomes,'candidate_scope':['bola-ahmed-tinubu','peter-gregory-obi','atiku-abubakar'],'candidate_4':'BLOCKED','methodology_version':'phase5-research-workbench-v1','failure_evidence':{'phase3':txt('phase3.txt')[-4000:],'phase4':txt('phase4.txt')[-4000:],'phase5':txt('phase5.txt')[-4000:],'mutations':txt('mutations.txt')[-4000:]},'status':'PASS' if all(v=='success' for v in outcomes.values()) else 'FAILED'}
           Path('reports/phase-5-research-workbench.json').write_text(json.dumps(report,indent=2)+'\n')
           Path('reports/phase-5-research-workbench.md').write_text('# Phase 5 — Research Workbench Validation\n\n'+json.dumps(report,indent=2)+'\n')
           PY
