@@ -1,0 +1,11 @@
+{
+  "phase":"natural-language-query-interpretation",
+  "methodology_version":"query-interpreter-v1",
+  "llm_dependency":false,
+  "candidate_4":"BLOCKED",
+  "validated_candidates":["bola-ahmed-tinubu","peter-gregory-obi","atiku-abubakar"],
+  "acceptance_criteria":["natural-language interpretation","entity resolution","candidate isolation","temporal interpretation","operation classification","causal detection","ambiguity detection","subjective rejection","comparison safety","public conversation distinction","provenance","reproducibility","deterministic retrieval"],
+  "golden_semantics_tests":13,
+  "demo_examples":16,
+  "status":"PENDING_FINAL_CI"
+}
