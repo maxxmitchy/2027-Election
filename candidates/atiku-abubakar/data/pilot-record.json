@@ -1,0 +1,50 @@
+{
+  "candidate_research_id": "gate4-atiku-abubakar-v1",
+  "research_cutoff": "2026-08-30",
+  "status": "IN_PROGRESS",
+  "person": {
+    "id": "person-atiku-abubakar",
+    "name": "Atiku Abubakar",
+    "birth_date": "1946-11-25",
+    "birth_place": "Jada, Adamawa State, Nigeria",
+    "status": "RESEARCH_ANCHORED"
+  },
+  "offices": [
+    {"id":"office-adamawa-governor","name":"Governor of Adamawa State","scope":"Adamawa State"},
+    {"id":"office-vice-president-nigeria","name":"Vice President of Nigeria","scope":"Federal Republic of Nigeria"}
+  ],
+  "elections": [
+    {"id":"election-adamawa-gov-1998","type":"governorship","scope":"Adamawa State","date":"1998","status":"COMPLETED"},
+    {"id":"election-ng-pres-1999","type":"presidential","scope":"Nigeria","date":"1999","status":"COMPLETED"},
+    {"id":"election-ng-pres-2003","type":"presidential","scope":"Nigeria","date":"2003","status":"COMPLETED"},
+    {"id":"election-ng-pres-2007","type":"presidential","scope":"Nigeria","date":"2007","status":"COMPLETED"},
+    {"id":"election-ng-pres-2011","type":"presidential","scope":"Nigeria","date":"2011","status":"COMPLETED"},
+    {"id":"election-ng-pres-2015","type":"presidential","scope":"Nigeria","date":"2015","status":"COMPLETED"},
+    {"id":"election-ng-pres-2019","type":"presidential","scope":"Nigeria","date":"2019","status":"COMPLETED"},
+    {"id":"election-ng-pres-2023","type":"presidential","scope":"Nigeria","date":"2023","status":"COMPLETED"},
+    {"id":"election-ng-pres-2027","type":"presidential","scope":"Nigeria","date":null,"date_status":"NOT_YET_HELD","status":"UPCOMING"}
+  ],
+  "parties": [
+    {"id":"party-pdp","name":"Peoples Democratic Party"},
+    {"id":"party-ac","name":"Action Congress"},
+    {"id":"party-apc","name":"All Progressives Congress"},
+    {"id":"party-adc","name":"African Democratic Congress"}
+  ],
+  "research_requirements": {
+    "reproducible_quantitative_calculation":"IN_PROGRESS",
+    "causal_classification":"IN_PROGRESS",
+    "correction_lineage":"IN_PROGRESS",
+    "review_records":"NOT_STARTED",
+    "ten_public_answers":"NOT_STARTED",
+    "retrieval_failure_state":"IN_PROGRESS"
+  },
+  "evidence_rules": [
+    "candidate_statement_is_not_factual_proof",
+    "unverified_is_not_false",
+    "disputed_is_not_false",
+    "absence_of_evidence_is_not_evidence_of_absence",
+    "temporal_association_is_not_causation",
+    "review_is_not_evidence",
+    "ai_answer_is_not_source_of_truth"
+  ]
+}
