@@ -8,17 +8,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | Bola Ahmed Tinubu | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | PASS | PASS | PUBLISHED |
 | Peter Gregory Obi | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | PASS | PASS | VALIDATED |
-| Atiku Abubakar | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | NOT_STARTED | NOT_STARTED | RESEARCH_COMPLETE |
-
-## Candidate status vocabulary
-
-- `NOT_STARTED` — no research work has begun.
-- `IN_PROGRESS` — controlled research is underway; the dossier is not yet eligible for validation.
-- `RESEARCH_COMPLETE` — substantive research is complete and ready for acceptance testing.
-- `VALIDATION_EXECUTED` — acceptance testing has run against a specific commit; result may be pass or fail.
-- `VALIDATION_FAILED` — acceptance testing found a defect or unresolved requirement.
-- `VALIDATED` — candidate dossier passed candidate-specific acceptance testing against a specific tested commit.
-- `PUBLISHED` — validated dossier approved for public retrieval.
+| Atiku Abubakar | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | COMPLETE | PASS | PASS | VALIDATED |
 
 ## Gate 4 Round 2 completion
 
@@ -26,32 +16,40 @@ Bola Ahmed Tinubu and Peter Gregory Obi independently passed the unchanged gener
 
 The first Peter Obi execution at commit `d22adfd03470046fb72644109dcac6a1f203e4e8` remains permanently preserved as historical evidence: **10 passed / 6 failed**. The subsequent successful execution is separately identified by its own commit, job and artifact.
 
-## Candidate 3 selection
+## Candidate 3 research completion
 
-**Selected candidate:** Atiku Abubakar (`atiku-abubakar`)
+**Atiku Abubakar — RESEARCH_COMPLETE → VALIDATION_EXECUTED → VALIDATED.**
 
-**Reason for selection:** methodological diversity, not political preference. Atiku introduces a federal vice-presidential record, a governor-elect-to-vice-president transition, a long sequence of presidential contests, federal policy/economic evidence and a live 2027 candidacy whose party/legal provenance requires temporal reconstruction.
-
-**Difference from Tinubu:** Atiku's central executive record is the federal vice presidency rather than a state governorship followed by the presidency; his governor-elect status changed into a vice-presidential office before he took the governorship; and his presidential history spans substantially more contests and party configurations.
-
-**Difference from Obi:** Atiku's core executive evidence is federal rather than state-governorship evidence; his office history has a governor-elect → vice-president transition rather than Obi's court-resolved Anambra governorship; and his current 2027 candidacy is on ADC rather than Obi's NDC. His dossier also introduces a substantially longer presidential-candidacy chronology.
-
-**Expected research challenges:** long-span party/candidacy reconstruction; separation of primary contests from general-election candidacies; governor-elect versus officeholding semantics; federal economic/policy attribution; social-media provenance; reproducible quantitative evidence; and the 2026 ADC registration/leadership litigation and nomination record.
-
-Selection details are recorded in `reports/candidate-3-selection.md`.
-
-## Atiku research completion
-
-Atiku's standardized dossier is now **RESEARCH_COMPLETE**. The machine-readable fixture contains temporal party memberships, officeholdings, candidacies, primary contests, official election-result anchors, sources, retrieval events, evidence relationships, quantitative observations/calculations, causal classification, contradictions, correction lineage, uncertainty states, review dimensions, RELATED PUBLIC CONVERSATION records, and a ten-answer provenance fixture.
+The standardized dossier contains temporal party memberships, officeholdings, candidacies, primary contests, official election-result anchors, sources, retrieval events, evidence relationships, quantitative observations/calculations, causal classification, contradictions, correction lineage, uncertainty states, review dimensions, RELATED PUBLIC CONVERSATION records, and ten public answers with dependency provenance.
 
 The Adamawa record explicitly distinguishes elected governor/governor-elect from sworn officeholder. The ADC record preserves the June 15 Federal High Court order, June 16 stay, July 2 leadership judgment, and July 28 appellate nullification as separate legal events. The dossier does not collapse those events into a binary deregistration label.
 
+## Atiku validation execution
+
+- **Tested commit:** `0e0647d562706a1c63f6fff18d93a8b69e9cd8d6`
+- **Workflow:** `Gate 4 Candidate Research`
+- **Run ID:** `33322894802`
+- **Job ID:** `99287868835`
+- **PostgreSQL:** `16.15`
+- **Python:** `3.12.14`
+- **Tests:** `16`
+- **Passed:** `16`
+- **Failed:** `0`
+- **Result:** `SUCCESS`
+- **Artifact ID:** `9735396097`
+- **Artifact SHA-256 / GitHub artifact digest:** `2770dcc9695e2cf02c118c452afbedaf9363139366db6ad3dfd2a8cbfa2b926d`
+- **Pytest evidence:** `16 passed in 0.68s`
+
+This is an actual independent CI execution. The common acceptance suite was not changed to accommodate Atiku.
+
 ## Current controlled candidate
 
-**Atiku Abubakar — RESEARCH_COMPLETE**
+**Atiku Abubakar — VALIDATED**
 
-Candidate 4 remains blocked. No Candidate 4 research, ingestion or validation has begun.
+Candidate 4 remains **BLOCKED**. No Candidate 4 research, ingestion or validation has begun.
 
 ## Gate discipline
 
-The common validator remains unchanged. The workflow matrix now contains Tinubu, Peter Obi and Atiku. Atiku has **not** been marked `VALIDATED`; CI evidence must establish the independent result before that transition can occur. A Candidate 3 failure must remain visible and must not be hidden by altering common acceptance criteria.
+The controlled sequential scale-up condition is satisfied for Candidate 3. The methodology has now survived three materially different candidate dossiers under the same generalized acceptance machinery.
+
+Candidate 4 must not begin under this gate unless a subsequent explicit scale-up decision authorizes it.
