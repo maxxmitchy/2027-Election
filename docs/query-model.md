@@ -1,14 +1,11 @@
 # Query Model
 
-The product reuses the validated `system_demo.answer_question()` retrieval/answer contract rather than replacing it.
+The structured query is the contract between natural-language interpretation and deterministic retrieval. The interpreter resolves language only; it does not decide truth, causation, source correctness, candidate quality, or allegation status.
 
-1. Resolve the question against a controlled template.
-2. Resolve candidate scope using stable candidate IDs.
-3. Retrieve only the dossier(s) in that scope.
-4. Select the record type appropriate to the question: officeholding, party membership, candidacy/election result, observation, causal analysis, contradiction, correction or public conversation.
-5. Assemble the answer from retrieved records.
-6. Attach provenance and limitations.
+The contract is defined in `schemas/query.schema.json` and includes candidate/person scope, domain, entity, operation, geography, time range, as-of state, comparison scope, evidence type, causal request, requested output, interpretation status, ambiguities, unsupported elements and methodology version.
 
-A query that cannot be mapped to a controlled template returns `NO_MATCH`; it is not answered by guesswork.
+Pipeline:
 
-Cross-candidate queries explicitly carry multiple candidate IDs. Single-candidate queries cannot inherit records from another dossier.
+USER QUESTION → INTERPRETER → STRUCTURED QUERY → VALIDATION → DETERMINISTIC RETRIEVAL → EVIDENCE → ANSWER
+
+The existing retrieval engine remains the factual authority. The language layer cannot reinterpret a structured query after validation.
