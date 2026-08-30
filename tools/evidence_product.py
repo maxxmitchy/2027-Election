@@ -8,20 +8,50 @@ from urllib.parse import parse_qs, urlparse
 import sys
 ROOT=Path(__file__).resolve().parents[1]; sys.path.insert(0,str(ROOT))
 from system_demo import load_dossiers, load_questions, answer_question, CANDIDATES, NAMES
+from query_interpreter import interpret_and_validate
 PRODUCT=ROOT/'product'
+
 def question_catalog(): return load_questions(ROOT)
+
+def _canonical_query(i):
+    """Map an interpreted query to an existing deterministic golden question.
+    This is deliberately a finite routing table: interpretation never invents facts.
+    """
+    q=i["raw_question"].casefold(); op=i["operation"]; scope=i["candidate_scope"]
+    if op=="FACTUAL_LOOKUP" and "office" in q and scope==["bola-ahmed-tinubu"]: return "What offices has Tinubu held?"
+    if op=="COUNT" and "vote" in q:
+        if len(scope)==3: return "Compare the presidential election results of Tinubu, Obi and Atiku in 2023."
+        if scope==["bola-ahmed-tinubu"]: return "How many votes did Tinubu receive in the 2023 presidential election?"
+        if scope==["peter-gregory-obi"]: return "How many votes did Peter Obi receive in the 2023 presidential election?"
+        if scope==["atiku-abubakar"]: return "How many votes did Atiku Abubakar receive in the 2023 presidential election?"
+    if op=="CHANGE" and i["entity"]=="headline_inflation": return "How did Nigeria's headline inflation change during the selected Tinubu period?"
+    if op=="CAUSAL_ATTRIBUTION" and scope==["bola-ahmed-tinubu"] and "inflation" in q: return "Did Tinubu cause inflation to rise?"
+    if op=="CONTRADICTION" and scope==["peter-gregory-obi"] and "anambra" in q: return "What conflicting evidence exists about Anambra's debt during Obi's tenure?"
+    if op=="CORRECTION" and scope==["atiku-abubakar"] and "adc" in q: return "What changed in the evidence concerning ADC's legal status during Atiku's 2026 candidacy?"
+    if op=="PUBLIC_CONVERSATION" and scope==["atiku-abubakar"] and "adc" in q: return "What did Atiku say about ADC?"
+    if op=="AS_OF" and scope==["peter-gregory-obi"] and "party" in q: return "As of 2026-05-01, what party was Peter Obi recorded as belonging to?"
+    if op=="COMPARISON" and len(scope)>=2 and "vote" in q: return "Compare the presidential election results of Tinubu, Obi and Atiku in 2023."
+    return None
+
 def execute(question,candidate='all',as_of=None):
-    q=next((x for x in question_catalog() if x['question'].casefold()==question.strip().casefold()),None)
-    if q is None: return {'answer_status':'NO_MATCH','answer_text':'No deterministic question template matches this query.'}
-    record=dict(q)
+    interpretation=interpret_and_validate(question)
+    if interpretation["interpretation_status"] in {"UNSUPPORTED","NO_MATCH","AMBIGUOUS","PARTIALLY_INTERPRETED"}:
+        return {"answer_status":interpretation["interpretation_status"],"answer_text":"The question needs clarification before deterministic evidence retrieval can run.","interpretation":interpretation,"limitations":interpretation["ambiguities"]+interpretation["unsupported_elements"]}
+    canonical=_canonical_query(interpretation)
+    if not canonical:
+        return {"answer_status":"NO_MATCH","answer_text":"I can interpret part of this question, but no validated deterministic retrieval pathway currently matches it.","interpretation":interpretation,"limitations":["Natural-language interpretation is not allowed to manufacture a new factual retrieval pathway."]}
+    q=next((x for x in question_catalog() if x['question'].casefold()==canonical.casefold()),None)
+    if q is None: return {"answer_status":"NO_MATCH","answer_text":"The interpreted query has no validated retrieval fixture.","interpretation":interpretation}
+    record=dict(q); record["interpreted_query"]=interpretation
     if candidate!='all':
         cid=next((k for k,v in NAMES.items() if v.casefold()==candidate.casefold() or k==candidate),None)
         if cid:
-            if len(record.get('candidate_scope',[]))>1:
-                return {'answer_status':'INCOMPARABLE','answer_text':'This is a cross-candidate question. Candidate scope must remain explicitly set to all three validated candidates.','candidate_scope':record['candidate_scope'],'limitations':['A single-candidate filter cannot silently narrow a cross-candidate comparison.']}
+            if len(record.get('candidate_scope',[]))>1: return {'answer_status':'INCOMPARABLE','answer_text':'This is a cross-candidate question. Candidate scope must remain explicit.','candidate_scope':record['candidate_scope'],'interpretation':interpretation,'limitations':['A single-candidate filter cannot silently narrow a cross-candidate comparison.']}
             record['candidate_scope']=[cid]
     if as_of: record['as_of']=as_of
-    return answer_question(record,load_dossiers(ROOT))
+    result=answer_question(record,load_dossiers(ROOT)); result["interpretation"]=interpretation; result["canonical_retrieval_question"]=canonical
+    return result
+
 def profile(cid):
     d=load_dossiers(ROOT)[cid]; person=d.get('person',{}); offices={x.get('id'):x.get('name') for x in d.get('offices',[])}; parties={x.get('id'):x.get('name') for x in d.get('parties',[])}; timeline=[]
     for x in d.get('officeholdings',[]): timeline.append({'date':x.get('valid_from'),'type':'Officeholding','label':offices.get(x.get('office_id')),'id':x.get('id')})
