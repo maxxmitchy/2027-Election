@@ -7,17 +7,17 @@
       "name": "Bola Ahmed Tinubu",
       "status": "PUBLISHED",
       "validation_status": "VALIDATED",
-      "last_validation": {"tested_commit":"d22adfd03470046fb72644109dcac6a1f203e4e8","workflow_run":33321495059,"job_id":99284136280,"result":"SUCCESS","tests":16,"passed":16,"failed":0,"postgres":"16.15","python":"3.12.14","artifact_id":9735008294,"artifact_sha256":"81388dbfb7264712af687409f43d633d9a659140e2acb73754cf19205ff4b9e3"}
+      "last_validation": {"tested_commit":"1be31059ace0bed6ef31de11fe3389132b912d27","workflow_run":33322075297,"job_id":99285686044,"result":"SUCCESS","tests":16,"passed":16,"failed":0,"postgres":"16.15","python":"3.12.14","artifact_id":9735171336,"artifact_sha256":"40c60d2c6478b23851cd817d5823c518081fc5dc0057d7bac5677231488c7ec8"}
     },
     {
       "candidate_id": "peter-gregory-obi",
       "name": "Peter Gregory Obi",
-      "status": "RESEARCH_COMPLETE",
+      "status": "VALIDATED",
       "research_status": "RESEARCH_COMPLETE",
-      "validation_status": "PENDING",
-      "last_validation": {"tested_commit":"d22adfd03470046fb72644109dcac6a1f203e4e8","workflow_run":33321495059,"job_id":99284136184,"result":"FAILURE","tests":16,"passed":10,"failed":6,"postgres":"16.15","python":"3.12.14","artifact_id":9735007675,"artifact_sha256":"adc396b7e04ce9b232ab7b9cac78a376a4314d3f7d123567a13da1737e30a2e1","classification":"INCOMPLETE_RESEARCH","superseded_by":"research-completion-commit-8e93574d25b4299ad962b262313e97a87ef23343"},
+      "validation_status": "VALIDATED",
+      "last_validation": {"tested_commit":"1be31059ace0bed6ef31de11fe3389132b912d27","workflow_run":33322075297,"job_id":99285686144,"result":"SUCCESS","tests":16,"passed":16,"failed":0,"postgres":"16.15","python":"3.12.14","artifact_id":9735167876,"artifact_sha256":"933cee9c4ef0b351aa748c124cb0ea7bb55b09bf9db5f21c340a3ba38faf01b5","supersedes_failed_execution":{"tested_commit":"d22adfd03470046fb72644109dcac6a1f203e4e8","workflow_run":33321495059,"job_id":99284136184,"tests":16,"passed":10,"failed":6,"artifact_id":9735007675,"artifact_sha256":"adc396b7e04ce9b232ab7b9cac78a376a4314d3f7d123567a13da1737e30a2e1"}},
       "research_completion": {"reproducible_quantitative_calculation":"COMPLETE","causal_classification":"COMPLETE","correction_lineage":"COMPLETE","review_records":"COMPLETE","ten_public_answers":"COMPLETE","retrieval_failure_state":"COMPLETE"}
     }
   ],
-  "scale_control": {"next_candidate_authorized":false,"reason":"Peter Gregory Obi is research-complete but has not yet passed the generalized Gate 4 validator."}
+  "scale_control": {"next_candidate_started":false,"next_candidate_authorized":false,"reason":"Peter Gregory Obi is validated, but Candidate 3 is explicitly prohibited during this task."}
 }
