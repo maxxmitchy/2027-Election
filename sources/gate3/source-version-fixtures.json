@@ -1,0 +1,38 @@
+[
+  {
+    "source_id": "SRC-G3-NBS-CPI-2026-07",
+    "version_id": "SRC-G3-NBS-CPI-2026-07-V1",
+    "version": 1,
+    "previous_version_id": null,
+    "version_kind": "observed",
+    "captured_at": "2026-08-30T00:00:00Z",
+    "availability_status": "available",
+    "title": "Nigeria Consumer Price Index and Inflation — July 2026",
+    "url": "https://microdata.nigerianstat.gov.ng/index.php/catalog/154/download/1432",
+    "notes": "Initial controlled ingestion state."
+  },
+  {
+    "source_id": "SRC-G3-NBS-CPI-2026-07",
+    "version_id": "SRC-G3-NBS-CPI-2026-07-V2",
+    "version": 2,
+    "previous_version_id": "SRC-G3-NBS-CPI-2026-07-V1",
+    "version_kind": "simulated_revision",
+    "captured_at": "2026-08-30T00:00:00Z",
+    "availability_status": "archived_only",
+    "title": "Nigeria Consumer Price Index and Inflation — July 2026",
+    "url": "https://microdata.nigerianstat.gov.ng/index.php/catalog/154/download/1432",
+    "notes": "Controlled simulation of a later source-state change. This is explicitly not presented as evidence that NBS actually revised the publication. V1 remains reconstructable."
+  },
+  {
+    "source_id": "SRC-G3-NBS-DIRECT-DOWNLOAD-TIMEOUT",
+    "version_id": "SRC-G3-NBS-DIRECT-DOWNLOAD-TIMEOUT-V1",
+    "version": 1,
+    "previous_version_id": null,
+    "version_kind": "retrieval_failure",
+    "captured_at": "2026-08-30T00:00:00Z",
+    "availability_status": "unknown",
+    "title": "NBS July 2026 CPI direct download retrieval attempt",
+    "url": "https://microdata.nigerianstat.gov.ng/index.php/catalog/154/download/1432",
+    "notes": "The direct download request timed out during inspection, while the NBS catalog page remained accessible. This is recorded as source-unavailable-for-this-retrieval, not as evidence that the underlying source is false."
+  }
+]
