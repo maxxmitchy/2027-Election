@@ -1,0 +1,109 @@
+{
+  "pilot_id": "gate4-bola-ahmed-tinubu",
+  "research_cutoff": "2026-08-30",
+  "person": {
+    "id": "person-bola-ahmed-tinubu",
+    "name": "Bola Ahmed Tinubu",
+    "birth_date": "1952-03-29",
+    "birth_place": "Lagos, Nigeria",
+    "status": "VERIFIED",
+    "source_ids": ["SRC-APC-BIO", "SRC-CSU-2023"]
+  },
+  "election": [
+    {"id":"election-ng-pres-2023","type":"presidential","jurisdiction":"Nigeria","date":"2023-02-25","status":"COMPLETED"},
+    {"id":"election-ng-pres-2027","type":"presidential","jurisdiction":"Nigeria","date":"2027-01-00","date_status":"PARTIAL/UNVERIFIED","status":"UPCOMING"},
+    {"id":"election-lagos-gov-1999","type":"governorship","jurisdiction":"Lagos State","date":"1999-01-09","status":"COMPLETED"},
+    {"id":"election-lagos-gov-2003","type":"governorship","jurisdiction":"Lagos State","date":"2003-04-19","status":"COMPLETED"}
+  ],
+  "candidacy": [
+    {"id":"cand-tinubu-ng-pres-2023","person_id":"person-bola-ahmed-tinubu","election_id":"election-ng-pres-2023","party_id":"party-apc","status":"ELECTED","source_ids":["SRC-INEC-2023"]},
+    {"id":"cand-tinubu-ng-pres-2027","person_id":"person-bola-ahmed-tinubu","election_id":"election-ng-pres-2027","party_id":"party-apc","status":"PARTY_NOMINEE","source_ids":["SRC-STATEHOUSE-2027-NOMINATION"]},
+    {"id":"cand-tinubu-lagos-gov-1999","person_id":"person-bola-ahmed-tinubu","election_id":"election-lagos-gov-1999","party_id":"party-ad","status":"ELECTED","source_ids":["SRC-APC-BIO","SRC-SECONDARY-1999"]},
+    {"id":"cand-tinubu-lagos-gov-2003","person_id":"person-bola-ahmed-tinubu","election_id":"election-lagos-gov-2003","party_id":"party-ad","status":"ELECTED","source_ids":["SRC-SECONDARY-2003"]}
+  ],
+  "parties": [
+    {"id":"party-sdp","name":"Social Democratic Party","membership_valid_from":"1992-01-01","membership_valid_until":"1993-11-17","certainty":"CORROBORATED","source_ids":["SRC-APC-BIO","SRC-GUARDIAN-TIMELINE"]},
+    {"id":"party-ad","name":"Alliance for Democracy","membership_valid_from":"1999-01-01","membership_valid_until":"2006-00-00","date_status":"PARTIAL","certainty":"CORROBORATED","source_ids":["SRC-APC-BIO"]},
+    {"id":"party-ac-acn","name":"Action Congress / Action Congress of Nigeria","membership_valid_from":"2006-00-00","membership_valid_until":"2013-02-06","date_status":"PARTIAL","certainty":"CORROBORATED","source_ids":["SRC-IRB-ACN","SRC-APC-ABOUT"]},
+    {"id":"party-apc","name":"All Progressives Congress","membership_valid_from":"2013-02-06","membership_valid_until":null,"certainty":"CORROBORATED","source_ids":["SRC-APC-ABOUT"]}
+  ],
+  "officeholdings": [
+    {"id":"officeholding-tinubu-senator-lagos-west","person_id":"person-bola-ahmed-tinubu","office_id":"office-senator-lagos-west","valid_from":"1992-07-04","valid_until":"1993-11-17","certainty":"CORROBORATED","source_ids":["SRC-APC-BIO","SRC-GUARDIAN-TIMELINE"]},
+    {"id":"officeholding-tinubu-governor-lagos","person_id":"person-bola-ahmed-tinubu","office_id":"office-governor-lagos","valid_from":"1999-05-29","valid_until":"2007-05-29","certainty":"VERIFIED","source_ids":["SRC-STATEHOUSE-BIO"]},
+    {"id":"officeholding-tinubu-president-nigeria","person_id":"person-bola-ahmed-tinubu","office_id":"office-president-nigeria","valid_from":"2023-05-29","valid_until":null,"certainty":"VERIFIED","source_ids":["SRC-STATEHOUSE-BIO"]}
+  ],
+  "results": [
+    {"id":"result-tinubu-pres-2023","candidacy_id":"cand-tinubu-ng-pres-2023","votes":8794726,"rank":1,"status":"ELECTED","certification_status":"OFFICIAL","source_id":"SRC-INEC-2023"},
+    {"id":"result-tinubu-lagos-1999","candidacy_id":"cand-tinubu-lagos-gov-1999","votes":841732,"status":"ELECTED","certification_status":"SECONDARY_SOURCE_ONLY","source_id":"SRC-SECONDARY-1999"},
+    {"id":"result-tinubu-lagos-2003","candidacy_id":"cand-tinubu-lagos-gov-2003","votes":911597,"status":"ELECTED","certification_status":"SECONDARY_SOURCE_ONLY","source_id":"SRC-SECONDARY-2003"}
+  ],
+  "sources": [
+    {"id":"SRC-STATEHOUSE-BIO","tier":1,"type":"official_biography","url":"https://statehouse.gov.ng/team/bola-ahmed-tinubu/","retrieved":"2026-08-30","reliability":"HIGH"},
+    {"id":"SRC-APC-BIO","tier":1,"type":"party_biography","url":"https://www.apc.com.ng/biography.php","retrieved":"2026-08-30","reliability":"HIGH_FOR_PARTY_DESCRIPTION; INDEPENDENT_CORROBORATION_REQUIRED"},
+    {"id":"SRC-CSU-2023","tier":1,"type":"institutional_record","url":"https://www.csu.edu/records_request.htm","retrieved":"2026-08-30","reliability":"HIGH"},
+    {"id":"SRC-STATEHOUSE-2027-NOMINATION","tier":1,"type":"official_statement","url":"https://statehouse.gov.ng/acceptance-speech-by-president-bola-ahmed-tinubu-gcfr-on-his-nomination-as-apc-presidential-flagbearer-for-the-2027-election-delivered-on-sunday-may-24-2026/","retrieved":"2026-08-30","reliability":"HIGH_FOR_NOMINATION_EVENT"},
+    {"id":"SRC-INEC-2023","tier":1,"type":"official_election_report","url":"https://inecnigeria.org/wp-content/uploads/2024/02/2023-GENERAL-ELECTION-REPORT-1.pdf","retrieved":"2026-08-30","reliability":"HIGH"},
+    {"id":"SRC-GUARDIAN-TIMELINE","tier":3,"type":"historical_reporting","url":"https://guardian.ng/politics/the-tinubu-timelines-in-nigerias-politics/","retrieved":"2026-08-30","reliability":"MEDIUM"},
+    {"id":"SRC-SECONDARY-1999","tier":3,"type":"secondary_election_history","url":"https://en.wikipedia.org/wiki/1999_Lagos_State_gubernatorial_election","retrieved":"2026-08-30","reliability":"MEDIUM_LOW; NOT PRIMARY"},
+    {"id":"SRC-SECONDARY-2003","tier":4,"type":"secondary_election_results","url":"https://www.eduweb.com.ng/2003-lagos-state-governorship-election-results/","retrieved":"2026-08-30","reliability":"LOWER; NOT PRIMARY"},
+    {"id":"SRC-APC-ABOUT","tier":1,"type":"party_history","url":"https://www.apc.com.ng/about.php","retrieved":"2026-08-30","reliability":"HIGH_FOR_PARTY_HISTORY"},
+    {"id":"SRC-IRB-ACN","tier":2,"type":"institutional_research","url":"https://www.irb-cisr.gc.ca/en/country-information/rir/Pages/index.aspx?doc=453866&pls=1","retrieved":"2026-08-30","reliability":"HIGH"},
+    {"id":"SRC-NBS-CPI-2023","tier":1,"type":"official_statistics","url":"https://www.nigerianstat.gov.ng/elibrary/read/1241439","retrieved":"2026-08-30","reliability":"HIGH"},
+    {"id":"SRC-NBS-CPI-2024","tier":1,"type":"official_statistics","url":"https://www.nigerianstat.gov.ng/elibrary/read/1241453","retrieved":"2026-08-30","reliability":"HIGH"},
+    {"id":"SRC-NBS-GDP-2024","tier":1,"type":"official_statistics","url":"https://www.nigerianstat.gov.ng/pdfuploads/Q3_2024_GDP_Report.pdf","retrieved":"2026-08-30","reliability":"HIGH"},
+    {"id":"SRC-DMO-DEBT-2023","tier":1,"type":"official_debt_statistics","url":"https://www.dmo.gov.ng/news-and-events/circulars-releases/4949-press-release-nigeria-s-total-public-debt-as-at-december-31-2023/file","retrieved":"2026-08-30","reliability":"HIGH"},
+    {"id":"SRC-CBN-FX","tier":1,"type":"official_monetary_policy","url":"https://www.cbn.gov.ng/intops/FXStructureAndManagement.html","retrieved":"2026-08-30","reliability":"HIGH"},
+    {"id":"SRC-X-TINUBU-2026","tier":3,"type":"social_media_original","url":"https://x.com/officialABAT/status/2011091018318524751","retrieved":"2026-08-30","reliability":"HIGH_FOR_STATEMENT_AUTHENTICITY; NOT PROOF_OF_PROPOSITION"},
+    {"id":"SRC-SC-CV-501-2023","tier":1,"type":"court_record_secondary_copy","url":"https://nigerianlawforum.com/case-law/peoples-democratic-party-v-independent-national-electoral-2023/","retrieved":"2026-08-30","reliability":"HIGHER_NEEDS_PRIMARY_COURT_COPY"},
+    {"id":"SRC-IMF-2026","tier":1,"type":"international_institutional_assessment","url":"https://www.imf.org/en/news/articles/2026/06/09/pr26190-nigeria-imf-executive-board-concludes-2026-article-iv-consultation-with-nigeria","retrieved":"2026-08-30","reliability":"HIGH"}
+  ],
+  "observations": [
+    {"id":"OBS-CPI-2022-12","metric":"headline_inflation_yoy","value":21.34,"unit":"percent","geography":"Nigeria","period_start":"2022-12-01","period_end":"2022-12-31","source_id":"SRC-NBS-CPI-2023","dataset_version":"NBS-CPI-2023-REPORT","observation_version":1},
+    {"id":"OBS-CPI-2023-12","metric":"headline_inflation_yoy","value":28.92,"unit":"percent","geography":"Nigeria","period_start":"2023-12-01","period_end":"2023-12-31","source_id":"SRC-NBS-CPI-2023","dataset_version":"NBS-CPI-2023-REPORT","observation_version":1},
+    {"id":"OBS-CPI-2024-01","metric":"headline_inflation_yoy","value":29.90,"unit":"percent","geography":"Nigeria","period_start":"2024-01-01","period_end":"2024-01-31","source_id":"SRC-NBS-CPI-2024","dataset_version":"NBS-CPI-JAN-2024-REPORT","observation_version":1},
+    {"id":"OBS-GDP-2023","metric":"real_gdp_growth_annual","value":2.74,"unit":"percent","geography":"Nigeria","period_start":"2023-01-01","period_end":"2023-12-31","source_id":"SRC-NBS-GDP-2024","dataset_version":"NBS-GDP-2023-SERIES","observation_version":1},
+    {"id":"OBS-DEBT-2023-12","metric":"total_public_debt","value":97341000000000,"unit":"NGN","geography":"Nigeria","period_start":"2023-12-31","period_end":"2023-12-31","source_id":"SRC-DMO-DEBT-2023","dataset_version":"DMO-Q4-2023","observation_version":1}
+  ],
+  "calculations": [
+    {"id":"CALC-CPI-2022-2023","formula":"28.92 - 21.34","result":7.58,"unit":"percentage_points","inputs":["OBS-CPI-2022-12","OBS-CPI-2023-12"]},
+    {"id":"CALC-CPI-2023-2024-01","formula":"29.90 - 28.92","result":0.98,"unit":"percentage_points","inputs":["OBS-CPI-2023-12","OBS-CPI-2024-01"]}
+  ],
+  "claims": [
+    {"id":"CLAIM-PERSON-PRESIDENT","claim":"Tinubu has held the office of President of Nigeria since 29 May 2023.","type":"FACT","status":"VERIFIED","evidence_ids":["EVD-STATEHOUSE-OFFICE"]},
+    {"id":"CLAIM-2027-NOMINEE","claim":"Tinubu was nominated by APC as its presidential flagbearer for the 2027 election in May 2026.","type":"FACT","status":"VERIFIED","evidence_ids":["EVD-2027-NOMINATION"]},
+    {"id":"CLAIM-2023-RESULT","claim":"Tinubu received 8,794,726 votes and was marked ELECTED in INEC's 2023 presidential result.","type":"FACT","status":"VERIFIED","evidence_ids":["EVD-INEC-2023"]},
+    {"id":"CLAIM-INFLATION-CHANGE","claim":"Nigeria headline inflation rose from 21.34% in December 2022 to 28.92% in December 2023, a 7.58 percentage-point increase.","type":"CALCULATED_FACT","status":"VERIFIED","evidence_ids":["EVD-NBS-CPI-2023"],"calculation_id":"CALC-CPI-2022-2023"},
+    {"id":"CLAIM-CAUSALITY","claim":"The observed December 2022 to December 2023 inflation increase was caused by Tinubu's presidency.","type":"CAUSAL","status":"INSUFFICIENT_EVIDENCE","causal_classification":"INSUFFICIENT_EVIDENCE","evidence_ids":["EVD-NBS-CPI-2023"]},
+    {"id":"CLAIM-SOCIAL-STATEMENT","claim":"The @officialABAT account published a statement concerning the Nigeria-UAE Comprehensive Economic Partnership Agreement on 13 January 2026.","type":"STATEMENT_OCCURRENCE","status":"VERIFIED","evidence_ids":["EVD-X-2026"]},
+    {"id":"CLAIM-REFORM-ASSESSMENT","claim":"The economic reforms improved macroeconomic outcomes while conditions remained difficult for many Nigerians.","type":"ASSESSMENT","status":"CORROBORATED_WITH_CONTEXT","evidence_ids":["EVD-IMF-2026","EVD-STATEHOUSE-2026"]}
+  ],
+  "evidence": [
+    {"id":"EVD-STATEHOUSE-OFFICE","source_id":"SRC-STATEHOUSE-BIO","relationship":"DIRECTLY_ESTABLISHES","claim_ids":["CLAIM-PERSON-PRESIDENT"]},
+    {"id":"EVD-2027-NOMINATION","source_id":"SRC-STATEHOUSE-2027-NOMINATION","relationship":"DIRECTLY_ESTABLISHES","claim_ids":["CLAIM-2027-NOMINEE"]},
+    {"id":"EVD-INEC-2023","source_id":"SRC-INEC-2023","relationship":"DIRECTLY_ESTABLISHES","claim_ids":["CLAIM-2023-RESULT"]},
+    {"id":"EVD-NBS-CPI-2023","source_id":"SRC-NBS-CPI-2023","relationship":"DIRECTLY_ESTABLISHES_OBSERVATIONS","claim_ids":["CLAIM-INFLATION-CHANGE","CLAIM-CAUSALITY"]},
+    {"id":"EVD-X-2026","source_id":"SRC-X-TINUBU-2026","relationship":"DIRECTLY_ESTABLISHES_STATEMENT_OCCURRENCE","claim_ids":["CLAIM-SOCIAL-STATEMENT"]},
+    {"id":"EVD-IMF-2026","source_id":"SRC-IMF-2026","relationship":"QUALIFIES","claim_ids":["CLAIM-REFORM-ASSESSMENT"]},
+    {"id":"EVD-STATEHOUSE-2026","source_id":"SRC-STATEHOUSE-BIO","relationship":"REPORTS_OFFICIAL_POSITION","claim_ids":["CLAIM-REFORM-ASSESSMENT"]}
+  ],
+  "reviews": [
+    {"id":"REV-PILOT-001","target_type":"claim_set","target_ids":["CLAIM-PERSON-PRESIDENT","CLAIM-2027-NOMINEE","CLAIM-2023-RESULT","CLAIM-INFLATION-CHANGE","CLAIM-CAUSALITY","CLAIM-SOCIAL-STATEMENT","CLAIM-REFORM-ASSESSMENT"],"evidence_quality":"HIGH_WITH_SOURCE_TIER_MIX","factual_accuracy":"PASS_FOR_SUPPORTED_CLAIMS","calculation_accuracy":"PASS","context_completeness":"PARTIAL","source_quality":"HIGH_FOR_PRIMARY_ANCHORS","reviewer_confidence":"HIGH","status":"REVIEWED"}
+  ],
+  "correction_test": {"claim_id":"CLAIM-INFLATION-CHANGE","v1":{"value":"28.92% - 21.34% = 7.58 percentage points","status":"PUBLISHED"},"correction":{"reason":"controlled_test_correction","new_value":"28.92% - 21.34% = 7.58 percentage points; no numerical change, provenance annotation corrected","status":"APPROVED"},"v2":{"value":"28.92% - 21.34% = 7.58 percentage points","predecessor":"v1","status":"PUBLISHED"}},
+  "source_failure_test": {"source_id":"SRC-SIMULATED-UNAVAILABLE","state":"RETRIEVAL_FAILURE","meaning":"source unavailable; truth value remains UNKNOWN"},
+  "public_answer_tests": [
+    {"id":"QA01","question":"Who is Bola Ahmed Tinubu?","answer_dependency_ids":["CLAIM-PERSON-PRESIDENT","SRC-STATEHOUSE-BIO"]},
+    {"id":"QA02","question":"What offices has he held?","answer_dependency_ids":["officeholding-tinubu-senator-lagos-west","officeholding-tinubu-governor-lagos","officeholding-tinubu-president-nigeria"]},
+    {"id":"QA03","question":"Which political parties has he belonged to?","answer_dependency_ids":["party-sdp","party-ad","party-ac-acn","party-apc"]},
+    {"id":"QA04","question":"What elections has he contested?","answer_dependency_ids":["cand-tinubu-lagos-gov-1999","cand-tinubu-lagos-gov-2003","cand-tinubu-ng-pres-2023","cand-tinubu-ng-pres-2027"]},
+    {"id":"QA05","question":"What was his 2023 presidential result?","answer_dependency_ids":["CLAIM-2023-RESULT","EVD-INEC-2023"]},
+    {"id":"QA06","question":"What major policy action is represented in the pilot?","answer_dependency_ids":["SRC-CBN-FX"]},
+    {"id":"QA07","question":"How did headline inflation change from December 2022 to December 2023?","answer_dependency_ids":["OBS-CPI-2022-12","OBS-CPI-2023-12","CALC-CPI-2022-2023"]},
+    {"id":"QA08","question":"How did the exchange-rate framework change in June 2023?","answer_dependency_ids":["SRC-CBN-FX"]},
+    {"id":"QA09","question":"Which claims are disputed or qualified?","answer_dependency_ids":["CLAIM-CAUSALITY","CLAIM-REFORM-ASSESSMENT","EVD-IMF-2026"]},
+    {"id":"QA10","question":"What evidence supports the 2023 election result?","answer_dependency_ids":["EVD-INEC-2023","SRC-INEC-2023"]}
+  ],
+  "ai_answers": [
+    {"id":"ANSWER-Q07-V1","question_id":"QA07","answer":"Headline inflation increased by 7.58 percentage points from December 2022 to December 2023 (21.34% to 28.92%). This is an observed change, not by itself evidence of causation.","dependencies":["OBS-CPI-2022-12","OBS-CPI-2023-12","CALC-CPI-2022-2023","SRC-NBS-CPI-2023"],"as_of":"2026-08-30","generation_commit":"PILOT_RECORD_VERSION_1","status":"CURRENT"}
+  ]
+}
