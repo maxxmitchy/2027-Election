@@ -13,6 +13,9 @@ def validate_answer(a):
     iq=a.get("interpreted_query",{}); scope=iq.get("candidate_scope",[])
     if any(cid not in VALID for cid in scope): return False
     if a.get("review_information",{}).get("status")!="NOT_A_SOURCE" or not a.get("limitations"): return False
+    rows=a.get("evidence",[])
+    for row in rows:
+        if isinstance(row,dict) and row.get("candidate_id") and row["candidate_id"] not in scope: return False
     if a.get("answer_status")=="INSUFFICIENT_EVIDENCE" and any(x in a.get("answer_text","").lower() for x in ("therefore tinubu caused","therefore obi caused","therefore atiku caused")): return False
     if iq.get("operation")=="CAUSAL_ATTRIBUTION" and "caus" not in " ".join(a.get("why_this_answer",{}).get("evidence_does_not_establish",[])).lower(): return False
     calc=a.get("calculation")
@@ -21,7 +24,8 @@ def validate_answer(a):
         vals=[x.get("value") for x in calc["inputs"]]
         if len(vals)>=2 and calc.get("unit")=="percentage_points" and abs((vals[1]-vals[0])-calc["result"])>1e-9: return False
     if iq.get("operation")=="PUBLIC_CONVERSATION":
-        if not a.get("related_public_conversation") or any(x.get("semantic_rule")!="statement_occurrence_is_not_independent_truth" for x in a["related_public_conversation"]): return False
+        if not a.get("evidence") or not a.get("related_public_conversation"): return False
+        if any(x.get("semantic_rule")!="statement_occurrence_is_not_independent_truth" for x in a["related_public_conversation"]): return False
         if "not as independent" not in a.get("answer_text",""): return False
     if iq.get("operation")=="CONTRADICTION" and a.get("answer_status")!="NO_MATCH" and not a.get("contradictions"): return False
     if iq.get("operation")=="CORRECTION" and a.get("answer_status")=="DISPUTED" and not a.get("corrections"): return False
