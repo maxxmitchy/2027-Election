@@ -44,8 +44,7 @@ jobs:
       - name: Run Phase 3 golden and presentation tests
         id: tests
         continue-on-error: true
-        run: |
-          python -m pytest -q tests/test_query_interpreter.py tests/query_semantics.py tests/test_system_demo.py tests/test_answer_experience.py tests/test_phase3_golden.py | tee evidence/phase-3/pytest.txt
+        run: python -m pytest -q tests/test_query_interpreter.py tests/query_semantics.py tests/test_system_demo.py tests/test_answer_experience.py tests/test_phase3_golden.py | tee evidence/phase-3/pytest.txt
       - name: Run Phase 3 mutation audit
         id: mutations
         continue-on-error: true
@@ -77,8 +76,7 @@ jobs:
           status="PASS" if os.environ.get("TEST_OUTCOME")=="success" and os.environ.get("MUTATION_OUTCOME")=="success" and killed==total_mut else "FAIL"
           report={"phase":"3","name":"Evidence Answer Experience","status":status,"tested_commit":Path("evidence/phase-3/sha.txt").read_text().strip(),"workflow":".github/workflows/phase-3-evidence-answer.yml","run_id":int(os.environ["GITHUB_RUN_ID"]),"job_id":job.get("id"),"job_name":job.get("name"),"environment":{"postgresql":"16.15","python":"3.12.14"},"tests":{"count":passed,"passed":passed,"failed":0 if os.environ.get("TEST_OUTCOME")=="success" else None},"mutations":{"count":total_mut,"killed":killed,"survived":total_mut-killed},"candidate_scope":["bola-ahmed-tinubu","peter-gregory-obi","atiku-abubakar"],"candidate_4":"BLOCKED","golden_questions":24,"provenance":"tested through answer contract and database snapshot","quantitative":"calculation lineage and unit checks","causal":"causal questions remain conservative","contradictions":"preserved","corrections":"preserved","as_of":"preserved in interpreted query and answer contract","review_separation":"review marked NOT_A_SOURCE","negative_knowledge":"distinct status states preserved","limitations":["Presentation remains limited to semantic routes already supported by the deterministic retrieval engine.","This phase does not claim unrestricted natural-language research or production readiness."],"known_failures":[] if status=="PASS" else ["See pytest.txt and mutations.txt for failure evidence."]}
           Path("reports/phase-3-evidence-answer-experience.json").write_text(json.dumps(report,indent=2)+"\n")
-          md=Path("reports/phase-3-evidence-answer-experience.md")
-          md.write_text("# Phase 3 — Evidence Answer Experience Validation\n\n"+json.dumps(report,indent=2)+"\n")
+          Path("reports/phase-3-evidence-answer-experience.md").write_text("# Phase 3 — Evidence Answer Experience Validation\n\n"+json.dumps(report,indent=2)+"\n")
           PY
       - name: Validate answer schema and reports
         if: always()
@@ -89,8 +87,7 @@ jobs:
           from jsonschema import Draft202012Validator
           schema=json.loads(Path('schemas/answer.schema.json').read_text())
           from answer_experience import present
-          sample=present('How many votes did Tinubu get in 2023?')
-          Draft202012Validator(schema).validate(sample)
+          Draft202012Validator(schema).validate(present('How many votes did Tinubu get in 2023?'))
           report=json.loads(Path('reports/phase-3-evidence-answer-experience.json').read_text())
           assert report['tested_commit']==Path('evidence/phase-3/sha.txt').read_text().strip()
           assert report['candidate_4']=='BLOCKED'
@@ -98,8 +95,7 @@ jobs:
           PY
       - name: Hash validation reports
         if: always()
-        run: |
-          sha256sum reports/phase-3-evidence-answer-experience.md reports/phase-3-evidence-answer-experience.json reports/phase-3-evidence-answer-demo.md > evidence/phase-3/report-hashes.txt
+        run: sha256sum reports/phase-3-evidence-answer-experience.md reports/phase-3-evidence-answer-experience.json reports/phase-3-evidence-answer-demo.md > evidence/phase-3/report-hashes.txt
       - name: Upload Phase 3 evidence
         if: always()
         uses: actions/upload-artifact@v4
