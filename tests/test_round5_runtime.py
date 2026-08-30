@@ -3,12 +3,10 @@ import psycopg
 import pytest
 from hypothesis import given, strategies as st
 from jsonschema import Draft202012Validator
-
 ROOT=pathlib.Path(__file__).resolve().parents[1]; DBSQL=ROOT/'db/round5_reference.sql'; REPORT=ROOT/'reports/round5-test-results.json'; RESULTS=[]
 def db(): return psycopg.connect(os.environ['DATABASE_URL'])
 def sql(c,q,*a):
-    with c.cursor() as cur:
-        cur.execute(q,a); return cur.fetchall() if cur.description else None
+    with c.cursor() as cur: cur.execute(q,a); return cur.fetchall() if cur.description else None
 def expect_db_error(label,fn):
     with db() as c:
         try: fn(c); c.commit(); RESULTS.append({'test':label,'expected':'database rejects operation','actual':'operation committed','status':'FAIL','layer':'database'}); return False
@@ -30,7 +28,7 @@ def test_database_constraints_and_attacks():
     assert expect_db_error('historical DELETE',lambda c:sql(c,"DELETE FROM record_version WHERE version_id='V2'"))
     assert expect_db_error('self dependency',lambda c:sql(c,"INSERT INTO dependency_edge(dependency_id,upstream_ref,downstream_ref,relationship) VALUES('DSELF','V1','V1','input_to')"))
     with db() as c:
-        for x in 'ABC': rv(c,x,x,1,f'2026-03-01T00:00:0{x}Z')
+        for x,t in [('A','00:00:01'),('B','00:00:02'),('C','00:00:03')]: rv(c,x,x,1,f'2026-03-01T{t}Z')
         sql(c,"INSERT INTO dependency_edge VALUES('D1','A','B','input_to',now(),'active')"); sql(c,"INSERT INTO dependency_edge VALUES('D2','B','C','input_to',now(),'active')"); c.commit()
     assert expect_db_error('dependency cycle',lambda c:sql(c,"INSERT INTO dependency_edge VALUES('D3','C','A','input_to',now(),'active')"))
 
@@ -53,7 +51,7 @@ def test_bitemporal_execution():
 
 def test_dependency_engine_selective_and_shared_dag():
     with db() as c:
-        for i in range(1,6): rv(c,f'G{i}',f'G{i}',1,f'2026-05-0{i}T00:00:00Z')
+        for i in range(1,6): rv(c,f'G{i}',f'G{i}',1,f'2026-05-{i:02d}T00:00:00Z')
         for i,(a,b) in enumerate([(1,2),(2,3),(3,4),(1,5)],1): sql(c,'INSERT INTO dependency_edge VALUES(%s,%s,%s,\'input_to\',now(),\'active\')',f'GD{i}',f'G{a}',f'G{b}')
         c.commit()
         got={r[0] for r in sql(c,"SELECT version_id FROM dependent_versions('G1')")}; assert got=={'G2','G3','G4','G5'}
@@ -66,7 +64,7 @@ def test_dataset_and_methodology_reproducibility():
 
 def test_published_answer_reconstruction_and_immutability():
     with db() as c:
-        for vid,eid in [('AV1','ANS'),('AV2','ANS')]: rv(c,vid,eid,1 if vid=='AV1' else 2,f'2026-07-0{1 if vid=="AV1" else 2}T00:00:00Z','AV1' if vid=='AV2' else None)
+        rv(c,'AV1','ANS',1,'2026-07-01T00:00:00Z'); rv(c,'AV2','ANS',2,'2026-07-02T00:00:00Z','AV1')
         sql(c,"INSERT INTO ai_answer VALUES('ANS','historical answer','2026-07-01T00:00:00Z','snap1','2026-07-01T00:00:00Z',1)"); sql(c,"INSERT INTO ai_answer_state VALUES('ANS','published')"); sql(c,"INSERT INTO ai_answer_dependency VALUES('ANS','AV1')"); c.commit()
     assert expect_db_error('published AI answer mutation',lambda c:sql(c,"UPDATE ai_answer SET answer_text='tampered' WHERE answer_id='ANS'"))
     assert expect_db_error('published AI answer dependency mutation',lambda c:sql(c,"DELETE FROM ai_answer_dependency WHERE answer_id='ANS'"))
@@ -94,8 +92,7 @@ def _refs(x):
 def test_property_version_chain(n):
     chain=[(i,None if i==1 else i-1) for i in range(1,n+1)]; assert chain[0][1] is None; assert all(i==1 or p==i-1 for i,p in chain)
 @given(st.integers(0,100),st.integers(1,100))
-def test_property_half_open_intervals(a,length):
-    b=a+length; assert a<b
+def test_property_half_open_intervals(a,length): assert a<a+length
 @given(st.sets(st.integers(0,20),min_size=1,max_size=15))
 def test_property_dag_reachability(nodes):
     ordered=sorted(nodes); assert all(a<b for a,b in zip(ordered,ordered[1:]))
