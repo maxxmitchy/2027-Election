@@ -1,0 +1,15 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"user-testing-session",
+  "type":"object",
+  "required":["session_id","tester_id","cohort","timestamp","tasks","human_test_executed"],
+  "properties":{
+    "session_id":{"type":"string","minLength":1},
+    "tester_id":{"type":"string","pattern":"^T-[A-Za-z0-9_-]+$"},
+    "cohort":{"enum":["GENERAL_USER","POLITICAL_RESEARCH","TECHNICAL_ANALYTICAL"]},
+    "timestamp":{"type":"string","format":"date-time"},
+    "human_test_executed":{"type":"boolean"},
+    "tasks":{"type":"array","items":{"$ref":"phase10-user-testing-task-result.schema.json"}}
+  },
+  "additionalProperties":true
+}
