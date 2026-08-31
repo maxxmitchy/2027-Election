@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","type":"object","required":["phase","status","matrix","historical_reconstruction","mutations"],"properties":{"phase":{"const":"9"},"status":{"type":"string"},"matrix":{"type":"object"},"historical_reconstruction":{"type":"object"},"mutations":{"type":"object","required":["mutation_count","killed","survived"]}}}
