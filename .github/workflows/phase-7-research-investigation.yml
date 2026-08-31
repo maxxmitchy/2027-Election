@@ -183,8 +183,3 @@ jobs:
       - name: Fail closed
         if: steps.phase3.outcome != 'success' || steps.phase4.outcome != 'success' || steps.phase5.outcome != 'success' || steps.phase6.outcome != 'success' || steps.phase7tests.outcome != 'success' || steps.assembly.outcome != 'success' || steps.mutations.outcome != 'success' || steps.schemas.outcome != 'success' || steps.isolation.outcome != 'success' || steps.historical.outcome != 'success' || steps.evidence.outcome != 'success'
         run: exit 1
-  phase-8:
-    name: dossier-review-publication
-    needs: phase-7
-    uses: ./.github/workflows/phase-8-review-publication.yml
-    secrets: inherit
