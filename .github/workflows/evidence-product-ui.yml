@@ -1,0 +1,110 @@
+name: Evidence Product UI
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [phase11-evidence-product-ui]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  evidence-product-ui:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16
+        env: {POSTGRES_PASSWORD: postgres, POSTGRES_USER: postgres, POSTGRES_DB: retrieval_test}
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d retrieval_test"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/retrieval_test
+      PGPASSWORD: postgres
+      PYTHONHASHSEED: '0'
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12.14'}
+      - name: Install pinned dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Initialize PostgreSQL reference schema
+        run: psql -h 127.0.0.1 -U postgres -d retrieval_test -f db/round5_reference.sql
+      - name: Record exact execution identity
+        run: |
+          mkdir -p evidence/evidence-product-ui
+          printf 'implementation_sha=%s\n' "${{ github.event.pull_request.head.sha || github.sha }}" | tee evidence/evidence-product-ui/implementation-sha.txt
+          printf 'github.sha=%s\n' "$GITHUB_SHA" | tee evidence/evidence-product-ui/github-sha.txt
+          printf 'tested_sha=%s\n' "$(git rev-parse HEAD)" | tee evidence/evidence-product-ui/sha.txt
+          printf 'workflow=.github/workflows/evidence-product-ui.yml\nrun_id=%s\njob_id=%s\n' "$GITHUB_RUN_ID" "$GITHUB_JOB" | tee evidence/evidence-product-ui/execution.txt
+          python --version | tee evidence/evidence-product-ui/versions.txt
+          psql --version >> evidence/evidence-product-ui/versions.txt
+          python -m pip freeze >> evidence/evidence-product-ui/versions.txt
+      - name: Run Phase 3 regression
+        id: p3
+        run: python -m pytest -q tests/test_query_interpreter.py tests/query_semantics.py tests/test_system_demo.py tests/test_answer_experience.py tests/test_phase3_golden.py | tee evidence/evidence-product-ui/phase3.txt
+      - name: Run Phase 4 regression
+        id: p4
+        run: python -m pytest -q tests/test_phase4_*.py tests/gate4_candidate_acceptance.py tests/gate4_postgres_runtime.py | tee evidence/evidence-product-ui/phase4.txt
+      - name: Run Phase 5 regression
+        id: p5
+        run: python -m pytest -q tests/test_phase5_research_workbench.py | tee evidence/evidence-product-ui/phase5.txt
+      - name: Run Phase 6 regression
+        id: p6
+        run: python -m pytest -q tests/test_phase6_evidence_acquisition.py | tee evidence/evidence-product-ui/phase6.txt
+      - name: Run Phase 7 regression and assembly
+        id: p7
+        run: |
+          python -m pytest -q tests/test_phase7_dossier.py tests/test_phase7_investigation.py | tee evidence/evidence-product-ui/phase7.txt
+          PYTHONPATH=. python scripts/run_phase7_assembly_v2.py | tee evidence/evidence-product-ui/phase7-assembly.txt
+      - name: Run Phase 8 regression and execution
+        id: p8
+        run: |
+          python -m pytest -q tests/test_phase8_review_publication.py | tee evidence/evidence-product-ui/phase8-tests.txt
+          PYTHONPATH=. python scripts/run_phase8_review_publication.py | tee evidence/evidence-product-ui/phase8-execution.txt
+          PYTHONPATH=. python scripts/run_phase8_mutation_audit.py | tee evidence/evidence-product-ui/phase8-mutations.txt
+      - name: Run Phase 9 regression and closure
+        id: p9
+        run: |
+          PYTHONPATH=. python scripts/run_phase9.py | tee evidence/evidence-product-ui/phase9-execution.txt
+          PYTHONPATH=. python -m pytest -q tests/test_phase9_publication_closure.py | tee evidence/evidence-product-ui/phase9-tests.txt
+          PYTHONPATH=. python scripts/run_phase9_mutation_audit.py | tee evidence/evidence-product-ui/phase9-mutations.txt
+      - name: Run UI/API acceptance suite
+        id: acceptance
+        run: python -m pytest -q tests/test_evidence_product_ui.py tests/test_evidence_product_http.py | tee evidence/evidence-product-ui/acceptance.txt
+      - name: Run genuine UI mutation suite
+        id: mutations
+        run: python tests/run_evidence_product_ui_mutations.py | tee evidence/evidence-product-ui/mutations.txt
+      - name: Verify Candidate 4 remains blocked
+        run: |
+          ! grep -R 'candidate-4' product/ || true
+          python - <<'PY'
+          from evidence_product_api import _candidate_ids
+          try: _candidate_ids(['candidate-4'])
+          except ValueError: print('CANDIDATE_4_BLOCKED_OK')
+          else: raise SystemExit('Candidate 4 accessible')
+          PY
+      - name: Generate UI implementation report
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path('reports/phase-ui-implementation.json')
+          data={'phase':'Evidence Product User Interface','implementation':'EXECUTED','frontend':'semantic responsive HTML/CSS/JS','backend':'Python stdlib read-only adapter','api':'POST /api/ask','deployment':'Render free web service descriptor present','candidate_scope':['bola-ahmed-tinubu','peter-gregory-obi','atiku-abubakar'],'candidate_4':'BLOCKED','tested_sha':Path('evidence/evidence-product-ui/sha.txt').read_text().strip(),'github_sha':os.environ['GITHUB_SHA'],'workflow':'.github/workflows/evidence-product-ui.yml','run_id':int(os.environ['GITHUB_RUN_ID']),'job_id':os.environ['GITHUB_JOB'],'human_testing':'NOT EXECUTED','known_limitations':['Prototype uses validated dossier snapshot files; PostgreSQL is retained as reference CI runtime.','Human testing is intentionally not fabricated.']}
+          p.write_text(json.dumps(data,indent=2)+'\n'); Path('reports/phase-ui-implementation.md').write_text('# Evidence Product User Interface\n\n```json\n'+json.dumps(data,indent=2)+'\n```\n')
+          PY
+      - name: Hash evidence
+        if: always()
+        run: sha256sum reports/phase-ui-implementation.* evidence/evidence-product-ui/* > evidence/evidence-product-ui/report-hashes.txt
+      - name: Upload evidence artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-product-ui-${{ github.sha }}
+          path: |
+            reports/phase-ui-implementation.*
+            evidence/evidence-product-ui/
+      - name: Fail closed
+        if: failure()
+        run: exit 1
