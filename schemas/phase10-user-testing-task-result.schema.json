@@ -1,0 +1,9 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"user-testing-task-result",
+  "type":"object",
+  "required":["task_id","question","task_category","expected_behavior","actual_behavior","success","answer_status"],
+  "properties":{
+    "task_id":{"type":"string","minLength":1},"question":{"type":"string","minLength":1},"task_category":{"type":"string"},"expected_behavior":{"type":"string"},"actual_behavior":{"type":"string"},"success":{"type":"boolean"},"completion_time":{"type":["number","null"],"minimum":0},"help_required":{"type":"boolean"},"error_count":{"type":"integer","minimum":0},"answer_status":{"type":"string","enum":["ANSWERED","PARTIALLY_ANSWERED","INSUFFICIENT_EVIDENCE","UNKNOWN","UNVERIFIED","DISPUTED","INCOMPARABLE","UNSUPPORTED","RESEARCH_GAP","SYSTEM_ERROR"]},"evidence_status":{"type":["string","null"]},"user_interpretation":{"type":["string","null"]},"confidence":{"type":["number","null"],"minimum":0,"maximum":100},"trust_assessment":{"type":["number","null"],"minimum":0,"maximum":100},"evidence_comprehension":{"type":["boolean","null"]},"provenance_comprehension":{"type":["boolean","null"]},"uncertainty_comprehension":{"type":["boolean","null"]},"usefulness":{"type":["number","null"],"minimum":0,"maximum":5},"friction":{"type":["string","null"]},"qualitative_feedback":{"type":["string","null"]},"researcher_observation":{"type":["string","null"]}
+  },"additionalProperties":true
+}
