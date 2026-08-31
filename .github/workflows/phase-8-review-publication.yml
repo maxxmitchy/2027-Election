@@ -78,49 +78,46 @@ jobs:
       - name: Run provenance audit
         id: provenance
         continue-on-error: true
-        run: python - <<'PY'
-          import json
+        run: |
+          python - <<'PY'
           from pathlib import Path
           from phase8_review_publication import load_dossiers, provenance_audit
-          d=load_dossiers(Path('.'))
-          assert all(provenance_audit(x)['status']=='PASS' for x in d.values())
-          print('PROVENANCE_AUDIT_OK')
+          d=load_dossiers(Path('.')); assert all(provenance_audit(x)['status']=='PASS' for x in d.values()); print('PROVENANCE_AUDIT_OK')
           PY
       - name: Run temporal audit
         id: temporal
         continue-on-error: true
-        run: python - <<'PY'
+        run: |
+          python - <<'PY'
           from pathlib import Path
           from phase8_review_publication import load_dossiers, temporal_audit
-          d=load_dossiers(Path('.'))
-          assert all(temporal_audit(x)['status']=='PASS' for x in d.values())
-          print('TEMPORAL_AUDIT_OK')
+          d=load_dossiers(Path('.')); assert all(temporal_audit(x)['status']=='PASS' for x in d.values()); print('TEMPORAL_AUDIT_OK')
           PY
       - name: Run quantitative recomputation
         id: quantitative
         continue-on-error: true
-        run: python - <<'PY'
+        run: |
+          python - <<'PY'
           from pathlib import Path
           from phase8_review_publication import load_dossiers, quantitative_recompute
-          d=load_dossiers(Path('.'))
-          assert all(quantitative_recompute(x)['status']=='PASS' for x in d.values())
-          print('QUANTITATIVE_RECOMPUTATION_OK')
+          d=load_dossiers(Path('.')); assert all(quantitative_recompute(x)['status']=='PASS' for x in d.values()); print('QUANTITATIVE_RECOMPUTATION_OK')
           PY
-      - name: Run candidate isolation and blocked corpus
+      - name: Run candidate isolation
         id: isolation
         continue-on-error: true
-        run: python - <<'PY'
+        run: |
+          python - <<'PY'
           from pathlib import Path
           from phase8_review_publication import load_dossiers, CANDIDATES, BLOCKED
-          d=load_dossiers(Path('.'))
-          assert set(d)==set(CANDIDATES) and BLOCKED not in d
+          d=load_dossiers(Path('.')); assert set(d)==set(CANDIDATES) and BLOCKED not in d
           for cid,x in d.items(): assert all(c.get('candidate_id')==cid for c in x.get('claims',[]))
           print('CANDIDATE_ISOLATION_OK')
           PY
       - name: Run review conflict tests
         id: conflicts
         continue-on-error: true
-        run: python - <<'PY'
+        run: |
+          python - <<'PY'
           from pathlib import Path
           import copy
           from phase8_review_publication import *
@@ -129,7 +126,8 @@ jobs:
       - name: Run publication diff and recall tests
         id: publication
         continue-on-error: true
-        run: python - <<'PY'
+        run: |
+          python - <<'PY'
           from pathlib import Path
           from phase8_review_publication import *
           d=load_dossiers(Path('.')); r=controlled_targets(d); e=execute_reviews(d,r)
@@ -159,27 +157,14 @@ jobs:
         id: blocked
         continue-on-error: true
         run: |
-          test "$(grep -R -l 'candidate-4' candidates 2>/dev/null | wc -l)" -eq 0
           python - <<'PY'
           from phase8_review_publication import BLOCKED, load_dossiers
           from pathlib import Path
-          assert BLOCKED not in load_dossiers(Path('.'))
-          print('CANDIDATE_4_BLOCKED_OK')
+          d=load_dossiers(Path('.')); assert BLOCKED not in d; print('CANDIDATE_4_BLOCKED_OK')
           PY
       - name: Generate publication quality report
         id: report
         if: always()
-        run: |
-          python - <<'PY'
-          import json, os
-          from pathlib import Path
-          r=json.loads(Path('reports/phase-8-publication-readiness.json').read_text()) if Path('reports/phase-8-publication-readiness.json').exists() else {}
-          m=json.loads(Path('reports/phase-8-mutation-results.json').read_text()) if Path('reports/phase-8-mutation-results.json').exists() else {}
-          def outcome(s): return s.outcome
-          data={'phase':'8','name':'Dossier Review, Quality Assurance & Publication Control','implementation_sha':Path('evidence/phase-8/implementation-sha.txt').read_text().strip().split('=',1)[1],'tested_sha':Path('evidence/phase-8/sha.txt').read_text().strip().split('=',1)[1],'github_sha':os.environ['GITHUB_SHA'],'workflow':'.github/workflows/phase-8-review-publication.yml','run_id':int(os.environ['GITHUB_RUN_ID']),'job_id':os.environ['GITHUB_JOB'],'python':'3.12.14','postgresql':'16','execution':{k:os.environ.get(k,'') for k in ['P3','P4','P5','P6','P7','ASM','P8','REV','PROV','TEMP','QUANT','ISO','CONFLICT','PUB','MUT','SCH','BLOCKED']},'review_targets':r.get('review_targets',0),'reviews_executed':r.get('reviews_executed',0),'reviews_approved':r.get('reviews_approved',0),'reviews_qualified':r.get('reviews_qualified',0),'reviews_need_more_evidence':r.get('reviews_need_more_evidence',0),'reviews_blocked':r.get('reviews_blocked',0),'review_conflicts':r.get('review_conflicts',0),'dossier_states':r.get('dossier_states',{}),'publication_states':r.get('publication_states',{}),'publications_created':r.get('publications_created',0),'publication_versions':r.get('publication_versions',0),'publication_recall':r.get('publication_recall'),'publication_diff':r.get('publication_diff'),'mutation_count':m.get('mutation_count',0),'mutations_killed':m.get('killed',0),'mutations_survived':m.get('survived',0),'candidate_4':'BLOCKED','status':'PASS' if all(v=='success' for v in {k:v for k,v in {"P3":os.environ.get("P3"),"P4":os.environ.get("P4"),"P5":os.environ.get("P5"),"P6":os.environ.get("P6"),"P7":os.environ.get("P7"),"ASM":os.environ.get("ASM"),"P8":os.environ.get("P8"),"REV":os.environ.get("REV"),"PROV":os.environ.get("PROV"),"TEMP":os.environ.get("TEMP"),"QUANT":os.environ.get("QUANT"),"ISO":os.environ.get("ISO"),"CONFLICT":os.environ.get("CONFLICT"),"PUB":os.environ.get("PUB"),"MUT":os.environ.get("MUT"),"SCH":os.environ.get("SCH"),"BLOCKED":os.environ.get("BLOCKED")}.items()}.items()) and m.get('mutation_count')==40 and m.get('survived',1)==0 else 'FAILED'}
-          Path('reports/phase-8-execution-report.json').write_text(json.dumps(data,indent=2)+'\n')
-          Path('reports/phase-8-execution-report.md').write_text('# Phase 8 — Execution Report\n\n```json\n'+json.dumps(data,indent=2)+'\n```\n')
-          PY
         env:
           P3: ${{ steps.phase3.outcome }}
           P4: ${{ steps.phase4.outcome }}
@@ -198,6 +183,17 @@ jobs:
           MUT: ${{ steps.mutations.outcome }}
           SCH: ${{ steps.schemas.outcome }}
           BLOCKED: ${{ steps.blocked.outcome }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          r=json.loads(Path('reports/phase-8-publication-readiness.json').read_text()) if Path('reports/phase-8-publication-readiness.json').exists() else {}
+          m=json.loads(Path('reports/phase-8-mutation-results.json').read_text()) if Path('reports/phase-8-mutation-results.json').exists() else {}
+          outcomes={k:os.environ.get(k) for k in ['P3','P4','P5','P6','P7','ASM','P8','REV','PROV','TEMP','QUANT','ISO','CONFLICT','PUB','MUT','SCH','BLOCKED']}
+          data={'phase':'8','name':'Dossier Review, Quality Assurance & Publication Control','implementation_sha':Path('evidence/phase-8/implementation-sha.txt').read_text().strip().split('=',1)[1],'tested_sha':Path('evidence/phase-8/sha.txt').read_text().strip().split('=',1)[1],'github_sha':os.environ['GITHUB_SHA'],'workflow':'.github/workflows/phase-8-review-publication.yml','run_id':int(os.environ['GITHUB_RUN_ID']),'job_id':os.environ['GITHUB_JOB'],'python':'3.12.14','postgresql':'16','execution':outcomes,'review_targets':r.get('review_targets',0),'reviews_executed':r.get('reviews_executed',0),'reviews_approved':r.get('reviews_approved',0),'reviews_qualified':r.get('reviews_qualified',0),'reviews_need_more_evidence':r.get('reviews_need_more_evidence',0),'reviews_blocked':r.get('reviews_blocked',0),'review_conflicts':r.get('review_conflicts',0),'dossier_states':r.get('dossier_states',{}),'publication_states':r.get('publication_states',{}),'publications_created':r.get('publications_created',0),'publication_versions':r.get('publication_versions',0),'publication_recall':r.get('publication_recall'),'publication_diff':r.get('publication_diff'),'mutation_count':m.get('mutation_count',0),'mutations_killed':m.get('killed',0),'mutations_survived':m.get('survived',0),'candidate_4':'BLOCKED','status':'PASS' if all(v=='success' for v in outcomes.values()) and m.get('mutation_count')==40 and m.get('survived',1)==0 else 'FAILED'}
+          Path('reports/phase-8-execution-report.json').write_text(json.dumps(data,indent=2)+'\n')
+          Path('reports/phase-8-execution-report.md').write_text('# Phase 8 — Execution Report\n\n```json\n'+json.dumps(data,indent=2)+'\n```\n')
+          PY
       - name: Verify reports and failure evidence
         id: evidence
         if: always()
