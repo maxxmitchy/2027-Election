@@ -1,0 +1,8 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"user-testing-observation",
+  "type":"object",
+  "required":["observation_id","session_id","observation_type","observation"],
+  "properties":{"observation_id":{"type":"string"},"session_id":{"type":"string"},"observation_type":{"enum":["UX","COMPREHENSION","PROVENANCE","UNCERTAINTY","TEMPORAL","RESEARCH","TRUST","WORKFLOW","RETRIEVAL","EVIDENCE_PRESENTATION"]},"severity":{"enum":["LOW","MEDIUM","HIGH","CRITICAL"]},"observation":{"type":"string","minLength":1}},
+  "additionalProperties":true
+}
