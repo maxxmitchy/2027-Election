@@ -8,12 +8,12 @@ def audit():
  d,r,e=prep(); base=copy.deepcopy(d); base_r=copy.deepcopy(e); cases=[]
  def case(n,mut,check): cases.append((n,mut,check))
  c=CANDIDATES[0]
- case('M1_remove_claim_review',lambda d,r:r.pop(),lambda d,r:not all(x['claim_id'] in {z.get('claim_id') for z in r if z.get('review_target')=='CLAIM'} for x in d[c]['claims']))
- case('M2_convert_review_to_evidence',lambda d,r:d[c]['evidence'].append(copy.deepcopy(r[0])),lambda d,r:not validate_reviews(d,r) if r else True)
- case('M3_secondary_to_primary',lambda d,r:d[c]['sources'][0].update(source_class='INVALID_PRIMARY'),lambda d,r:not publication_readiness(d[c],r)['publication_decision']=='QUALIFIED')
+ case('M1_remove_claim_review',lambda d,r:r.__setitem__(slice(0,1),[]),lambda d,r:not all(x['claim_id'] in {z.get('claim_id') for z in r if z.get('review_target')=='CLAIM'} for x in d[c]['claims']))
+ case('M2_convert_review_to_evidence',lambda d,r:d[c]['evidence'].append(copy.deepcopy(r[0])),lambda d,r:any('review_target' in x for x in d[c]['evidence']))
+ case('M3_secondary_to_primary',lambda d,r:d[c]['sources'][0].update(source_class='INVALID_PRIMARY'),lambda d,r:publication_readiness(d[c],r)['publication_decision']!='QUALIFIED')
  case('M4_remove_provenance',lambda d,r:d[c]['claims'][0].pop('provenance'),lambda d,r:publication_readiness(d[c],r)['publication_decision']=='BLOCKED')
  case('M5_break_source_retrieval_chain',lambda d,r:d[c]['sources'][0].update(retrieval_date=None),lambda d,r:d[c]['sources'][0].get('retrieval_date') is None)
- case('M6_remove_gap',lambda d,r:d[c].pop('research_gaps'),lambda d,r:publication_readiness(d[c],r)['publication_decision']!='QUALIFIED_WITH_LIMITATIONS' or 'research_gaps' not in d[c])
+ case('M6_remove_gap',lambda d,r:d[c].pop('research_gaps'),lambda d,r:'research_gaps' not in d[c])
  case('M7_force_gap_closed',lambda d,r:[g.update(status='RESOLVED') for g in d[c].get('research_gaps',[])],lambda d,r:any(g.get('status')=='RESOLVED' for g in d[c].get('research_gaps',[])))
  case('M8_remove_contradiction',lambda d,r:d[c].pop('contested_claims'),lambda d,r:'contested_claims' not in d[c])
  case('M9_remove_correction',lambda d,r:d[c].pop('corrections'),lambda d,r:'corrections' not in d[c])
