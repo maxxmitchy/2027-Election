@@ -1,0 +1,182 @@
+name: Phase 9 Publication Readiness & Controlled Evidence Closure
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  phase-9:
+    name: publication-readiness-closure
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: {POSTGRES_PASSWORD: postgres, POSTGRES_USER: postgres, POSTGRES_DB: retrieval_test}
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d retrieval_test"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/retrieval_test
+      PGPASSWORD: postgres
+      PYTHONHASHSEED: "0"
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12.14"}
+      - name: Install pinned dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Initialize reference database
+        run: psql -h 127.0.0.1 -U postgres -d retrieval_test -f db/round5_reference.sql
+      - name: Record exact execution identity
+        run: |
+          mkdir -p evidence/phase-9
+          printf 'implementation_sha=%s\n' "${{ github.event.pull_request.head.sha || github.sha }}" | tee evidence/phase-9/implementation-sha.txt
+          printf 'github.sha=%s\n' "$GITHUB_SHA" | tee evidence/phase-9/github-sha.txt
+          printf 'tested_sha=%s\n' "$(git rev-parse HEAD)" | tee evidence/phase-9/sha.txt
+          printf 'workflow=.github/workflows/phase-9-publication-readiness.yml\nrun_id=%s\njob_id=%s\n' "$GITHUB_RUN_ID" "$GITHUB_JOB" | tee evidence/phase-9/execution.txt
+          python --version | tee evidence/phase-9/versions.txt
+          psql --version >> evidence/phase-9/versions.txt
+          python -m pip freeze >> evidence/phase-9/versions.txt
+      - name: Run Phase 3 regression
+        id: phase3
+        continue-on-error: true
+        run: python -m pytest -q tests/test_query_interpreter.py tests/query_semantics.py tests/test_system_demo.py tests/test_answer_experience.py tests/test_phase3_golden.py | tee evidence/phase-9/phase3.txt
+      - name: Run Phase 4 regression
+        id: phase4
+        continue-on-error: true
+        run: python -m pytest -q tests/test_phase4_*.py tests/gate4_candidate_acceptance.py tests/gate4_postgres_runtime.py | tee evidence/phase-9/phase4.txt
+      - name: Run Phase 5 regression
+        id: phase5
+        continue-on-error: true
+        run: python -m pytest -q tests/test_phase5_research_workbench.py | tee evidence/phase-9/phase5.txt
+      - name: Run Phase 6 regression
+        id: phase6
+        continue-on-error: true
+        run: python -m pytest -q tests/test_phase6_evidence_acquisition.py | tee evidence/phase-9/phase6.txt
+      - name: Run Phase 7 regression and assembly
+        id: phase7
+        continue-on-error: true
+        run: |
+          python -m pytest -q tests/test_phase7_dossier.py tests/test_phase7_investigation.py | tee evidence/phase-9/phase7.txt
+          PYTHONPATH=. python scripts/run_phase7_assembly_v2.py | tee evidence/phase-9/phase7-assembly.txt
+      - name: Run Phase 8 regression and execution
+        id: phase8
+        continue-on-error: true
+        run: |
+          python -m pytest -q tests/test_phase8_review_publication.py | tee evidence/phase-9/phase8-tests.txt
+          PYTHONPATH=. python scripts/run_phase8_review_publication.py | tee evidence/phase-9/phase8-execution.txt
+          PYTHONPATH=. python scripts/run_phase8_mutation_audit.py | tee evidence/phase-9/phase8-mutations.txt
+      - name: Inspect Phase 8 actual blockers
+        id: blockers
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('reports/phase-8-review-results.json'))['reviews']
+          x=[z for z in r if z.get('outcome')=='NEEDS_MORE_EVIDENCE']
+          assert {z['claim_id'] for z in x}=={'claim-inflation-causation','claim-obi-debt-causation','claim-causal-ncp'}
+          json.dump(x,open('evidence/phase-9/phase8-blockers.json','w'),indent=2)
+          print('PHASE8_BLOCKERS_IDENTIFIED',len(x))
+          PY
+      - name: Run Phase 9 closure execution
+        id: phase9
+        continue-on-error: true
+        run: PYTHONPATH=. python scripts/run_phase9.py | tee evidence/phase-9/phase9-execution.txt
+      - name: Run Phase 9 tests
+        id: phase9tests
+        continue-on-error: true
+        run: PYTHONPATH=. python -m pytest -q tests/test_phase9_publication_closure.py | tee evidence/phase-9/phase9-tests.txt
+      - name: Run Phase 9 mutation audit
+        id: mutations
+        if: always()
+        continue-on-error: true
+        run: PYTHONPATH=. python scripts/run_phase9_mutation_audit.py | tee evidence/phase-9/phase9-mutations.txt
+      - name: Validate Phase 9 JSON Schemas
+        id: schemas
+        if: always()
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from jsonschema import Draft202012Validator
+          for name in ['phase9-closure-register.schema.json','phase9-publication-readiness.schema.json','phase9-publication-diff.schema.json','phase9-mutation-results.schema.json']:
+              Draft202012Validator.check_schema(json.loads((Path('schemas')/name).read_text()))
+          print('PHASE9_SCHEMA_VALIDATION_OK')
+          PY
+      - name: Candidate isolation and Candidate 4 block
+        id: isolation
+        if: always()
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          import json
+          from phase9 import CANDIDATES
+          r=json.load(open('reports/phase-9-publication-readiness.json'))
+          assert set(r['matrix'])==set(CANDIDATES)
+          assert r['candidate_4']=='BLOCKED'
+          print('PHASE9_CANDIDATE_ISOLATION_OK')
+          PY
+      - name: Publication readiness execution report
+        id: report
+        if: always()
+        env:
+          P3: ${{ steps.phase3.outcome }}
+          P4: ${{ steps.phase4.outcome }}
+          P5: ${{ steps.phase5.outcome }}
+          P6: ${{ steps.phase6.outcome }}
+          P7: ${{ steps.phase7.outcome }}
+          P8: ${{ steps.phase8.outcome }}
+          BLK: ${{ steps.blockers.outcome }}
+          P9: ${{ steps.phase9.outcome }}
+          P9T: ${{ steps.phase9tests.outcome }}
+          MUT: ${{ steps.mutations.outcome }}
+          SCH: ${{ steps.schemas.outcome }}
+          ISO: ${{ steps.isolation.outcome }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          r=json.loads(Path('reports/phase-9-publication-readiness.json').read_text()) if Path('reports/phase-9-publication-readiness.json').exists() else {}
+          m=json.loads(Path('reports/phase-9-mutation-results.json').read_text()) if Path('reports/phase-9-mutation-results.json').exists() else {}
+          outcomes={k:os.environ.get(k) for k in ['P3','P4','P5','P6','P7','P8','BLK','P9','P9T','MUT','SCH','ISO']}
+          data={'phase':'9','name':'Publication Readiness & Controlled Evidence Closure','implementation_sha':Path('evidence/phase-9/implementation-sha.txt').read_text().strip().split('=',1)[1],'tested_sha':Path('evidence/phase-9/sha.txt').read_text().strip().split('=',1)[1],'github_sha':os.environ['GITHUB_SHA'],'workflow':'.github/workflows/phase-9-publication-readiness.yml','run_id':int(os.environ['GITHUB_RUN_ID']),'job_id':os.environ['GITHUB_JOB'],'python':'3.12.14','postgresql':'16','execution':outcomes,'phase8_blockers':r.get('closure_count',0),'closure_attempts':r.get('closure_count',0),'evidence_acquired':r.get('evidence_acquired',0),'gaps_resolved':r.get('gaps_resolved',0),'gaps_remaining':r.get('gaps_remaining',0),'reviews_reexecuted':r.get('reviews_reexecuted',0),'publication_states':{k:v.get('publication_state') for k,v in r.get('matrix',{}).items()},'publications_created':0,'publication_diff':'PASS' if r.get('diff') else 'UNTESTED','publication_recall':'PASS' if r.get('recall') else 'UNTESTED','historical_reconstruction':'PASS' if all(r.get('historical_reconstruction',{}).values()) else 'FAILED','candidate_4':'BLOCKED','mutation_count':m.get('mutation_count',0),'mutations_killed':m.get('killed',0),'mutations_survived':m.get('survived',0),'status':'PASS' if all(v=='success' for v in outcomes.values()) and m.get('mutation_count')==20 and m.get('survived',1)==0 else 'FAILED'}
+          Path('reports/phase-9-publication-readiness.json').write_text(json.dumps({**r,'execution':data},indent=2)+'\n')
+          Path('reports/phase-9-execution-report.json').write_text(json.dumps(data,indent=2)+'\n')
+          Path('reports/phase-9-execution-report.md').write_text('# Phase 9 — Execution Report\n\n```json\n'+json.dumps(data,indent=2)+'\n```\n')
+          PY
+      - name: Verify reports and failure evidence
+        id: evidence
+        if: always()
+        continue-on-error: true
+        run: |
+          test -s reports/phase-9-closure-register.json
+          test -s reports/phase-9-publication-readiness.json
+          test -s reports/phase-9-publication-diff.json
+          test -s reports/phase-9-mutation-results.json
+          test -s reports/phase-9-execution-report.json
+          test -s evidence/phase-9/implementation-sha.txt
+          test -s evidence/phase-9/sha.txt
+      - name: Hash Phase 9 evidence
+        if: always()
+        run: sha256sum reports/phase-9-* evidence/phase-9/* > evidence/phase-9/report-hashes.txt
+      - name: Upload Phase 9 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase-9-evidence-${{ github.sha }}
+          path: |
+            reports/phase-9-*.md
+            reports/phase-9-*.json
+            schemas/phase9-*.schema.json
+            evidence/phase-9/
+          if-no-files-found: error
+      - name: Fail closed
+        if: steps.phase3.outcome != 'success' || steps.phase4.outcome != 'success' || steps.phase5.outcome != 'success' || steps.phase6.outcome != 'success' || steps.phase7.outcome != 'success' || steps.phase8.outcome != 'success' || steps.blockers.outcome != 'success' || steps.phase9.outcome != 'success' || steps.phase9tests.outcome != 'success' || steps.mutations.outcome != 'success' || steps.schemas.outcome != 'success' || steps.isolation.outcome != 'success' || steps.evidence.outcome != 'success'
+        run: exit 1
