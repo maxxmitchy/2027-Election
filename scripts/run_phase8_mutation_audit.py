@@ -1,5 +1,5 @@
 from pathlib import Path
-import copy, json
+import copy,json
 from phase8_review_publication import *
 ROOT=Path(__file__).resolve().parents[1]
 def prep():
@@ -23,7 +23,7 @@ def audit():
  case('M13_corrupt_quantitative_input',lambda d,r:d[c]['economic_record'][0].update(dataset_version=None),lambda d,r:quantitative_recompute(d[c])['status']=='FAIL')
  case('M14_change_metric_unit',lambda d,r:d[c]['economic_record'][0].update(unit=None),lambda d,r:quantitative_recompute(d[c])['status']=='FAIL')
  case('M15_change_geography',lambda d,r:d[c]['economic_record'][0].update(geography=None),lambda d,r:quantitative_recompute(d[c])['status']=='FAIL')
- case('M16_change_period',lambda d,r:d[c]['economic_record'][0].update(period=None),lambda d,r:quantitative_recompute(d[c])['status']=='FAIL')
+ case('M16_change_period',lambda d,r:d[c]['economic_record'][0].update(period=None,period_start=None,period_end=None),lambda d,r:quantitative_recompute(d[c])['status']=='FAIL')
  case('M17_remove_methodology',lambda d,r:d[c].pop('methodology_version'),lambda d,r:publication_readiness(d[c],r)['publication_decision']=='BLOCKED')
  case('M18_remove_database_snapshot',lambda d,r:d[c].pop('database_snapshot'),lambda d,r:publication_readiness(d[c],r)['publication_decision'] in {'BLOCKED','NEEDS_MORE_EVIDENCE'})
  case('M19_statement_to_truth',lambda d,r:next(x.update(claim_type='TRUTH') for x in d[c]['claims'] if x.get('claim_type')=='PUBLIC_STATEMENT'),lambda d,r:any(x.get('claim_type')=='TRUTH' for x in d[c]['claims']))
